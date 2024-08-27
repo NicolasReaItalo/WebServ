@@ -13,12 +13,16 @@ class Server
 		int nfds;
 		int run_server();
 		int server_cleanup();
+		void do_request(char *buffer, int i);
+		void method_get(std::string &request, int i);
+		void method_post(std::string &request, int i);
+		void method_delete(std::string &request, int i);
+		void fds_cleanup();
+
 
 	public : 
 		Server();
 		int start_server();
-	
-
 };
 
 

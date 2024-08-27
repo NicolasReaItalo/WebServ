@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/27 11:27:16 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/08/27 12:15:31 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/08/27 16:44:14 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,13 @@ std::string get_mime_type(const std::string &path)
     
     return "application/octet-stream"; // Default for binary data
 }
-
+std::string get_method_type(const std::string &request)
+{
+    std::istringstream request_stream(request);
+    std::string method;
+    request_stream >> method;
+    return method;
+}
 std::string get_request_path(const std::string &request) 
 {
     std::istringstream request_stream(request);
