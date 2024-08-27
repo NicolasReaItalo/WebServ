@@ -1,77 +1,20 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   webserv.cpp                                        :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/08/27 11:26:45 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/08/27 13:37:14 by qgiraux          ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
-#include "webserv.hpp"
 #include "Server.hpp"
 
-int main() 
+Server::Server()
 {
-    Server server;
-    int ret;
-
-    ret = server.start_server();
-    return ret;
+	addrlen = sizeof(address);
+	PORT = 8080;
+	nfds = 1;
 }
-  /*  int server_fd;
-    struct sockaddr_in address;
-    int addrlen = sizeof(address);
-    const int PORT = 8080;
-    struct pollfd fds[MAX_CLIENTS];
-    int nfds = 1;
 
-    // Create socket file descriptor
-    if ((server_fd = socket(AF_INET, SOCK_STREAM, 0)) == 0) 
-    {
-        std::cerr << "Socket failed: " << strerror(errno) << std::endl;
-        return 1;
-    }
-    
-    int opt = 1;
-    if (setsockopt(server_fd, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT, &opt, sizeof(opt))) 
-    {
-        std::cerr << "setsockopt failed: " << strerror(errno) << std::endl;
-        close(server_fd);
-        return 1;
-    }
-    fds[0].fd = server_fd;
-    fds[0].events = POLLIN;
-    
-    address.sin_family = AF_INET;
-    address.sin_addr.s_addr = INADDR_ANY;
-    address.sin_port = htons(PORT);
-    
-    if (bind(fds[0].fd, (struct sockaddr *)&address, sizeof(address)) < 0) 
-    {
-        std::cerr << "Bind failed: " << strerror(errno) << std::endl;
-        close(fds[0].fd);
-        return 1;
-    }
-    
-    if (listen(fds[0].fd, 3) < 0) {
-        std::cerr << "Listen failed: " << strerror(errno) << std::endl;
-        close(fds[0].fd);
-        return 1;
-    }
-    
-    std::cout << "Server listening on port " << PORT << "..." << std::endl;
-
-    while (true) 
-    {
-        int poll_count = poll(fds, nfds, -1);
+void Server::run_server()
+{
+	int poll_count = poll(fds, nfds, -1);
 
         if (poll_count == -1)
         {
             std::cerr << "poll() failed: " << strerror(errno) << std::endl;
-            break;
+            return;
         }
         
         for (int i = 0; i < nfds; i++)
@@ -165,8 +108,11 @@ int main()
                 i--;  // Stay at the current index after the shift
             }
         }
-    }
-    for (int i = 0; i < nfds; i++) 
+}
+
+int Server::server_cleanup()
+{
+	for (int i = 0; i < nfds; i++) 
     {
         if (fds[i].fd != -1) 
         {
@@ -175,4 +121,45 @@ int main()
     }
     close(server_fd);
     return 0;
-}*/
+}
+int Server::start_server()
+{
+	if ((server_fd = socket(AF_INET, SOCK_STREAM, 0)) == 0) 
+    {
+        std::cerr << "Socket failed: " << strerror(errno) << std::endl;
+        return 1;
+    }
+    
+    int opt = 1;
+    if (setsockopt(server_fd, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT, &opt, sizeof(opt))) 
+    {
+        std::cerr << "setsockopt failed: " << strerror(errno) << std::endl;
+        close(server_fd);
+        return 1;
+    }
+    fds[0].fd = server_fd;
+    fds[0].events = POLLIN;
+    
+    address.sin_family = AF_INET;
+    address.sin_addr.s_addr = INADDR_ANY;
+    address.sin_port = htons(PORT);
+    
+    if (bind(fds[0].fd, (struct sockaddr *)&address, sizeof(address)) < 0) 
+    {
+        std::cerr << "Bind failed: " << strerror(errno) << std::endl;
+        close(fds[0].fd);
+        return 1;
+    }
+    
+    if (listen(fds[0].fd, 3) < 0) {
+        std::cerr << "Listen failed: " << strerror(errno) << std::endl;
+        close(fds[0].fd);
+        return 1;
+    }
+    
+    std::cout << "Server listening on port " << PORT << "..." << std::endl;
+
+	while (true)
+		run_server();
+	return server_cleanup();
+}
