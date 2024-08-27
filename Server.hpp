@@ -11,7 +11,7 @@ class Server
 		int PORT;
 		struct pollfd fds[MAX_CLIENTS];
 		int nfds;
-		void run_server();
+		int run_server();
 		int server_cleanup();
 
 	public : 
