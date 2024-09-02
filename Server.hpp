@@ -19,10 +19,14 @@ class Server
 		void method_delete(std::string &request, int i);
 		void fds_cleanup();
 
+		
+
 
 	public : 
 		Server();
 		int start_server();
+		
+		
 };
 
 

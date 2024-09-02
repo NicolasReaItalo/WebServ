@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/27 11:26:02 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/08/27 16:47:55 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/09/02 11:48:17 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,12 +19,13 @@
 #include <unistd.h>
 #include <fstream>
 #include <sstream>
-#include <string>
+#include <cstring>
 #include <vector>
 #include <cstring>
 #include <map>
 #include <poll.h>
 #include <cstdio>
+#include <csignal>
 
 #define MAX_CLIENTS 100
 #define BUFFER_SIZE 30000
