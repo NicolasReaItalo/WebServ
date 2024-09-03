@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/27 11:26:02 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/09/02 11:48:17 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/09/02 13:47:05 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@
 #include <csignal>
 
 #define MAX_CLIENTS 100
-#define BUFFER_SIZE 30000
+#define BUFFER_SIZE 1000
 
 std::string get_request_path(const std::string &request);
 std::string get_mime_type(const std::string &path);

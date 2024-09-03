@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   Server_method.cpp                                  :+:      :+:    :+:   */
+/*   Server_requests.cpp                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/02 12:00:24 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/09/02 12:00:25 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/09/03 10:25:02 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,23 +53,31 @@ void Server::method_get(std::string &request, int i)
 void Server::method_post(std::string &request, int i)
 {
     std::string::size_type pos = request.find("\r\n\r\n");
-        // if (pos != std::string::npos) 
-        // {
-            // std::string headers = request.substr(0, pos);
-    std::string body = request.substr(pos + 4);
-        // }
-    std::string response_body = "POST data received : " + body;
+        if (pos != std::string::npos) 
+        {
+            std::string headers = request.substr(0, pos);
+            std::string body = request.substr(pos + 4);
+            std::cout << "POST data received : " + body;
+            std::string response = "HTTP/1.1 200 OK\r\n"
+            "Content-Type: text/html\r\n"
+            "Content-Length: 48\r\n"
+            "\r\n"
+            "<html><body><h1>POST Received</h1></body></html>";
+            
+            send(fds[i].fd, response.c_str(), response.size(), 0);
+        }
+        else
+        {
+        // If no POST data is found, send an error response
+        std::string bad_request_response = 
+            "HTTP/1.1 400 Bad Request\r\n"
+            "Content-Type: text/html\r\n"
+            "Content-Length: 49\r\n"
+            "\r\n"
+            "<html><body><h1>400 Bad Request</h1></body></html>";
 
-    std::ostringstream oss;
-    oss << response_body.size();
-
-    std::string response_head = "HTTP/1.1 200 OK\r\n"
-        "Content-Type: text/plain\r\n"
-        "Content-Length: " + oss.str() + "\r\n"
-        "Connection: close\r\n\r\n" + "\r\n";
-    
-    send(fds[i].fd, response_head.c_str(), response_head.size(), 0);
-    send(fds[i].fd, response_body.c_str(), response_body.size(), 0);
+        send(fds[i].fd, bad_request_response.c_str(), bad_request_response.size(), 0);
+    }
 }
 
 void Server::method_delete(std::string &request, int i)
@@ -89,7 +97,7 @@ void Server::method_delete(std::string &request, int i)
 }
 void Server::do_request(char* buffer, int i)
 {
-    std::cout << "client request :\n\n" << buffer << std::endl << "\n******************\n";
+    // std::cout << "client request :\n\n" << buffer << std::endl << "\n******************\n";
     std::string request(buffer);
     std::string request_type = get_method_type(request);
     if (request_type == "GET")
