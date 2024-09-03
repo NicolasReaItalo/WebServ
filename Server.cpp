@@ -65,7 +65,9 @@ int Server::run_server()
                 int valread = read(fds[i].fd, buffer, BUFFER_SIZE);
                 if (valread == 0)
                 {
-                    std::cout << "Client disconnected, socket fd: " << fds[i].fd << std::endl;
+                    std::ostringstream oss;
+                    oss << "Client disconnected, socket fd: " << fds[i].fd << std::endl;
+                    std::cout << oss.str();
                     close(fds[i].fd);
                     fds[i].fd = -1;
                 }
@@ -100,7 +102,11 @@ void Server::fds_cleanup()
 
 int Server::server_cleanup()
 {
-    std::cout << "Shutting server down..." << std::endl;
+    {
+        std::ostringstream oss;
+        oss << "Shutting server down..." << std::endl;
+        std::cout << oss.str();
+    }
 
 	for (int i = 0; i < nfds; i++) 
     {
@@ -110,7 +116,11 @@ int Server::server_cleanup()
         }
     }
     close(server_fd);
-    std::cout << "Server offline, goodbye!" << std::endl;
+    {
+        std::ostringstream oss;
+        oss << "Server offline, goodbye!" << std::endl;
+        std::cout << oss.str();
+    }
     return 0;
 }
 int Server::start_server()
@@ -149,8 +159,11 @@ int Server::start_server()
         close(fds[1].fd);
         return 1;
     }
-    
-    std::cout << "Server listening on port " << PORT << "..." << std::endl;
+    {
+        std::ostringstream oss;
+        oss << "Server listening on port " << PORT << "..." << std::endl;
+        std::cout << oss.str();
+    }
     int ret = 0;
 	while (ret == 0)
     {
