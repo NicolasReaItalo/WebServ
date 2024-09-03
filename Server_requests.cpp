@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/02 12:00:24 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/09/03 10:25:02 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/09/03 10:41:19 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,47 +37,30 @@ void Server::method_get(std::string &request, int i)
         // Send the file content
         send(fds[i].fd, reinterpret_cast<const char*>(file_content.data()), file_content.size(), 0);
     }
-    else 
-    {
-        std::string not_found_response = 
-            "HTTP/1.1 404 Not Found\r\n"
-            "Content-Type: text/html\r\n"
-            "Content-Length: 58\r\n"
-            "\r\n"
-            "<html><body><h1>404 Not Found</h1><p>Resource not found.</p></body></html>";
-
-        send(fds[i].fd, not_found_response.c_str(), not_found_response.size(), 0);
-    }
+    // If no POST data is found, send an error response
+    else        
+        resp_404(request, i);
 }
 
 void Server::method_post(std::string &request, int i)
 {
     std::string::size_type pos = request.find("\r\n\r\n");
-        if (pos != std::string::npos) 
-        {
-            std::string headers = request.substr(0, pos);
-            std::string body = request.substr(pos + 4);
-            std::cout << "POST data received : " + body;
-            std::string response = "HTTP/1.1 200 OK\r\n"
-            "Content-Type: text/html\r\n"
-            "Content-Length: 48\r\n"
-            "\r\n"
-            "<html><body><h1>POST Received</h1></body></html>";
-            
-            send(fds[i].fd, response.c_str(), response.size(), 0);
-        }
-        else
-        {
-        // If no POST data is found, send an error response
-        std::string bad_request_response = 
-            "HTTP/1.1 400 Bad Request\r\n"
-            "Content-Type: text/html\r\n"
-            "Content-Length: 49\r\n"
-            "\r\n"
-            "<html><body><h1>400 Bad Request</h1></body></html>";
-
-        send(fds[i].fd, bad_request_response.c_str(), bad_request_response.size(), 0);
+    if (pos != std::string::npos) 
+    {
+        std::string headers = request.substr(0, pos);
+        std::string body = request.substr(pos + 4);
+        std::cout << "POST data received : " + body;
+        std::string response = "HTTP/1.1 200 OK\r\n"
+        "Content-Type: text/html\r\n"
+        "Content-Length: 48\r\n"
+        "\r\n"
+        "<html><body><h1>POST Received</h1></body></html>";
+        
+        send(fds[i].fd, response.c_str(), response.size(), 0);
     }
+    // If no POST data is found, send an error response
+    else
+    resp_400(request, i);
 }
 
 void Server::method_delete(std::string &request, int i)

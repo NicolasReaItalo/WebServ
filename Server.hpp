@@ -18,6 +18,8 @@ class Server
 		void method_post(std::string &request, int i);
 		void method_delete(std::string &request, int i);
 		void fds_cleanup();
+		void resp_400(std::string request, int i);
+		void resp_404(std::string request, int i);
 
 		
 
