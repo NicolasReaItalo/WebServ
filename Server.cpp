@@ -1,9 +1,23 @@
 #include "Server.hpp"
+#include "webserv.hpp"
 
 Server::Server()
 {
 	addrlen = sizeof(address);
+    for (int i = 0; i < MAX_CLIENTS + 1; i++)
+    {
+        fds[i].fd = -1;
+        fds[i].events = 0;
+        fds[i].revents = 0;
+    }
 	PORT = 8080;
+	nfds = 1;
+    host = "127.0.0.1";
+
+}
+Server::Server(int port, std::string host) : PORT(port), host(host)
+{
+	addrlen = sizeof(address);
 	nfds = 2;
 }
 
@@ -11,21 +25,15 @@ Server::Server()
 
 int Server::run_server()
 {
-    if (poll(fds, nfds, -1) == -1)
+    int timeout_ms = 100;
+    if (poll(fds, nfds, timeout_ms) == -1)
     {
         std::cerr << "poll() failed: " << strerror(errno) << std::endl;
         return 1;
     }
-
-    if (fds[0].revents & POLLIN)
-    {
-        std::string input = "";
-        std::getline(std::cin, input);
-        if (input == "exit")
+    if (stopper != 0)
             return 1;
-    }
-    
-    for (int i = 1; i < nfds; i++)
+    for (int i = 0; i < nfds; i++)
     {
         if (fds[i].revents & POLLIN)
         {
@@ -38,12 +46,15 @@ int Server::run_server()
                 }
 
                 // Add new socket to fds array
-                if (nfds < MAX_CLIENTS) {
+                if (nfds < MAX_CLIENTS + 1) 
+                {
                     fds[nfds].fd = new_socket;
                     fds[nfds].events = POLLIN;  // Monitor this socket for incoming data
                     nfds++;
                     std::cout << "New connection, socket fd: " << new_socket << std::endl;
-                } else {
+                } 
+                else 
+                {
                     std::cerr << "Max clients reached. Connection refused." << std::endl;
                     close(new_socket);
                 }
@@ -123,7 +134,7 @@ int Server::start_server()
     fds[1].events = POLLIN;
     
     address.sin_family = AF_INET;
-    address.sin_addr.s_addr = INADDR_ANY;
+    address.sin_addr.s_addr = inet_addr(host.c_str());
     address.sin_port = htons(PORT);
     
     if (bind(fds[1].fd, (struct sockaddr *)&address, sizeof(address)) < 0) 
@@ -142,6 +153,15 @@ int Server::start_server()
     std::cout << "Server listening on port " << PORT << "..." << std::endl;
     int ret = 0;
 	while (ret == 0)
+    {
 		ret = run_server();
-	return server_cleanup();
+    }
+	return stop_server();
+}
+
+int Server::stop_server()
+{
+    fds_cleanup();
+    server_cleanup();
+    return 0;
 }

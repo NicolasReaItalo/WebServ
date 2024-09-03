@@ -2,6 +2,7 @@
 #define SERVER_HPP
 #include "webserv.hpp"
 
+
 class Server
 {
 	private :
@@ -9,8 +10,9 @@ class Server
 		struct sockaddr_in address;
 		int addrlen;
 		int PORT;
-		struct pollfd fds[MAX_CLIENTS];
+		struct pollfd fds[MAX_CLIENTS + 1];
 		int nfds;
+		std::string host;
 		int run_server();
 		int server_cleanup();
 		void do_request(char *buffer, int i);
@@ -26,7 +28,9 @@ class Server
 
 	public : 
 		Server();
+		Server(int port, std::string host);
 		int start_server();
+		int stop_server();
 		
 		
 };

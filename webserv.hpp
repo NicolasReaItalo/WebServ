@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/27 11:26:02 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/09/02 13:47:05 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/09/03 17:40:46 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 #include <iostream>
 #include <sys/socket.h>
 #include <netinet/in.h>
+#include <arpa/inet.h>
 #include <unistd.h>
 #include <fstream>
 #include <sstream>
@@ -28,12 +29,17 @@
 #include <csignal>
 
 #define MAX_CLIENTS 100
-#define BUFFER_SIZE 1000
+#define BUFFER_SIZE 100
+
+extern volatile sig_atomic_t stopper;
+
+
 
 std::string get_request_path(const std::string &request);
 std::string get_mime_type(const std::string &path);
 std::vector<unsigned char> load_file(const std::string &filename);
 std::string get_method_type(const std::string &request);
 
+void handle_sigint(int sig);
 
 #endif

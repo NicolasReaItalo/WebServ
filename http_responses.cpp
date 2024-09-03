@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/02 13:26:40 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/09/03 11:08:17 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/09/03 14:08:23 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,15 +69,18 @@ void Server::resp_400(std::string request, int i)
 /*not found*/
 void Server::resp_404(std::string request, int i)
 {
+    std::vector<unsigned char> file_content = load_file("./404.html");
     (void)request;
+    std::ostringstream oss;
+    oss << file_content.size();
     std::string not_found_response = 
             "HTTP/1.1 404 Not Found\r\n"
             "Content-Type: text/html\r\n"
-            "Content-Length: 58\r\n"
-            "\r\n"
-            "<html><body><h1>404 Not Found</h1><p>Resource not found.</p></body></html>";
+            "Content-Length: " + oss.str() + "\r\n"
+            "\r\n";
 
         send(fds[i].fd, not_found_response.c_str(), not_found_response.size(), 0);
+        send(fds[i].fd, reinterpret_cast<const char*>(file_content.data()), file_content.size(), 0);
 }
 
 // /*method not allowe*/

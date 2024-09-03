@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/27 11:27:16 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/08/27 16:44:14 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/09/03 14:33:37 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ std::vector<unsigned char> load_file(const std::string &filename)
         std::cerr << "Error opening file: " << filename << std::endl;
         return std::vector<unsigned char>(); // Return an empty vector
     }
-    
+    // std::cout << " opening file " << filename.c_str() << std::endl;
     std::vector<unsigned char> file_data((std::istreambuf_iterator<char>(file)),
                                            std::istreambuf_iterator<char>());
     return file_data;
