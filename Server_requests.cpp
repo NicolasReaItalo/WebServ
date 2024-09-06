@@ -6,87 +6,61 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/02 12:00:24 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/09/03 10:41:19 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/09/06 17:41:16 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Server.hpp"
+#include <ctime>
+#include <sstream>
+#include <fstream>
+#include <map>
 
-void Server::method_get(std::string &request, int i)
+std::vector<unsigned char> Server::load_file(const std::string &filename) 
 {
-    std::string request_path = get_request_path(request);
-    std::string mime_type = "text/plain"; // Default MIME type
-    if (request_path == "/")// || request_path == "/index.html") 
-        request_path = "/index.html"; // Serve the index page by default
+    std::ifstream file(filename.c_str(), std::ios::binary);
+    if (!file) {
+        std::cerr << "Error opening file: " << filename << std::endl;
+        return std::vector<unsigned char>(); // Return an empty vector
+    }
+    std::cout << " opening file " << filename << std::endl;
+    std::vector<unsigned char> file_data((std::istreambuf_iterator<char>(file)),
+                                           std::istreambuf_iterator<char>());
+    return file_data;
+}
+
+std::string get_request_path(const std::string &request) 
+{
+    std::istringstream request_stream(request);
+    std::string method, path;
+    request_stream >> method >> path;
+    
+    return path;
+}
+
+void Server::method_get(int client_fd, char* request)
+{   
+    std::map<std::string, std::string> header = headerRequestParser(request);
+    if (get_mime_type(header["address"]).empty()){
+        send_error(415, client_fd);
+        return;
+    }
+    std::string path = get_request_path(request);
+    if (path == "/")// root request_path == "/index.html") 
+        path = d_path + d_main; // Serve the index page by default
+    else
+        path = d_path + path;
 
     // Serve the requested file
-    std::vector<unsigned char> file_content = load_file("." + request_path);
+    std::vector<unsigned char> file_content = load_file("." + path);
     if (!file_content.empty())
     {
-        mime_type = get_mime_type(request_path);
-        std::ostringstream oss;
-        oss << file_content.size();
-        std::string http_header = 
-            "HTTP/1.1 200 OK\r\n"
-            "Content-Type: " + mime_type + "\r\n"
-            "Content-Length: " + oss.str() + "\r\n"
-            "\r\n";
-
-        // Send the HTTP header
-        send(fds[i].fd, http_header.c_str(), http_header.size(), 0);
+        send_header(client_fd, file_content.size(), path);
         // Send the file content
-        send(fds[i].fd, reinterpret_cast<const char*>(file_content.data()), file_content.size(), 0);
+        if (-1 == send(client_fd, reinterpret_cast<const char*>(file_content.data()), file_content.size(), 0))
+            send_error(400, client_fd);
     }
     // If no POST data is found, send an error response
-    else        
-        resp_404(request, i);
-}
-
-void Server::method_post(std::string &request, int i)
-{
-    std::string::size_type pos = request.find("\r\n\r\n");
-    if (pos != std::string::npos) 
-    {
-        std::string headers = request.substr(0, pos);
-        std::string body = request.substr(pos + 4);
-        std::cout << "POST data received : " + body;
-        std::string response = "HTTP/1.1 200 OK\r\n"
-        "Content-Type: text/html\r\n"
-        "Content-Length: 48\r\n"
-        "\r\n"
-        "<html><body><h1>POST Received</h1></body></html>";
-        
-        send(fds[i].fd, response.c_str(), response.size(), 0);
-    }
-    // If no POST data is found, send an error response
-    else
-    resp_400(request, i);
-}
-
-void Server::method_delete(std::string &request, int i)
-{
-    std::string request_path = get_request_path(request);
-    if (request_path == "/")// || request_path == "/index.html") 
-        request_path = "/index.html"; // Serve the index page by default
-
-    // Delete the requested file
-    std::remove(request_path.c_str());
-    std::string http_header = 
-        "HTTP/1.1 200 OK\r\n"
-        "\r\n";
-
-    // Send the HTTP header
-    send(fds[i].fd, http_header.c_str(), http_header.size(), 0);
-}
-void Server::do_request(char* buffer, int i)
-{
-    // std::cout << "client request :\n\n" << buffer << std::endl << "\n******************\n";
-    std::string request(buffer);
-    std::string request_type = get_method_type(request);
-    if (request_type == "GET")
-        method_get(request, i);
-    if (request_type == "POST")
-        method_post(request, i);
-    if (request_type == "DELETE")
-        method_delete(request, i);
+    else  
+        send_error(404, client_fd);
 }

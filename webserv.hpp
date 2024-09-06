@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/27 11:26:02 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/09/03 17:40:46 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/09/04 10:49:12 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@
 #include <csignal>
 
 #define MAX_CLIENTS 100
-#define BUFFER_SIZE 100
+#define BUFFER_SIZE 1000
 
 extern volatile sig_atomic_t stopper;
 

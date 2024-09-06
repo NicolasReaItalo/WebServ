@@ -6,7 +6,7 @@
 #    By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/08/27 10:37:12 by qgiraux           #+#    #+#              #
-#    Updated: 2024/09/03 11:06:54 by qgiraux          ###   ########.fr        #
+#    Updated: 2024/09/06 12:27:42 by qgiraux          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -18,7 +18,7 @@ RM			= rm -rf
 
 OBJDIR = .objFiles
 
-FILES		= webserv requests Server Server_requests http_responses
+FILES		= main Server ServerStart ServerRun Server_requests ServerHeaderParse Server_send
 
 SRC			= $(FILES:=.cpp)
 OBJ			= $(addprefix $(OBJDIR)/, $(FILES:=.o))
