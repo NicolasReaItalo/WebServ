@@ -68,7 +68,6 @@ class Server
         unsigned long maxBodySize;
 
         void closeAllFd();
-        std::map<std::string, std::string> headerRequestParser(const std::string& request);
         void set_mimeList();
         void set_errorList();
         /*on an event pollin*/
@@ -90,6 +89,7 @@ class Server
         std::string generate_error_page(int errcode);
 
     public :
+        Server(std::list<ServerConfig> servers);
         int ServerStart();
         int ServerRun();
 

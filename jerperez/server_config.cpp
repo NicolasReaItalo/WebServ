@@ -130,7 +130,7 @@ static void	_debug_test_server(ServerConfig &server)
 				<<  " error_page=" << error_page << std::endl;
 }
 
-int	pr_parse_config(token_deq_t &list)
+int	pr_parse_config(token_deq_t &list, std::list<ServerConfig> &servers) //
 {
 	Directive*				context = new BlockDirective();
 	token_deq_t::iterator	it_curr = list.begin();
@@ -153,6 +153,7 @@ int	pr_parse_config(token_deq_t &list)
 		}
 		delete d;
 		_debug_test_server(server);
+		servers.push_back(server); //
 		d = pr_next_directive(it_curr, list.end(), context);
 	}
 	if (d && -1 == d->getType())

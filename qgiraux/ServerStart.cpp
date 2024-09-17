@@ -46,6 +46,7 @@ int Server::ServerStart()
             closeAllFd();
             return 1;
         }
+        std::cout << "Bind successfull on " << server_fd[i] << std::endl;
         fd_set[server_fd[i]] = std::make_pair(it->getAddress(), it->getPort());
         //making server_fd a passive socket, to accept incoming connexion requests
         if (listen(server_fd[i], 32) < 0) 

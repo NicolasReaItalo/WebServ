@@ -29,6 +29,7 @@ SRCS_QGIRAUX_FILES	= 	chunk_receive.cpp\
 				method_post.cpp\
 				ServerRun.cpp\
 				utils.cpp\
+				constructor.cpp\
 
 SRCS_QGIRAUX	= 	$(addprefix qgiraux/, $(SRCS_QGIRAUX_FILES))
 

@@ -296,97 +296,99 @@ header_infos return_error(std::string error_code, ServerConfig  & config,int loc
 	return response;
 }
 
-header_infos Server::headerParser(std::string rawBuffer)
+header_infos Server::headerParser(std::string rawBuffer, std::pair<std::string, std::string> address)
 {
+	 (void)address;
+	 (void)rawBuffer;
 	header_infos response;
-	std::vector<std::string> splitted_buffer;
-	std::map<std::string, std::string> header_attributes;
-	// std::map<std::string, std::string> header_attributes;
+// 	std::vector<std::string> splitted_buffer;
+// 	std::map<std::string, std::string> header_attributes;
+// 	// std::map<std::string, std::string> header_attributes;
 
-	// ON RECUPERE LE BON SERVER
+// 	// ON RECUPERE LE BON SERVER
 
-// ON RECUPERE LA LOCATION ( CACHE )
+// // ON RECUPERE LA LOCATION ( CACHE )
 
-	ServerConfig dummy; /////////////////////////////////////pour tests
-	int locationIndex = 0; // dummy config
+// 	ServerConfig dummy; /////////////////////////////////////pour tests
+// 	int locationIndex = 0; // dummy config
 
-	splitted_buffer = splitString(rawBuffer, "\r\n");
-
-
-	if (splitted_buffer.size() < 3)
-		return return_error(HTTP_STATUS_BAD_REQUEST, dummy, locationIndex);
-	std::vector<std::string> tmp = splitString(splitted_buffer[0], " ");
-	if (tmp.size() != 3)
-		return_error(HTTP_STATUS_BAD_REQUEST, dummy, locationIndex);
-	header_attributes["method"] = tmp[0];
-	header_attributes["raw_uri"] = tmp[1];
-	header_attributes["protocol"] = tmp[2];
-
-///VERIFICATION DU PROTOCOLE
-	if (header_attributes["protocol"] != "HTTP/1.1")
-		return return_error(HTTP_STATUS_HTTP_VERSION_NOT_SUPPORTED, dummy, locationIndex);
+// 	splitted_buffer = splitString(rawBuffer, "\r\n");
 
 
-////----------FIN VERIFICATION DU PROTOCOLOLE--------------of
+// 	if (splitted_buffer.size() < 3)
+// 		return return_error(HTTP_STATUS_BAD_REQUEST, dummy, locationIndex);
+// 	std::vector<std::string> tmp = splitString(splitted_buffer[0], " ");
+// 	if (tmp.size() != 3)
+// 		return_error(HTTP_STATUS_BAD_REQUEST, dummy, locationIndex);
+// 	header_attributes["method"] = tmp[0];
+// 	header_attributes["raw_uri"] = tmp[1];
+// 	header_attributes["protocol"] = tmp[2];
 
-///ON VERIFIE QUE L'URI N'EST PAS VIDE ET COMMENCE PAR '/'-------------------------------------------
-	if (header_attributes["raw_uri"].size() == 0 || header_attributes["raw_uri"][0] != '/')
-		return return_error(HTTP_STATUS_BAD_REQUEST, dummy, locationIndex);
-///---------------------------------------------------------------------------------------------------
+// ///VERIFICATION DU PROTOCOLE
+// 	if (header_attributes["protocol"] != "HTTP/1.1")
+// 		return return_error(HTTP_STATUS_HTTP_VERSION_NOT_SUPPORTED, dummy, locationIndex);
 
-///CONVERSION DES CARACTERES SPECIAUX DE L'URI---------------------------------------------
-	try
-	{
-		header_attributes["uri"] = convert_uri(tmp[1]);
-	}
-	catch(const std::exception& e)
-	{
-		return return_error(HTTP_STATUS_BAD_REQUEST, dummy, locationIndex);
-	}
-//--------------------------------------------------------------------------------------------
 
-///ON RECUPERE UNE EVENTUELLE QUERY--------------------------------------------
-	// on reutilise tmp pour split l'uri
-	tmp = splitString(header_attributes["uri"], "?");
-	if (tmp.size() == 2 )
-		header_attributes["query"] = tmp[1];
-	else if (tmp.size() != 1)
-		return return_error(HTTP_STATUS_BAD_REQUEST, dummy, locationIndex);
-///------------------------------------------------------------------------------
+// ////----------FIN VERIFICATION DU PROTOCOLOLE--------------of
 
-/// ON RECUPERE CHAQUE ATTRIBUT DU HEADER dans une map
+// ///ON VERIFIE QUE L'URI N'EST PAS VIDE ET COMMENCE PAR '/'-------------------------------------------
+// 	if (header_attributes["raw_uri"].size() == 0 || header_attributes["raw_uri"][0] != '/')
+// 		return return_error(HTTP_STATUS_BAD_REQUEST, dummy, locationIndex);
+// ///---------------------------------------------------------------------------------------------------
 
-	std::vector<std::string>::iterator it;
-	for (it = splitted_buffer.begin() + 1; it != splitted_buffer.end(); it++)
-	{
-		if (!(*it).size())
-			break ;
-		tmp = splitString(*it, ": ");
-		if (tmp.size() == 2)
-			header_attributes[tmp[0]] = tmp[1];
-	}
-//-----------------------
+// ///CONVERSION DES CARACTERES SPECIAUX DE L'URI---------------------------------------------
+// 	try
+// 	{
+// 		header_attributes["uri"] = convert_uri(tmp[1]);
+// 	}
+// 	catch(const std::exception& e)
+// 	{
+// 		return return_error(HTTP_STATUS_BAD_REQUEST, dummy, locationIndex);
+// 	}
+// //--------------------------------------------------------------------------------------------
 
-// ON VERIFIE QUE HOST EST PRESENT
-	std::map<std::string,std::string>::iterator h_it = header_attributes.find("Host");
-	if (h_it == header_attributes.end())
-		return return_error(HTTP_STATUS_BAD_REQUEST, dummy, locationIndex);
-//---------------------------------------------------------------------
+// ///ON RECUPERE UNE EVENTUELLE QUERY--------------------------------------------
+// 	// on reutilise tmp pour split l'uri
+// 	tmp = splitString(header_attributes["uri"], "?");
+// 	if (tmp.size() == 2 )
+// 		header_attributes["query"] = tmp[1];
+// 	else if (tmp.size() != 1)
+// 		return return_error(HTTP_STATUS_BAD_REQUEST, dummy, locationIndex);
+// ///------------------------------------------------------------------------------
 
-//ON SPLITTE LE HOST POUR RECUPERER LE PORT SI PRECISE
-	tmp = splitString(header_attributes["Host"], ":");
-	if (tmp.size() == 2)
-	{
-		if (! contains_only_numeric(tmp[1]))
-			return return_error(HTTP_STATUS_BAD_REQUEST, dummy, locationIndex);
-		header_attributes["Port"] = tmp[1];
-	}
-	else if ( tmp.size() != 1)
-		return return_error(HTTP_STATUS_BAD_REQUEST, dummy, locationIndex);
+// /// ON RECUPERE CHAQUE ATTRIBUT DU HEADER dans une map
 
-// ON VERIFIE QUE LA METHODE EST AUTORISEE
-	if (!dummy.inDirectiveParameters(locationIndex, "limit", header_attributes["method"]))
-		return return_error(HTTP_STATUS_METHOD_NOT_ALLOWED, dummy, locationIndex);
+// 	std::vector<std::string>::iterator it;
+// 	for (it = splitted_buffer.begin() + 1; it != splitted_buffer.end(); it++)
+// 	{
+// 		if (!(*it).size())
+// 			break ;
+// 		tmp = splitString(*it, ": ");
+// 		if (tmp.size() == 2)
+// 			header_attributes[tmp[0]] = tmp[1];
+// 	}
+// //-----------------------
+
+// // ON VERIFIE QUE HOST EST PRESENT
+// 	std::map<std::string,std::string>::iterator h_it = header_attributes.find("Host");
+// 	if (h_it == header_attributes.end())
+// 		return return_error(HTTP_STATUS_BAD_REQUEST, dummy, locationIndex);
+// //---------------------------------------------------------------------
+
+// //ON SPLITTE LE HOST POUR RECUPERER LE PORT SI PRECISE
+// 	tmp = splitString(header_attributes["Host"], ":");
+// 	if (tmp.size() == 2)
+// 	{
+// 		if (! contains_only_numeric(tmp[1]))
+// 			return return_error(HTTP_STATUS_BAD_REQUEST, dummy, locationIndex);
+// 		header_attributes["Port"] = tmp[1];
+// 	}
+// 	else if ( tmp.size() != 1)
+// 		return return_error(HTTP_STATUS_BAD_REQUEST, dummy, locationIndex);
+
+// // ON VERIFIE QUE LA METHODE EST AUTORISEE
+// 	if (!dummy.inDirectiveParameters(locationIndex, "limit", header_attributes["method"]))
+// 		return return_error(HTTP_STATUS_METHOD_NOT_ALLOWED, dummy, locationIndex);
 
 // ON SWITCHE SELON LA METHODE
 
@@ -422,7 +424,22 @@ header_infos Server::headerParser(std::string rawBuffer)
 	// std::cout<< BLUE<< "protocol: "<<YELLOW<<"["<<RST<<header_attributes["protocol"]<<YELLOW<<"]"<<RST<<std::endl;
 ///--------------------------DEBUG----------------------------------
 
+	response.chunked = false;
+	response.interpreterPath = "";
+	response.contentType = "text/html";
+	response.ressourcePath = "/home/qgiraux/en_cours/WebServ/qgiraux/tmp.html";
+	response.toDo = GET;
+	response.keepAlive = true;
+	response.bodySize = GetFileSize("/home/qgiraux/en_cours/WebServ/qgiraux/tmp.html");
+	response.returnCode = 0;
+	response.cgi_pid = 0;
+	response.configServer = NULL;
+	response.fd_ressource = -1;
+	response.locationIndex = 0;
+	response.queryParams = "";
+	response.timestamp = 0;
 
+	
 	return response;
 }
 

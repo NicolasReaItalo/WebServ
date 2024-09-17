@@ -8,9 +8,13 @@
 > int i   : the index of the server to which the data is sent*/
 void Server::receive_data(int fd, int i)
 {
-    char buffer[maxBodySize];
-    read(fd, buffer, maxBodySize);
-    std::string tmp = buffer;
+    char buffer[maxBodySize + 1]; // +1 to ensure null-termination
+    ssize_t bytesRead = read(fd, buffer, maxBodySize);
+    if (bytesRead < 0) {
+        return;
+    }
+    buffer[bytesRead] = '\0'; // Null-terminate the buffer
+    std::string tmp(buffer);
 
     /*if the request is chunked*/
     if (is_fd_in_chunklist(fd) == true)
