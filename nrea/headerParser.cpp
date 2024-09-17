@@ -6,7 +6,7 @@
 /*   By: nrea <nrea@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/12 16:20:48 by nrea              #+#    #+#             */
-/*   Updated: 2024/09/17 14:35:28 by nrea             ###   ########.fr       */
+/*   Updated: 2024/09/17 14:40:25 by nrea             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -298,6 +298,8 @@ header_infos return_error(std::string error_code, ServerConfig  & config,int loc
 
 header_infos Server::headerParser(std::string rawBuffer, std::pair<std::string, std::string> interface)
 {
+	 (void)address;
+	 (void)rawBuffer;
 	header_infos response;
 	std::vector<std::string> splitted_buffer;
 	std::map<std::string, std::string> header_attributes;
@@ -323,16 +325,16 @@ header_infos Server::headerParser(std::string rawBuffer, std::pair<std::string, 
 
 /// ON RECUPERE CHAQUE ATTRIBUT DU HEADER dans une map
 
-	std::vector<std::string>::iterator it;
-	for (it = splitted_buffer.begin() + 1; it != splitted_buffer.end(); it++)
-	{
-		if (!(*it).size())
-			break ;
-		tmp = splitString(*it, ": ");
-		if (tmp.size() == 2)
-			header_attributes[tmp[0]] = tmp[1];
-	}
-//-----------------------
+// 	std::vector<std::string>::iterator it;
+// 	for (it = splitted_buffer.begin() + 1; it != splitted_buffer.end(); it++)
+// 	{
+// 		if (!(*it).size())
+// 			break ;
+// 		tmp = splitString(*it, ": ");
+// 		if (tmp.size() == 2)
+// 			header_attributes[tmp[0]] = tmp[1];
+// 	}
+// //-----------------------
 
 // ON VERIFIE QUE HOST EST PRESENT
 	std::map<std::string,std::string>::iterator h_it = header_attributes.find("Host");
@@ -470,6 +472,20 @@ header_infos Server::headerParser(std::string rawBuffer, std::pair<std::string, 
 	// std::cout<< BLUE<< "protocol: "<<YELLOW<<"["<<RST<<header_attributes["protocol"]<<YELLOW<<"]"<<RST<<std::endl;
 ///--------------------------DEBUG----------------------------------
 
+	response.chunked = false;
+	response.interpreterPath = "";
+	response.contentType = "text/html";
+	response.ressourcePath = "/home/qgiraux/en_cours/WebServ/qgiraux/tmp.html";
+	response.toDo = GET;
+	response.keepAlive = true;
+	response.bodySize = GetFileSize("/home/qgiraux/en_cours/WebServ/qgiraux/tmp.html");
+	response.returnCode = 0;
+	response.cgi_pid = 0;
+	response.configServer = NULL;
+	response.fd_ressource = -1;
+	response.locationIndex = 0;
+	response.queryParams = "";
+	response.timestamp = 0;
 
 
 

@@ -15,12 +15,15 @@
 
 # include "Directive.hpp"
 # include "tokenizer.hpp"
+# include "ServerConfig.hpp"//
+# include <list>//
 
 Directive	*pr_next_directive(
 	token_deq_t::iterator &it_list,
 	token_deq_t::const_iterator it_end, 
 	Directive *context);
 
-int	pr_parse_config(token_deq_t &list);
+int	pr_parse_config(token_deq_t &list, std::list<ServerConfig> &servers);
+//nt	pr_parse_config(token_deq_t &list); //
 
 #endif
