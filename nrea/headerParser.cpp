@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   headerParser.cpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jerperez <jerperez@student.42.fr>          +#+  +:+       +#+        */
+/*   By: nrea <nrea@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/12 16:20:48 by nrea              #+#    #+#             */
-/*   Updated: 2024/09/17 11:48:17 by jerperez         ###   ########.fr       */
+/*   Updated: 2024/09/17 14:35:28 by nrea             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@
 #define BLUE	"\033[1;34m"
 
 /*#################################################################################################################################*/
-///DUMMY POUR TEST
+///defaultconfig POUR TEST
 
 // #define ERROR 1
 // #define GET 2
@@ -111,7 +111,7 @@
 // {
 // 	(void) loc;
 // 	(void) errorCode;
-// 	return std::string("dummy_error.html");
+// 	return std::string("defaultconfig_error.html");
 // }
 
 // bool		ServerConfig::inDirectives(int location, std::string directive_name, std::string parameter)
@@ -134,7 +134,7 @@
 // }
 
 
-////////////////////FIN DUMMY
+////////////////////FIN defaultconfig
 
 /*#################################################################################################################################*/
 
@@ -296,63 +296,30 @@ header_infos return_error(std::string error_code, ServerConfig  & config,int loc
 	return response;
 }
 
-header_infos Server::headerParser(std::string rawBuffer)
+header_infos Server::headerParser(std::string rawBuffer, std::pair<std::string, std::string> interface)
 {
 	header_infos response;
 	std::vector<std::string> splitted_buffer;
 	std::map<std::string, std::string> header_attributes;
-	// std::map<std::string, std::string> header_attributes;
 
-	// ON RECUPERE LE BON SERVER
 
-// ON RECUPERE LA LOCATION ( CACHE )
 
-	ServerConfig dummy; /////////////////////////////////////pour tests
-	int locationIndex = 0; // dummy config
+	ServerConfig defaultconfig; ///ServerConfig par defaut pour les messages d'erreurs
+	int locationIndex = 0; // defaultconfig config
+
+
 
 	splitted_buffer = splitString(rawBuffer, "\r\n");
-
-
 	if (splitted_buffer.size() < 3)
-		return return_error(HTTP_STATUS_BAD_REQUEST, dummy, locationIndex);
+		return return_error(HTTP_STATUS_BAD_REQUEST, defaultconfig, locationIndex);
+
+
 	std::vector<std::string> tmp = splitString(splitted_buffer[0], " ");
 	if (tmp.size() != 3)
-		return_error(HTTP_STATUS_BAD_REQUEST, dummy, locationIndex);
+		return_error(HTTP_STATUS_BAD_REQUEST, defaultconfig, locationIndex);
 	header_attributes["method"] = tmp[0];
 	header_attributes["raw_uri"] = tmp[1];
 	header_attributes["protocol"] = tmp[2];
-
-///VERIFICATION DU PROTOCOLE
-	if (header_attributes["protocol"] != "HTTP/1.1")
-		return return_error(HTTP_STATUS_HTTP_VERSION_NOT_SUPPORTED, dummy, locationIndex);
-
-
-////----------FIN VERIFICATION DU PROTOCOLOLE--------------of
-
-///ON VERIFIE QUE L'URI N'EST PAS VIDE ET COMMENCE PAR '/'-------------------------------------------
-	if (header_attributes["raw_uri"].size() == 0 || header_attributes["raw_uri"][0] != '/')
-		return return_error(HTTP_STATUS_BAD_REQUEST, dummy, locationIndex);
-///---------------------------------------------------------------------------------------------------
-
-///CONVERSION DES CARACTERES SPECIAUX DE L'URI---------------------------------------------
-	try
-	{
-		header_attributes["uri"] = convert_uri(tmp[1]);
-	}
-	catch(const std::exception& e)
-	{
-		return return_error(HTTP_STATUS_BAD_REQUEST, dummy, locationIndex);
-	}
-//--------------------------------------------------------------------------------------------
-
-///ON RECUPERE UNE EVENTUELLE QUERY--------------------------------------------
-	// on reutilise tmp pour split l'uri
-	tmp = splitString(header_attributes["uri"], "?");
-	if (tmp.size() == 2 )
-		header_attributes["query"] = tmp[1];
-	else if (tmp.size() != 1)
-		return return_error(HTTP_STATUS_BAD_REQUEST, dummy, locationIndex);
-///------------------------------------------------------------------------------
 
 /// ON RECUPERE CHAQUE ATTRIBUT DU HEADER dans une map
 
@@ -370,7 +337,7 @@ header_infos Server::headerParser(std::string rawBuffer)
 // ON VERIFIE QUE HOST EST PRESENT
 	std::map<std::string,std::string>::iterator h_it = header_attributes.find("Host");
 	if (h_it == header_attributes.end())
-		return return_error(HTTP_STATUS_BAD_REQUEST, dummy, locationIndex);
+		return return_error(HTTP_STATUS_BAD_REQUEST, defaultconfig, locationIndex);
 //---------------------------------------------------------------------
 
 //ON SPLITTE LE HOST POUR RECUPERER LE PORT SI PRECISE
@@ -378,24 +345,105 @@ header_infos Server::headerParser(std::string rawBuffer)
 	if (tmp.size() == 2)
 	{
 		if (! contains_only_numeric(tmp[1]))
-			return return_error(HTTP_STATUS_BAD_REQUEST, dummy, locationIndex);
+			return return_error(HTTP_STATUS_BAD_REQUEST, defaultconfig, locationIndex);
 		header_attributes["Port"] = tmp[1];
 	}
 	else if ( tmp.size() != 1)
-		return return_error(HTTP_STATUS_BAD_REQUEST, dummy, locationIndex);
+		return return_error(HTTP_STATUS_BAD_REQUEST, defaultconfig, locationIndex);
+
+
+/// Maintenant qu'on a le host on peut recuperer le
+// bon server de config !
+	// ON RECUPERE LE BON SERVER
+	std::list<ServerConfig>::iterator server_it;
+	std::vector<ServerConfig &>  interface_match;
+	//parcourir la liste server si address et port match ajouter sa reference a mylist
+	for (server_it = servers.begin(); server_it != servers.end(); server_it++)
+	{
+		if (server_it->getAddress() == interface.first && server_it->getPort() == interface.second)
+			interface_match.push_back(*server_it);
+	}
+
+	// si interface_match > 1 on doit choisir en fonction du server_name
+	if (interface_match.size() > 1)
+	{
+		std::vector<ServerConfig &>::iterator match_it = interface_match.begin();
+		for (;match_it != interface_match.end(); match_it++)
+		{
+
+		}
+
+		//Si aucun server_name ne matche on prend le premier de la liste.
+
+	}
+
+
+
+// ON RECUPERE LA LOCATION ( CACHE )
+
+
+
+
+
+///VERIFICATION DU PROTOCOLE
+	if (header_attributes["protocol"] != "HTTP/1.1")
+		return return_error(HTTP_STATUS_HTTP_VERSION_NOT_SUPPORTED, defaultconfig, locationIndex);
+
+
+////----------FIN VERIFICATION DU PROTOCOLOLE--------------of
+
+///ON VERIFIE QUE L'URI N'EST PAS VIDE ET COMMENCE PAR '/'-------------------------------------------
+	if (header_attributes["raw_uri"].size() == 0 || header_attributes["raw_uri"][0] != '/')
+		return return_error(HTTP_STATUS_BAD_REQUEST, defaultconfig, locationIndex);
+///---------------------------------------------------------------------------------------------------
+
+///CONVERSION DES CARACTERES SPECIAUX DE L'URI---------------------------------------------
+	try
+	{
+		header_attributes["uri"] = convert_uri(tmp[1]);
+	}
+	catch(const std::exception& e)
+	{
+		return return_error(HTTP_STATUS_BAD_REQUEST, defaultconfig, locationIndex);
+	}
+//--------------------------------------------------------------------------------------------
+
+///ON RECUPERE UNE EVENTUELLE QUERY--------------------------------------------
+	// on reutilise tmp pour split l'uri
+	tmp = splitString(header_attributes["uri"], "?");
+	if (tmp.size() == 2 )
+		header_attributes["query"] = tmp[1];
+	else if (tmp.size() != 1)
+		return return_error(HTTP_STATUS_BAD_REQUEST, defaultconfig, locationIndex);
+///------------------------------------------------------------------------------
+
 
 // ON VERIFIE QUE LA METHODE EST AUTORISEE
-	if (!dummy.inDirectiveParameters(locationIndex, "limit", header_attributes["method"]))
-		return return_error(HTTP_STATUS_METHOD_NOT_ALLOWED, dummy, locationIndex);
+	if (!defaultconfig.inDirectiveParameters(locationIndex, "limit", header_attributes["method"]))
+		return return_error(HTTP_STATUS_METHOD_NOT_ALLOWED, defaultconfig, locationIndex);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 // ON SWITCHE SELON LA METHODE
 
 	// if (header_attributes["method"] == "GET")
-	// 	response = handle_get(response, dummy, locationIndex, header_attributes);
+	// 	response = handle_get(response, defaultconfig, locationIndex, header_attributes);
 	// else if (header_attributes["method"] == "POST")
-	// 	response = handle_post(response, dummy, locationIndex, header_attributes);
+	// 	response = handle_post(response, defaultconfig, locationIndex, header_attributes);
 	// else if (header_attributes["method"] == "DELETE")
-	// 	response = handle_delete(response, dummy, locationIndex, header_attributes);
+	// 	response = handle_delete(response, defaultconfig, locationIndex, header_attributes);
 ////DEBUG------------------------------------------------------------------
 	// int index = 0;
 	// for (it = splitted_buffer.begin(); it != splitted_buffer.end(); it++)
@@ -421,6 +469,8 @@ header_infos Server::headerParser(std::string rawBuffer)
 	// std::cout<< BLUE<< "query: "<<YELLOW<<"["<<RST<<header_attributes["query"]<<YELLOW<<"]"<<RST<<std::endl;
 	// std::cout<< BLUE<< "protocol: "<<YELLOW<<"["<<RST<<header_attributes["protocol"]<<YELLOW<<"]"<<RST<<std::endl;
 ///--------------------------DEBUG----------------------------------
+
+
 
 
 	return response;

@@ -77,9 +77,9 @@ class Server
         void method_get(header_infos header, int fd, int i);
         void method_post(header_infos header, std::string body, int fd, int i);
         void method_delete(header_infos header, int fd);
-        
+
         std::string get_mime_type(const std::string &uri);
-        header_infos headerParser(std::string rawBuffer, std::pair<std::string, std::string> address);
+        header_infos headerParser(std::string rawBuffer, std::pair<std::string, std::string> interface);
 
         void chunked_post(int fd, std::string tmp);
         void send_chunk(int fd, int i, header_infos header);
