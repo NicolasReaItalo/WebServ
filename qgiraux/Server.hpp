@@ -45,7 +45,7 @@ typedef struct s_header_infos
 	int fd_ressource;
 	int cgi_pid;
 	int locationIndex;
-	class ServerConfig *configServer;
+	const class ServerConfig *configServer;
 } header_infos;
 
 class Server
@@ -79,7 +79,7 @@ class Server
 
         std::string get_mime_type(const std::string &uri);
         header_infos headerParser(std::string rawBuffer, std::pair<std::string, std::string> interface);
-
+		const ServerConfig * find_server(std::pair<std::string, std::string> interface, std::string host);
         void chunked_post(int fd, std::string tmp);
         void send_chunk(int fd, int i, header_infos header);
         void send_chunk(int fd, int i);

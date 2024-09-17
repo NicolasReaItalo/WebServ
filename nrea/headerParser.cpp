@@ -6,7 +6,7 @@
 /*   By: nrea <nrea@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/12 16:20:48 by nrea              #+#    #+#             */
-/*   Updated: 2024/09/17 14:40:25 by nrea             ###   ########.fr       */
+/*   Updated: 2024/09/17 16:17:27 by nrea             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -274,6 +274,37 @@ bool contains_only_numeric(std::string str)
 // header_infos handle_delete(header_infos &response, ServerConfig  & config,int locationIndex,std::map<std::string, std::string> header_attributes);
 
 
+const ServerConfig * Server::find_server(std::pair<std::string, std::string> interface, std::string host)
+{
+	std::list<ServerConfig>::iterator server_it;
+	std::vector<const ServerConfig*> matching_servers;
+
+	// On recupere tous les server qui matchent en address:port
+	for (server_it = servers.begin(); server_it != servers.end(); server_it++)
+	{
+		const ServerConfig &server = *server_it;
+		if (server.getAddress() == interface.first && server.getPort() == interface.second)
+			matching_servers.push_back(&server);
+
+	}
+	// Si il y en a plus d'un on cherche une valeur server_name qui matche
+	std::vector<const ServerConfig*>::iterator matching_it;
+	for (matching_it = matching_servers.begin(); matching_it != matching_servers.end(); matching_it++)
+	{
+		const std::list<std::string> names = (*matching_it)->getServerNames();
+		std::list<std::string>::const_iterator name_it = names.begin();
+		for (;name_it != names.end(); name_it++)
+		{
+			if (*name_it == host)
+				return *matching_it;
+		}
+	}
+	// Si aucun server_name ne matche on renvoie le premier de la liste par defaut
+	return matching_servers[0];
+}
+
+
+
 
 
 
@@ -282,11 +313,10 @@ header_infos return_error(std::string error_code, ServerConfig  & config,int loc
 {
 	header_infos response;
 
-	(void)error_code;
 	response.toDo = ERROR;
 	response.returnCode = 0;//error_code;
 	response.contentType = "text/html";
-	response.ressourcePath = config.getCustomErrorPage(locationIndex, 0); //config.getCustomErrorPage(locationIndex, error_code);
+	response.ressourcePath =  config.getCustomErrorPage(locationIndex,std::atoi(error_code.c_str())); //config.getCustomErrorPage(locationIndex, error_code);
 	response.bodySize = GetFileSize(response.ressourcePath.c_str());
 	response.configServer = &config;
 	response.locationIndex = locationIndex;
@@ -298,8 +328,6 @@ header_infos return_error(std::string error_code, ServerConfig  & config,int loc
 
 header_infos Server::headerParser(std::string rawBuffer, std::pair<std::string, std::string> interface)
 {
-	 (void)address;
-	 (void)rawBuffer;
 	header_infos response;
 	std::vector<std::string> splitted_buffer;
 	std::map<std::string, std::string> header_attributes;
@@ -311,10 +339,20 @@ header_infos Server::headerParser(std::string rawBuffer, std::pair<std::string, 
 
 
 
+
+	std::cout<<"raw buffer : ["<<rawBuffer<<"]"<<std::endl;
+
+
+
+
+
+
+
 	splitted_buffer = splitString(rawBuffer, "\r\n");
 	if (splitted_buffer.size() < 3)
 		return return_error(HTTP_STATUS_BAD_REQUEST, defaultconfig, locationIndex);
 
+	std::cout<<"<<----TOP !"<<std::endl;
 
 	std::vector<std::string> tmp = splitString(splitted_buffer[0], " ");
 	if (tmp.size() != 3)
@@ -325,16 +363,16 @@ header_infos Server::headerParser(std::string rawBuffer, std::pair<std::string, 
 
 /// ON RECUPERE CHAQUE ATTRIBUT DU HEADER dans une map
 
-// 	std::vector<std::string>::iterator it;
-// 	for (it = splitted_buffer.begin() + 1; it != splitted_buffer.end(); it++)
-// 	{
-// 		if (!(*it).size())
-// 			break ;
-// 		tmp = splitString(*it, ": ");
-// 		if (tmp.size() == 2)
-// 			header_attributes[tmp[0]] = tmp[1];
-// 	}
-// //-----------------------
+	std::vector<std::string>::iterator it;
+	for (it = splitted_buffer.begin() + 1; it != splitted_buffer.end(); it++)
+	{
+		if (!(*it).size())
+			break ;
+		tmp = splitString(*it, ": ");
+		if (tmp.size() == 2)
+			header_attributes[tmp[0]] = tmp[1];
+	}
+//-----------------------
 
 // ON VERIFIE QUE HOST EST PRESENT
 	std::map<std::string,std::string>::iterator h_it = header_attributes.find("Host");
@@ -355,31 +393,10 @@ header_infos Server::headerParser(std::string rawBuffer, std::pair<std::string, 
 
 
 /// Maintenant qu'on a le host on peut recuperer le
-// bon server de config !
+// bon server de config et on set sa location!
 	// ON RECUPERE LE BON SERVER
-	std::list<ServerConfig>::iterator server_it;
-	std::vector<ServerConfig &>  interface_match;
-	//parcourir la liste server si address et port match ajouter sa reference a mylist
-	for (server_it = servers.begin(); server_it != servers.end(); server_it++)
-	{
-		if (server_it->getAddress() == interface.first && server_it->getPort() == interface.second)
-			interface_match.push_back(*server_it);
-	}
 
-	// si interface_match > 1 on doit choisir en fonction du server_name
-	if (interface_match.size() > 1)
-	{
-		std::vector<ServerConfig &>::iterator match_it = interface_match.begin();
-		for (;match_it != interface_match.end(); match_it++)
-		{
-
-		}
-
-		//Si aucun server_name ne matche on prend le premier de la liste.
-
-	}
-
-
+	const ServerConfig * serverconfig = find_server(interface,header_attributes["Host"]);
 
 // ON RECUPERE LA LOCATION ( CACHE )
 
@@ -389,14 +406,14 @@ header_infos Server::headerParser(std::string rawBuffer, std::pair<std::string, 
 
 ///VERIFICATION DU PROTOCOLE
 	if (header_attributes["protocol"] != "HTTP/1.1")
-		return return_error(HTTP_STATUS_HTTP_VERSION_NOT_SUPPORTED, defaultconfig, locationIndex);
+		return return_error(HTTP_STATUS_HTTP_VERSION_NOT_SUPPORTED, const_cast<ServerConfig&>(*serverconfig), locationIndex);
 
 
 ////----------FIN VERIFICATION DU PROTOCOLOLE--------------of
 
 ///ON VERIFIE QUE L'URI N'EST PAS VIDE ET COMMENCE PAR '/'-------------------------------------------
 	if (header_attributes["raw_uri"].size() == 0 || header_attributes["raw_uri"][0] != '/')
-		return return_error(HTTP_STATUS_BAD_REQUEST, defaultconfig, locationIndex);
+		return return_error(HTTP_STATUS_BAD_REQUEST, const_cast<ServerConfig&>(*serverconfig), locationIndex);
 ///---------------------------------------------------------------------------------------------------
 
 ///CONVERSION DES CARACTERES SPECIAUX DE L'URI---------------------------------------------
@@ -406,7 +423,7 @@ header_infos Server::headerParser(std::string rawBuffer, std::pair<std::string, 
 	}
 	catch(const std::exception& e)
 	{
-		return return_error(HTTP_STATUS_BAD_REQUEST, defaultconfig, locationIndex);
+		return return_error(HTTP_STATUS_BAD_REQUEST, const_cast<ServerConfig&>(*serverconfig), locationIndex);
 	}
 //--------------------------------------------------------------------------------------------
 
@@ -416,13 +433,13 @@ header_infos Server::headerParser(std::string rawBuffer, std::pair<std::string, 
 	if (tmp.size() == 2 )
 		header_attributes["query"] = tmp[1];
 	else if (tmp.size() != 1)
-		return return_error(HTTP_STATUS_BAD_REQUEST, defaultconfig, locationIndex);
+		return return_error(HTTP_STATUS_BAD_REQUEST, const_cast<ServerConfig&>(*serverconfig), locationIndex);
 ///------------------------------------------------------------------------------
 
 
 // ON VERIFIE QUE LA METHODE EST AUTORISEE
 	if (!defaultconfig.inDirectiveParameters(locationIndex, "limit", header_attributes["method"]))
-		return return_error(HTTP_STATUS_METHOD_NOT_ALLOWED, defaultconfig, locationIndex);
+		return return_error(HTTP_STATUS_METHOD_NOT_ALLOWED, const_cast<ServerConfig&>(*serverconfig), locationIndex);
 
 
 
@@ -446,31 +463,31 @@ header_infos Server::headerParser(std::string rawBuffer, std::pair<std::string, 
 	// 	response = handle_post(response, defaultconfig, locationIndex, header_attributes);
 	// else if (header_attributes["method"] == "DELETE")
 	// 	response = handle_delete(response, defaultconfig, locationIndex, header_attributes);
-////DEBUG------------------------------------------------------------------
-	// int index = 0;
-	// for (it = splitted_buffer.begin(); it != splitted_buffer.end(); it++)
-	// {
-	// 	std::cout<<BLUE<< index<< " : "<<YELLOW<<"["<<RST<<*it<<YELLOW<<"]"<<RST<<std::endl;
-	// 	if ((*it).size() == 0)
-	// 		break ;
-	// 	index++;
-	// }
-	// std::cout<<std::endl<<"--------------------------------------------------------"<<std::endl;
-	// for (h_it = header_attributes.begin(); h_it != header_attributes.end(); h_it++)
-	// {
-	// 	std::cout<<BLUE<< (*h_it).first<< " : "<<YELLOW<<"["<<RST<<(*h_it).second<<YELLOW<<"]"<<RST<<std::endl;
-	// 	index++;
-	// }
+//DEBUG------------------------------------------------------------------
+	int index = 0;
+	for (it = splitted_buffer.begin(); it != splitted_buffer.end(); it++)
+	{
+		std::cout<<BLUE<< index<< " : "<<YELLOW<<"["<<RST<<*it<<YELLOW<<"]"<<RST<<std::endl;
+		if ((*it).size() == 0)
+			break ;
+		index++;
+	}
+	std::cout<<std::endl<<"--------------------------------------------------------"<<std::endl;
+	for (h_it = header_attributes.begin(); h_it != header_attributes.end(); h_it++)
+	{
+		std::cout<<BLUE<< (*h_it).first<< " : "<<YELLOW<<"["<<RST<<(*h_it).second<<YELLOW<<"]"<<RST<<std::endl;
+		index++;
+	}
 
-	// std::cout<<std::endl<<"--------------------------------------------------------"<<std::endl;
+	std::cout<<std::endl<<"--------------------------------------------------------"<<std::endl;
 
 
-	// std::cout<< BLUE<< "method: "<<YELLOW<<"["<<RST<<header_attributes["method"]<<YELLOW<<"]"<<RST<<std::endl;
-	// std::cout<< BLUE<< "raw_uri: "<<YELLOW<<"["<<RST<<header_attributes["raw_uri"]<<YELLOW<<"]"<<RST<<std::endl;
-	// std::cout<< BLUE<< "uri: "<<YELLOW<<"["<<RST<<header_attributes["uri"]<<YELLOW<<"]"<<RST<<std::endl;
-	// std::cout<< BLUE<< "query: "<<YELLOW<<"["<<RST<<header_attributes["query"]<<YELLOW<<"]"<<RST<<std::endl;
-	// std::cout<< BLUE<< "protocol: "<<YELLOW<<"["<<RST<<header_attributes["protocol"]<<YELLOW<<"]"<<RST<<std::endl;
-///--------------------------DEBUG----------------------------------
+	std::cout<< BLUE<< "method: "<<YELLOW<<"["<<RST<<header_attributes["method"]<<YELLOW<<"]"<<RST<<std::endl;
+	std::cout<< BLUE<< "raw_uri: "<<YELLOW<<"["<<RST<<header_attributes["raw_uri"]<<YELLOW<<"]"<<RST<<std::endl;
+	std::cout<< BLUE<< "uri: "<<YELLOW<<"["<<RST<<header_attributes["uri"]<<YELLOW<<"]"<<RST<<std::endl;
+	std::cout<< BLUE<< "query: "<<YELLOW<<"["<<RST<<header_attributes["query"]<<YELLOW<<"]"<<RST<<std::endl;
+	std::cout<< BLUE<< "protocol: "<<YELLOW<<"["<<RST<<header_attributes["protocol"]<<YELLOW<<"]"<<RST<<std::endl;
+// /--------------------------DEBUG----------------------------------
 
 	response.chunked = false;
 	response.interpreterPath = "";
