@@ -6,7 +6,7 @@
 /*   By: jerperez <jerperez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 16:02:57 by jerperez          #+#    #+#             */
-/*   Updated: 2024/09/13 15:56:17 by jerperez         ###   ########.fr       */
+/*   Updated: 2024/09/17 13:53:18 by jerperez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,10 +16,16 @@
 #include "tokenizer.hpp"
 #include "parser.hpp"
 
+#define PR_KNOWN_DIRECTIVES "autoindex alias error_page index limit listen \
+cgi client_body_path client_max_body_size location root server_name"
+
 // DEBUG
 #include <iostream>
 #include <iomanip>
 #include "InvalidDirective.hpp"
+#include <sstream>
+
+
 static void	_print_dir(Directive *d)
 {
 	int								type = d->getType();
@@ -53,17 +59,11 @@ static void	_pushKnownDirectives(std::list<std::string>	&knownDirectives)
 {
 	if (false == knownDirectives.empty())
 		return ;
-	knownDirectives.push_back("listen");
-	knownDirectives.push_back("autoindex");
-	knownDirectives.push_back("alias");
-	knownDirectives.push_back("error_page");
-	knownDirectives.push_back("index");
-	knownDirectives.push_back("limit");
-	knownDirectives.push_back("client_body_path");
-	knownDirectives.push_back("client_max_body_size");
-	knownDirectives.push_back("location");
-	knownDirectives.push_back("root");
-	knownDirectives.push_back("server_name");
+	std::stringstream	ss(PR_KNOWN_DIRECTIVES);
+	std::string			directive_name; 
+
+	while (std::getline(ss, directive_name, ' ')) 
+		knownDirectives.push_back(directive_name);
 }
 
 
@@ -72,7 +72,7 @@ static void	_debug_test_server(ServerConfig &server)
 	std::string	uri;
 	int			location;
 	std::string	error_page;
-	int			error_code;
+	std::string	error_code;
 
 	std::cout << "#######################################################" << std::endl;
 	uri = "lol";
@@ -124,8 +124,17 @@ static void	_debug_test_server(ServerConfig &server)
 	std::cout << "uri=" << std::setw(20) << uri;
 	location = server.getLocation(uri);
 	std::cout << " location=" << std::setw(2) << location;
-	error_code = 404;
-	error_page = server.getCustomErrorPage(location, error_code);
+	error_code = "404";
+	error_page = server.getDirectiveOutput(location, "error_page", error_code);
+	std::cout 	<<  " error_code=" << std::setw(5) << error_code
+				<<  " error_page=" << error_page << std::endl;
+
+	uri = "/";
+	std::cout << "uri=" << std::setw(20) << uri;
+	location = server.getLocation(uri);
+	std::cout << " location=" << std::setw(2) << location;
+	error_code = "404";
+	error_page = server.getDirectiveOutput(location, "error_page", error_code);
 	std::cout 	<<  " error_code=" << std::setw(5) << error_code
 				<<  " error_page=" << error_page << std::endl;
 }

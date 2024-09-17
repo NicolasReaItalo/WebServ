@@ -6,7 +6,7 @@
 /*   By: jerperez <jerperez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 13:29:48 by jerperez          #+#    #+#             */
-/*   Updated: 2024/09/17 10:38:10 by jerperez         ###   ########.fr       */
+/*   Updated: 2024/09/17 13:58:10 by jerperez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,17 +19,6 @@
 #include "Directive.hpp"
 #include <iostream>
 #include <stdexcept>
-
-// class BlockSimpleConfig
-// {
-// 	private:
-// 		std::map<std::string, std::list<std::string>>	_directive_parameters;
-// 	public:
-// 		bool		inDirectives(std::string);
-// 		std::string getDirectiveParameter(std::string, std::string);
-// 		bool		inDirectiveParameters(std::string, std::string);
-// 		bool		_addDirective(Directive*);
-// };
 
 bool	BlockSimpleConfig::inDirectives(std::string directive_name)
 {
@@ -100,6 +89,28 @@ bool	BlockSimpleConfig::inDirectiveParameters(\
 	return (p_end != std::find(it->second.begin(), p_end, parameter));
 }
 
+int	BlockSimpleConfig::_addDirective_unique(std::string &name, Directive::args_t::iterator &it, Directive::args_t::const_iterator &it_end)
+{
+	directive_parameters_t				parameters;
+
+	while (it != it_end)
+		parameters.push_back(*it++);
+	this->_directive_parameters[name] = parameters;
+	return (0);
+}
+
+int	BlockSimpleConfig::_addDirective_io(std::string &name, Directive::args_t::iterator &it, Directive::args_t::const_iterator &it_end)
+{
+	Directive::args_t::const_iterator	it_io_end = it_end - 1;
+
+	if (it_io_end == it)
+		return (1);
+	while (it != it_io_end)
+		this->_io_directive_parameters[name][*it++] = *it_io_end;
+	(void)name;
+	return (0);
+}
+
 int		BlockSimpleConfig::_addDirective(Directive* directive)
 {
 	Directive::args_t	args = directive->getArgs();
@@ -116,24 +127,11 @@ int		BlockSimpleConfig::_addDirective(Directive* directive)
 		std::cerr << "BlockSimpleConfig: unknown directive `" << name << "'" << std::endl; //
 		return (1);
 	}
-	// if ("error_page" == name)
-	// {
-	// 	std::string	output = args.back();
-	// 	Directive::args_t::const_iterator	it_io_end = it_end - 1;
-	// 	if ()
-	// 	while (it != it_end)
-	// 		parameters.push_back(*it++);
-	// }
-	directive_parameters_t				parameters;
 	++it;
-	while (it != it_end)
-		parameters.push_back(*it++);
-	// split function here
-
-	// TODO : check allowed
-	this->_directive_parameters[name] = parameters;
-	// if ("error_page" == name)
-	// 	return (this->_updateErrorPages(parameters)); //
+	if ("cgi" == name || "error_page" == name)
+		return (this->_addDirective_io(name, it, it_end));
+	else
+		return (this->_addDirective_unique(name, it, it_end));
 	return (0);
 }
 
