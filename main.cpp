@@ -3,70 +3,103 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
+/*   By: jerperez <jerperez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/09/04 14:45:07 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/09/05 12:04:00 by qgiraux          ###   ########.fr       */
+/*   Created: 2024/09/03 15:20:58 by jerperez          #+#    #+#             */
+/*   Updated: 2024/09/13 12:03:55 by jerperez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 
-#include "Server.hpp"
-#include <pthread.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <iostream>
+#include <fstream>
+#include "tokenizer.hpp"
+#include "parser.hpp"
+#include "Directive.hpp"
+#include "BlockDirective.hpp"
+#include "InvalidDirective.hpp"
+#include <iomanip>
+#include <cstdlib>
 
-// int main()
+static void	_print_tokens(token_deq_t list)
+{
+	token_deq_t::const_iterator	it_end = list.end();
+
+	for (token_deq_t::iterator	it = list.begin(); it != it_end; ++it)
+	{
+		if (-1 == it->token_id)
+			std::cout << it->word;
+		else if (' ' == it->token_id || '\t' == it->token_id)
+			std::cout << "\e[33m_\e[0m";
+		else if ('\n' == it->token_id)
+			std::cout << "\e[33m(newline)\n\e[0m";
+		else
+			std::cout << "\e[33m" << (char)(it->token_id) << "\e[0m";
+	}
+	std::cout << std::endl;
+}
+
+/* example function
+ * args for arguments, context for calling directive (ex: main, server, etc, ../)
+ * PLACEHOLDER add virtual server object to change properties
+ */
+// static int	_listen(Directive::funmap_arg_t args, Directive *context)
 // {
-// 	Server server;
+// 	Directive::funmap_arg_t::iterator	it_end = args.end();
+// 	Directive::funmap_arg_t::iterator	it = args.begin();
+
+// 	(void)context;
+// 	if (it == it_end)
+// 		return (1);
+// 	++it;
+// 	if (it == it_end || it->empty())
+// 		return (2);
 	
-// 	server.ServerStart();
-// 	return 0;
+// 	const int	port = std::atoi(it->c_str());
+
+// 	if (0 > port)
+// 		return (2);
+// 	++it;
+// 	if (it != it_end)
+// 		return (2);
+// 	std::cout << "PLACEHOLDER listening to " << port << std::endl; // Do stuff here
+// 	return (0);
 // }
 
-volatile sig_atomic_t stopper = 0;
-
-void handle_sigint(int sig) {
-    std::cout << "Caught signal " << sig << ", stopping server..." << std::endl;
-    stopper = 1;
-}
-
-void* runServer(void* arg) {
-    Server* server = static_cast<Server*>(arg);
-    int ret = server->ServerStart();
-    
-    if (ret != 0) {
-        std::cerr << "Server failed to start." << std::endl;
-    }
-    return NULL;
-}
-
-int main() 
+static int	_read(char *pathname)
 {
-    Server server1(8080, "127.0.0.1");
-    
-    pthread_t thread1;
-    int ret1;
+	std::fstream 					f;
+	token_deq_t						list;
 
-    // Server server2(8081, "127.0.0.1"); // Different port and/or IP for server2
-    // pthread_t thread2;
-    // int ret2;
+	f.open(pathname);
+	if (false == f.is_open())
+	{
+		std::cerr << "error: fstream: Failed to open configuration file" << std::endl;
+		return (1);
+	}
+	if (tk_tokenize(f, list))
+	{
+		std::cerr << "error: tokenizer: Failed to tokentize" << std::endl;
+		f.close();
+		return (1);
+	}
+	f.close();
+	_print_tokens(list);
+	std::cout << "\e[34m##############################\e[0m" << std::endl;
+	if (pr_parse_config(list))
+	{
+		std::cerr << "main: Parsing failed" << std::endl;
+		return (1);
+	}
+	return (0);
+}
 
-    signal(SIGINT, handle_sigint);
 
-    // Server setup and main loop
-    
-    ret1 = pthread_create(&thread1, NULL, runServer, &server1);
-    if (ret1) {
-        std::cerr << "Error creating thread 1: " << ret1 << std::endl;
-        return 1;
-    }
-    // ret2 = pthread_create(&thread2, NULL, runServer, &server2);
-    // if (ret2) {
-    //     std::cerr << "Error creating thread 2: " << ret2 << std::endl;
-    //     return 1;
-    // }
-    // Wait for threads to complete
-    pthread_join(thread1, NULL);
-    // pthread_join(thread2, NULL);
-
-    return 0;
+int	main(int ac, char *av[])
+{
+	if (2 == ac)
+		return (_read(av[1]));
+	return (2);
 }
