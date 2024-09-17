@@ -6,7 +6,7 @@
 /*   By: jerperez <jerperez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 13:29:48 by jerperez          #+#    #+#             */
-/*   Updated: 2024/09/17 10:26:33 by jerperez         ###   ########.fr       */
+/*   Updated: 2024/09/17 14:28:49 by jerperez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,6 +57,7 @@ class ServerConfig : public BlockSimpleConfig
 		const std::string				&getAddress(void) const;
 		const std::string				&getPort(void) const;
 		const std::list<std::string>	&getServerNames(void) const;
+		int								_debugPlaceholder(int debug_input=0); //
 	// 	std::string get_error_page(std::string request_uri, int error_code);
 	// 	bool get_autoindex_status(std::string request_uri);
 	// 	bool get_method_status(std::string request_uri, std::string method); // est-ce-que la methode est autorisee?

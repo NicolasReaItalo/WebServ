@@ -6,7 +6,7 @@
 /*   By: jerperez <jerperez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 16:02:57 by jerperez          #+#    #+#             */
-/*   Updated: 2024/09/17 13:53:18 by jerperez         ###   ########.fr       */
+/*   Updated: 2024/09/17 14:20:11 by jerperez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -153,7 +153,7 @@ int	pr_parse_config(token_deq_t &list)
 		_print_dir(d); //
 		ServerConfig	server;
 		server.setKnownDirectives(&knownDirectives);
-		if (server.addServer(d))
+		if (server._debugPlaceholder()) //(server.addServer(d))
 		{
 			delete d;
 			delete context;

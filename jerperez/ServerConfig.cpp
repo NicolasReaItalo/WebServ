@@ -6,7 +6,7 @@
 /*   By: jerperez <jerperez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 13:29:48 by jerperez          #+#    #+#             */
-/*   Updated: 2024/09/17 10:28:19 by jerperez         ###   ########.fr       */
+/*   Updated: 2024/09/17 14:28:28 by jerperez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -359,4 +359,32 @@ std::string	ServerConfig::getCustomErrorPage(int location, int errorCode)
 			return (lConfig.getCustomErrorPage(errorCode));
 	}
 	return (BlockSimpleConfig::getCustomErrorPage(errorCode));
+}
+
+int	ServerConfig::_debugPlaceholder(int debug_input)
+{
+	(void)debug_input;
+
+	//host:port (NEEDED)
+	if (!this->BlockSimpleConfig::inDirectives("listen"))
+		this->_directive_parameters["listen"].push_back("127.0.0.1");
+
+	//directives example (except cgi /error_page)
+	if (!this->BlockSimpleConfig::inDirectives("root"))
+		this->_directive_parameters["root"].push_back("/");
+	//io directives example (cgi /error_page)
+	if (!this->BlockSimpleConfig::inIODirectives("error_page"))
+		this->_io_directive_parameters["error_page"]["404"] = "/error404.html";
+
+	//location example uri = "/bin"
+	LocationConfig	lConfig("/bin");
+	lConfig._directive_parameters["alias"].push_back("/usr/bin"); //use lConfig. instead of this->
+	this->_locations.push_back(lConfig); //adds new location
+
+	// MAKING SURE THERE IS A LISTEN
+	if (this->_evalListen())
+		return (1);
+
+	this->_fillAll(); // COMMENT TO DISABLE DEFAULT VALUES
+	return (0);
 }
