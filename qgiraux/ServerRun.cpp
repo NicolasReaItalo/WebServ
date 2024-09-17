@@ -58,7 +58,8 @@ int Server::ServerRun()
                         continue;
                     }
                     std::cout << "Accepted new connection, fd: " << new_socket << std::endl;
-                    fd_set.insert(new_socket);
+                    // fd_set.insert(new_socket);
+                    fd_set[new_socket] = fd_set[fd];
                     break;
                 }
             }

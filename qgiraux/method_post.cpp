@@ -3,7 +3,8 @@
 void Server::method_post(header_infos header, std::string body, int fd, int i)
 {
     header.fd_ressource = open(header.ressourcePath.c_str(), O_WRONLY);
-    fd_set.insert(header.fd_ressource);
+    // fd_set.insert(header.fd_ressource);
+    fd_set[header.fd_ressource] = std::make_pair("0", "0");
             if (header.chunked == false)
             {
                 if (body.size() != header.bodySize)

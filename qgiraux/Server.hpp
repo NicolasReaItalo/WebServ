@@ -16,6 +16,7 @@
 #include <fcntl.h>
 #include <algorithm>
 #include <set>
+#include <utility>
 
 #define MAX_EVENTS 500
 #define BUFFER_SIZE 10000
@@ -56,7 +57,7 @@ class Server
         std::vector<int> server_fd;
         int epoll_fd, new_socket;
         int nfds;
-        std::map<int, std::tuple<std::string, std::string>> fd_set;
+        std::map<int, std::pair<std::string, std::string> > fd_set;
         std::vector<struct sockaddr_in> address;
         std::vector<struct epoll_event> ev;
         struct epoll_event events[MAX_EVENTS];
@@ -78,7 +79,7 @@ class Server
         void method_delete(header_infos header, int fd);
         
         std::string get_mime_type(const std::string &uri);
-        header_infos headerParser(std::string rawBuffer, std::tuple<std::string, std::string> address);
+        header_infos headerParser(std::string rawBuffer, std::pair<std::string, std::string> address);
 
         void chunked_post(int fd, std::string tmp);
         void send_chunk(int fd, int i, header_infos header);

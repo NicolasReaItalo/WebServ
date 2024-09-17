@@ -19,7 +19,7 @@ void Server::receive_data(int fd, int i)
     }
     std::string head = tmp.substr(0, tmp.find("\r\n"));
     std::string body = tmp.substr(tmp.find("\r\n") + 2);
-    header_infos header = headerParser(head);    
+    header_infos header = headerParser(head, fd_set[fd]);    
 
     switch (header.toDo)
     {

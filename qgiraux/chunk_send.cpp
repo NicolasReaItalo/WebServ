@@ -14,7 +14,8 @@ void Server::send_chunk(int fd, int i, header_infos header)
     {
         chunk[fd] = header;
         chunk[fd].fd_ressource = open(chunk[fd].ressourcePath.c_str(), O_RDONLY);
-        fd_set.insert(chunk[fd].fd_ressource);
+        //fd_set.insert(chunk[fd].fd_ressource);
+        fd_set[chunk[fd].fd_ressource] = fd_set[fd];
         //struct stat fileInfo;
         std::time_t clock = std::time(NULL);
         std::string time_str = std::ctime(&clock);

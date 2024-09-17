@@ -11,7 +11,8 @@ void Server::method_get(header_infos header, int fd, int i)
     else
     {
         header.fd_ressource = open(header.ressourcePath.c_str(), O_RDONLY, 0);
-        fd_set.insert(header.fd_ressource);
+        // fd_set.insert(header.fd_ressource);
+        fd_set[header.fd_ressource] = std::make_pair("0", "0");
         char buffer[maxBodySize];
         read(header.fd_ressource, buffer, header.bodySize);
         std::string body = buffer;

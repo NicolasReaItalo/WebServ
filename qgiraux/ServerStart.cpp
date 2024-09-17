@@ -14,7 +14,7 @@ int Server::ServerStart()
         close(epoll_fd);
         return 1;
     }
-    fd_set.insert(epoll_fd);
+    fd_set[epoll_fd] = std::make_pair("0", "0");
 
     // For each Server initialize the servers sockets
     for (int i = 0; i < list_size; i++)
@@ -46,7 +46,7 @@ int Server::ServerStart()
             closeAllFd();
             return 1;
         }
-        fd_set.insert(server_fd[i]);
+        fd_set[server_fd[i]] = std::make_pair(it->getAddress(), it->getPort());
         //making server_fd a passive socket, to accept incoming connexion requests
         if (listen(server_fd[i], 32) < 0) 
         {
