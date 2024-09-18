@@ -1,0 +1,172 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   utils.cpp                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: nrea <nrea@student.42.fr>                  +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/09/18 14:15:21 by nrea              #+#    #+#             */
+/*   Updated: 2024/09/18 16:15:25 by nrea             ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "headerParser.hpp"
+
+std::vector<std::string> splitString(const std::string& str, std::string delimiter)
+{
+	std::vector<std::string> tokens;
+	std::size_t start = 0;
+	std::size_t end = str.find(delimiter);
+
+	while (end != std::string::npos)
+	{
+		tokens.push_back(str.substr(start, end - start));
+		start = end + delimiter.size();
+		end = str.find(delimiter, start);
+	}
+	tokens.push_back(str.substr(start));
+	return tokens;
+}
+
+
+std::string retrieve_mime_type(const std::string &uri)  /// temporaire a refactorer cf  issue #5!!!
+{
+
+	std::map<std::string, std::string> mimeList;
+	mimeList[".html"]   = "text/html";
+    mimeList[".htm"]    = "text/html";
+    mimeList[".png"]    = "image/png";
+    mimeList[".jpg"]    = "image/jpg";
+    mimeList[".jpeg"]   = "image/jpeg";
+    mimeList[".gif"]    = "image/gif";
+    mimeList[".ico"]    = "image/ico";
+    mimeList[".css"]    = "text/css";
+    mimeList[".js"]     = "application/javascript";
+    mimeList[".json"]   = "application/json";
+    mimeList[".pdf"]    = "application/pdf";
+    mimeList[".css"]    = "text/css";
+    std::string::size_type idx = uri.rfind('.');
+    if (idx != std::string::npos) {
+        std::string extension = uri.substr(idx);
+        if (mimeList.find(extension) != mimeList.end())
+            return mimeList[extension];
+        else return "";
+    }
+    return "application/octet-stream"; // Default for binary data
+}
+
+bool matchContentTypes(std::string file_content_type, std::string accepted_types)
+{
+	if (accepted_types.find("*/*") != std::string::npos)
+		return true;
+	if (accepted_types.find(file_content_type) != std::string::npos)
+		return true;
+	return false;
+}
+
+//remove special characters
+std::string  convert_uri(std::string const &uri)
+{
+	std::string converted = uri;
+	std::map<std::string, std::string> conversion;
+	conversion["%20"] = " ";
+	conversion["%21"] = "!";
+	conversion["%22"] = "\"";
+	conversion["%23"] = "#";
+	conversion["%24"] = "$";
+	conversion["%25"] = "%";
+	conversion["%26"] = "&";
+	conversion["%27"] = "'";
+	conversion["%28"] = "(";
+	conversion["%29"] = ")";
+	conversion["%2A"] = "*";
+	conversion["%2B"] = "+";
+	conversion["%2C"] = ",";
+	conversion["%2D"] = "-";
+	conversion["%2E"] = ".";
+	conversion["%2F"] = "/";
+	conversion["%3A"] = ":";
+	conversion["%3B"] = ";";
+	conversion["%3C"] = "<";
+	conversion["%3D"] = "=";
+	conversion["%3E"] = ">";
+	conversion["%3F"] = "?";
+	conversion["%40"] = "@";
+	conversion["%5B"] = "[";
+	conversion["%5C"] = "\\";
+	conversion["%5D"] = "]";
+	conversion["%5E"] = "^";
+	conversion["%5F"] = "_";
+	conversion["%60"] = "`";
+	conversion["%7B"] = "{";
+	conversion["%7D"] = "}";
+	conversion["%7E"] = "~";
+
+	std::size_t pos = converted.find('%');
+	while (pos != std::string::npos)
+	{
+		if (pos + 2 >= converted.size())
+		{
+			throw std::runtime_error("BAD REQUEST");
+		}
+
+		std::string code = converted.substr(pos, 3);
+		std::map<std::string, std::string>::iterator it = conversion.find(code);
+		if (it != conversion.end())
+		{
+			converted.replace(pos, 3, it->second);
+		}
+		else
+		{
+			throw std::runtime_error("BAD REQUEST");
+		}
+		pos = converted.find('%', pos + it->second.length());
+	}
+	// cas du +
+	pos = converted.find('+');
+	while (pos != std::string::npos)
+	{
+		converted.replace(pos, 1, " ");
+		pos = converted.find('%', pos + 1);
+	}
+
+	return converted;
+}
+
+bool contains_forbbiden(std::string const &uri)
+{
+	std::string auth = "ABCDEFGHIJKLMNOPQRSTUVWXYZ\
+	abcdefghijklmnopqrstuvwxyz0123456789-._~:/?#[]@!$&'()*+,;=%";
+
+	for(std::string::const_iterator it = uri.begin(); it != uri.end(); ++it)
+	{
+		if ( auth.find(*it) == std::string::npos)
+		{
+			std::cout << "["<<*it<<"]"<<std::endl;
+			return true;
+		}
+	}
+	return false;
+}
+
+
+long GetFileSize(std::string filename)
+{
+    struct stat stat_buf;
+    int rc = stat(filename.c_str(), &stat_buf);
+    return rc == 0 ? stat_buf.st_size : -1;
+}
+
+
+
+bool contains_only_numeric(std::string str)
+{
+	std::string numeric = "0123456789";
+	std::string::iterator it;
+	for (it = str.begin(); it != str.end(); it++)
+	{
+		if (numeric.find(*it) == std::string::npos)
+			return false;
+	}
+	return true;
+}

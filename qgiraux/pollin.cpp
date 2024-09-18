@@ -1,6 +1,6 @@
 #include "Server.hpp"
 
-/*Reads the data received from the client and either : 
+/*Reads the data received from the client and either :
     - sends to the correct method or
     - receive and concatenate new chunk
 
@@ -21,9 +21,9 @@ void Server::receive_data(int fd, int i)
     {
         return chunked_post(fd, tmp);
     }
-    std::string head = tmp.substr(0, tmp.find("\r\n"));
+    std::string head = tmp.substr(0, tmp.find("\r\n\r\n"));
     std::string body = tmp.substr(tmp.find("\r\n") + 2);
-    header_infos header = headerParser(head, fd_set[fd]);    
+    header_infos header = headerParser(head, fd_set[fd]);
 
     switch (header.toDo)
     {
@@ -41,7 +41,7 @@ void Server::receive_data(int fd, int i)
             break;
         case POST_CGI :
 
-        
+
         default:
             break;
     }

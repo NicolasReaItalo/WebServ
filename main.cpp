@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jerperez <jerperez@student.42.fr>          +#+  +:+       +#+        */
+/*   By: nrea <nrea@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/03 15:20:58 by jerperez          #+#    #+#             */
-/*   Updated: 2024/09/13 12:03:55 by jerperez         ###   ########.fr       */
+/*   Updated: 2024/09/18 11:12:04 by nrea             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,14 +73,17 @@ static int	_parse(char *pathname, std::list<ServerConfig> &servers)
 
 int	main(int ac, char *av[])
 {
-	int ret;
+	int ret = 0;
 	std::list<ServerConfig> servers;
 
 	if (2 == ac)
 		ret = _parse(av[1], servers);
 	else
-		return 2;
-	
+	{
+		ret = 2;
+		return ret;
+	}
+
 	Server server(servers);
 
 	server.ServerStart();

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   BlockSimpleConfig.cpp                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jerperez <jerperez@student.42.fr>          +#+  +:+       +#+        */
+/*   By: nrea <nrea@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 13:29:48 by jerperez          #+#    #+#             */
-/*   Updated: 2024/09/17 10:38:10 by jerperez         ###   ########.fr       */
+/*   Updated: 2024/09/18 16:53:36 by nrea             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -194,10 +194,12 @@ int	BlockSimpleConfig::_updateErrorPages(directive_parameters_t &error_page_para
 
 std::string	BlockSimpleConfig::getCustomErrorPage(int errorCode)
 {
-	std::map<int, std::string>	&error_pages = this->_error_pages;
-	std::map<int, std::string>::iterator	it = error_pages.find(errorCode);
+	// std::map<int, std::string>	&error_pages = this->_error_pages;
+	// std::map<int, std::string>::iterator	it = error_pages.find(errorCode);
 
-	if (error_pages.end() == it)
-		return ("");
-	return (it->second);
+	// if (error_pages.end() == it)
+	// 	return ("");
+	// return (it->second);
+	(void) errorCode;
+	return("generic-error.html"); ////////Hardcode
 }
