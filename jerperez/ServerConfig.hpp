@@ -34,9 +34,10 @@ class ServerConfig : public BlockSimpleConfig
 		void			_pushSplitParameters(std::string name, std::string joined_string, char delimiter);
 		int				_evalListen(void);
 		int				_addLocation(BlockDirective* block_directive);
-		LocationConfig	&_returnLocation(const std::string &uri); //
+		LocationConfig	&_returnLocation(const std::string &uri);
 		void			_debug_print(void);
 		int				_fillAll(void);
+		
 	public:
 		ServerConfig(void) {};
 		~ServerConfig(void) {};

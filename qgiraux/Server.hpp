@@ -17,10 +17,11 @@
 #include <algorithm>
 #include <set>
 #include <utility>
+#include <vector>
 
 #define MAX_EVENTS 500
-#define BUFFER_SIZE 10000
-#define CHUNK_SIZE 10000
+#define BUFFER_SIZE 100000
+#define CHUNK_SIZE 100
 
 #define ERROR 1
 #define GET 2
@@ -28,7 +29,6 @@
 #define DELETE 6
 #define GET_CGI 7
 #define POST_CGI 8
-
 
 typedef struct s_header_infos
 {
@@ -46,6 +46,8 @@ typedef struct s_header_infos
 	int cgi_pid;
 	int locationIndex;
 	class ServerConfig *configServer;
+    std::streampos readIndex;
+
 } header_infos;
 
 class Server
@@ -87,6 +89,7 @@ class Server
         bool is_fd_in_chunklist(int fd);
         void sendError(int errcode, int fd, header_infos header);
         std::string generate_error_page(int errcode);
+        std::vector<unsigned char> load_file(const std::string &filename);
 
     public :
         Server(std::list<ServerConfig> servers);

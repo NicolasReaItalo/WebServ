@@ -30,6 +30,7 @@ SRCS_QGIRAUX_FILES	= 	chunk_receive.cpp\
 				ServerRun.cpp\
 				utils.cpp\
 				constructor.cpp\
+				generate_error_page.cpp\
 
 SRCS_QGIRAUX	= 	$(addprefix qgiraux/, $(SRCS_QGIRAUX_FILES))
 

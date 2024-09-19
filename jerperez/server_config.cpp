@@ -67,68 +67,68 @@ static void	_pushKnownDirectives(std::list<std::string>	&knownDirectives)
 }
 
 
-static void	_debug_test_server(ServerConfig &server)
-{
-	std::string	uri;
-	int			location;
-	std::string	error_page;
-	int			error_code;
+// static void	_debug_test_server(ServerConfig &server)
+// {
+// 	std::string	uri;
+// 	int			location;
+// 	std::string	error_page;
+// 	int			error_code;
 
-	std::cout << "#######################################################" << std::endl;
-	uri = "lol";
-	std::cout << "uri=" << std::setw(20) << uri;
-	location = server.getLocation(uri);
-	std::cout	<< " location=" << std::setw(2) << location
-				<< " fullpath=" << std::setw(20) << server.getFullPath(uri, location) << std::endl;
-	uri = "/";
-	std::cout << "uri=" << std::setw(20) << uri;
-	location = server.getLocation(uri);
-	std::cout	<< " location=" << std::setw(2) << location
-				<< " fullpath=" << std::setw(20) << server.getFullPath(uri, location) << std::endl;
-	uri = "/bin/bash";
-	std::cout << "uri=" << std::setw(20) << uri;
-	location = server.getLocation(uri);
-	std::cout	<< " location=" << std::setw(2) << location
-				<< " fullpath=" << std::setw(20) << server.getFullPath(uri, location) << std::endl;
-	uri = "/bin//bash";
-	std::cout << "uri=" << std::setw(20) << uri;
-	location = server.getLocation(uri);
-	std::cout	<< " location=" << std::setw(2) << location
-				<< " fullpath=" << std::setw(20) << server.getFullPath(uri, location) << std::endl;
+// 	std::cout << "#######################################################" << std::endl;
+// 	uri = "lol";
+// 	std::cout << "uri=" << std::setw(20) << uri;
+// 	location = server.getLocation(uri);
+// 	std::cout	<< " location=" << std::setw(2) << location
+// 				<< " fullpath=" << std::setw(20) << server.getFullPath(uri, location) << std::endl;
+// 	uri = "/";
+// 	std::cout << "uri=" << std::setw(20) << uri;
+// 	location = server.getLocation(uri);
+// 	std::cout	<< " location=" << std::setw(2) << location
+// 				<< " fullpath=" << std::setw(20) << server.getFullPath(uri, location) << std::endl;
+// 	uri = "/bin/bash";
+// 	std::cout << "uri=" << std::setw(20) << uri;
+// 	location = server.getLocation(uri);
+// 	std::cout	<< " location=" << std::setw(2) << location
+// 				<< " fullpath=" << std::setw(20) << server.getFullPath(uri, location) << std::endl;
+// 	uri = "/bin//bash";
+// 	std::cout << "uri=" << std::setw(20) << uri;
+// 	location = server.getLocation(uri);
+// 	std::cout	<< " location=" << std::setw(2) << location
+// 				<< " fullpath=" << std::setw(20) << server.getFullPath(uri, location) << std::endl;
 
-	uri = "/bin//prout";
-	std::cout << "uri=" << std::setw(20) << uri;
-	location = server.getLocation(uri);
-	std::cout	<< " location=" << std::setw(2) << location
-				<< " fullpath=" << std::setw(20) << server.getFullPath(uri, location) << std::endl;
+// 	uri = "/bin//prout";
+// 	std::cout << "uri=" << std::setw(20) << uri;
+// 	location = server.getLocation(uri);
+// 	std::cout	<< " location=" << std::setw(2) << location
+// 				<< " fullpath=" << std::setw(20) << server.getFullPath(uri, location) << std::endl;
 
-	uri = "/bin/../";
-	std::cout << "uri=" << std::setw(20) << uri;
-	location = server.getLocation(uri);
-	std::cout	<< " location=" << std::setw(2) << location
-				<< " fullpath=" << std::setw(20) << server.getFullPath(uri, location) << std::endl;
+// 	uri = "/bin/../";
+// 	std::cout << "uri=" << std::setw(20) << uri;
+// 	location = server.getLocation(uri);
+// 	std::cout	<< " location=" << std::setw(2) << location
+// 				<< " fullpath=" << std::setw(20) << server.getFullPath(uri, location) << std::endl;
 
-	uri = "/bin/../../";
-	std::cout << "uri=" << std::setw(20) << uri;
-	location = server.getLocation(uri);
-	std::cout	<< " location=" << std::setw(2) << location
-				<< " fullpath=" << std::setw(20) << server.getFullPath(uri, location) << std::endl;
+// 	uri = "/bin/../../";
+// 	std::cout << "uri=" << std::setw(20) << uri;
+// 	location = server.getLocation(uri);
+// 	std::cout	<< " location=" << std::setw(2) << location
+// 				<< " fullpath=" << std::setw(20) << server.getFullPath(uri, location) << std::endl;
 
-	uri = "/bin/../../../";
-	std::cout << "uri=" << std::setw(20) << uri;
-	location = server.getLocation(uri);
-	std::cout	<< " location=" << std::setw(2) << location
-				<< " fullpath=" << std::setw(20) << server.getFullPath(uri, location) << std::endl;
+// 	uri = "/bin/../../../";
+// 	std::cout << "uri=" << std::setw(20) << uri;
+// 	location = server.getLocation(uri);
+// 	std::cout	<< " location=" << std::setw(2) << location
+// 				<< " fullpath=" << std::setw(20) << server.getFullPath(uri, location) << std::endl;
 
-	uri = "/bin/../../../";
-	std::cout << "uri=" << std::setw(20) << uri;
-	location = server.getLocation(uri);
-	std::cout << " location=" << std::setw(2) << location;
-	error_code = 404;
-	error_page = server.getCustomErrorPage(location, error_code);
-	std::cout 	<<  " error_code=" << std::setw(5) << error_code
-				<<  " error_page=" << error_page << std::endl;
-}
+// 	uri = "/bin/../../../";
+// 	std::cout << "uri=" << std::setw(20) << uri;
+// 	location = server.getLocation(uri);
+// 	std::cout << " location=" << std::setw(2) << location;
+// 	error_code = 404;
+// 	error_page = server.getCustomErrorPage(location, error_code);
+// 	std::cout 	<<  " error_code=" << std::setw(5) << error_code
+// 				<<  " error_page=" << error_page << std::endl;
+// }
 
 int	pr_parse_config(token_deq_t &list, std::list<ServerConfig> &servers) //
 {
@@ -152,7 +152,7 @@ int	pr_parse_config(token_deq_t &list, std::list<ServerConfig> &servers) //
 			return (1);
 		}
 		delete d;
-		_debug_test_server(server);
+		// _debug_test_server(server);
 		servers.push_back(server); //
 		d = pr_next_directive(it_curr, list.end(), context);
 	}

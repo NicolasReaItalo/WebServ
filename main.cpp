@@ -24,23 +24,6 @@
 #include <iomanip>
 #include <cstdlib>
 
-// static void	_print_tokens(token_deq_t list)
-// {
-// 	token_deq_t::const_iterator	it_end = list.end();
-
-// 	for (token_deq_t::iterator	it = list.begin(); it != it_end; ++it)
-// 	{
-// 		if (-1 == it->token_id)
-// 			std::cout << it->word;
-// 		else if (' ' == it->token_id || '\t' == it->token_id)
-// 			std::cout << "\e[33m_\e[0m";
-// 		else if ('\n' == it->token_id)
-// 			std::cout << "\e[33m(newline)\n\e[0m";
-// 		else
-// 			std::cout << "\e[33m" << (char)(it->token_id) << "\e[0m";
-// 	}
-// 	std::cout << std::endl;
-// }
 
 static int	_parse(char *pathname, std::list<ServerConfig> &servers)
 {
@@ -60,7 +43,6 @@ static int	_parse(char *pathname, std::list<ServerConfig> &servers)
 		return (1);
 	}
 	f.close();
-	// _print_tokens(list);
 	std::cout << "\e[34m##############################\e[0m" << std::endl;
 	if (pr_parse_config(list, servers))
 	{
@@ -80,9 +62,9 @@ int	main(int ac, char *av[])
 		ret = _parse(av[1], servers);
 	else
 		return 2;
-	
 	Server server(servers);
-
 	server.ServerStart();
+	std::cout << "<<<EXIT>>>\n";
+	return 0;
 
 }

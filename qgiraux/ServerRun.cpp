@@ -1,20 +1,21 @@
 #include "Server.hpp"
 
-void set_nonblocking(int sockfd) {
+int set_nonblocking(int sockfd) {
     int flags = fcntl(sockfd, F_GETFL, 0);
     if (flags == -1) {
         std::cerr << "fcntl(F_GETFL) failed: " << strerror(errno) << std::endl;
-        return ;
+        return 0;
     }
     if (fcntl(sockfd, F_SETFL, flags | O_NONBLOCK) == -1) {
         std::cerr << "fcntl(F_SETFL) failed: " << strerror(errno) << std::endl;
-        return ;
+        return 0;
     }
+    return 1;
 }
 
 int Server::ServerRun()
 {
-    nfds = epoll_wait(epoll_fd, events, MAX_EVENTS, 100);
+    nfds = epoll_wait(epoll_fd, events, MAX_EVENTS, 10);
     if (nfds == -1)
 	{
 		std::cerr << "epoll_wait failed: " << strerror(errno) << std::endl;
@@ -45,7 +46,12 @@ int Server::ServerRun()
                         break;
                     }
                     // Set the new socket to non-blocking mode
-                    set_nonblocking(new_socket);
+                    if (set_nonblocking(new_socket) == -1)
+                    {
+                        std::cerr << "set_nonblocking failed: " << strerror(errno) << std::endl;
+                        close(new_socket);
+                        break;
+                    }
 
                     // Prepare and add the new socket to epoll
                     struct epoll_event event;
@@ -77,12 +83,15 @@ int Server::ServerRun()
         }
 
         /*sonething went wrong*/
-        else
+        // Handle errors
+        else if (events[i].events & (EPOLLERR | EPOLLHUP))
         {
-            std::cout << "fd " << fd << "is broken, closing..." << std::endl;
+            std::cerr << "epoll error on fd: " << fd << std::endl;
             close(fd);
             fd_set.erase(fd);
         }
+        else
+            std::cout << "???????????\n";
     }
     return 0;
 }

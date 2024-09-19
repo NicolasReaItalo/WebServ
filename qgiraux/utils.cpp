@@ -5,6 +5,20 @@
 #include <ctime>
 
 
+
+std::vector<unsigned char> Server::load_file(const std::string &filename) 
+{
+    std::ifstream file(filename.c_str(), std::ios::binary);
+    if (!file) {
+        std::cerr << "Error opening file: " << filename << std::endl;
+        return std::vector<unsigned char>(); // Return an empty vector
+    }
+    // std::cout << " opening file " << filename.c_str() << std::endl;
+    std::vector<unsigned char> file_data((std::istreambuf_iterator<char>(file)),
+                                           std::istreambuf_iterator<char>());
+    return file_data;
+}
+
 std::string Server::get_mime_type(const std::string &uri) 
 {
     
@@ -78,17 +92,19 @@ void Server::sendError(int errcode, int fd, header_infos header)
     std::string time_str = std::ctime(&clock);
     time_str.erase(time_str.find_last_not_of("\n") + 1);
 
-    ss << "HTTP/1.1" << errcode << " " << errorList[errcode] << "\r\n"
+    ss << "HTTP/1.1 " << errcode << " " << errorList[errcode] << "\r\n"
     << "Date : " << time_str << "\r\nContent-Type : text/html\r\n\r\n";
     std::string body;
 	(void)fd;
     // body = header... custom error page path
     if (body.empty())
     {
-    //    body = generate_error_page(errcode);
+        body = generate_error_page(errcode);
     }
-    // std::string head = ss.str();
-
-    // send(fd, head.c_str(), head.size(), 0);
-    // send(fd, body.c_str(), body.size(), 0);
+    std::string head = ss.str();
+    std::cout << "errcode " << errcode << "\n";
+    send(fd, head.c_str(), head.size(), 0);
+    std::cout << "header sent\n";
+    send(fd, body.c_str(), body.size(), 0);
+    std::cout << "body sent\n";
 }

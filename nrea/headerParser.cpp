@@ -295,12 +295,25 @@ header_infos return_error(std::string error_code, ServerConfig  & config,int loc
 	response.keepAlive = error_code != "400" && error_code != "512";
 	return response;
 }
-
+#include <sstream>
 header_infos Server::headerParser(std::string rawBuffer, std::pair<std::string, std::string> address)
 {
 	 (void)address;
 	 (void)rawBuffer;
 	header_infos response;
+
+	std::istringstream stream(rawBuffer);
+    std::string line;
+
+	std::string method;
+    std::string uri;
+    // Get the first line of the HTTP request
+    if (std::getline(stream, line)) {
+        std::istringstream lineStream(line);
+        
+        // Extract method, URI, and ignore HTTP version
+        lineStream >> method >> uri;
+    }
 // 	std::vector<std::string> splitted_buffer;
 // 	std::map<std::string, std::string> header_attributes;
 // 	// std::map<std::string, std::string> header_attributes;
@@ -423,14 +436,19 @@ header_infos Server::headerParser(std::string rawBuffer, std::pair<std::string, 
 	// std::cout<< BLUE<< "query: "<<YELLOW<<"["<<RST<<header_attributes["query"]<<YELLOW<<"]"<<RST<<std::endl;
 	// std::cout<< BLUE<< "protocol: "<<YELLOW<<"["<<RST<<header_attributes["protocol"]<<YELLOW<<"]"<<RST<<std::endl;
 ///--------------------------DEBUG----------------------------------
-
+	if (method == "GET")
+		response.toDo = GET;
+	if (method == "POST")
+		response.toDo = POST;
+	if (method == "DELETE")
+		response.toDo = DELETE;
 	response.chunked = false;
 	response.interpreterPath = "";
-	response.contentType = "text/html";
-	response.ressourcePath = "/home/qgiraux/en_cours/WebServ/qgiraux/tmp.html";
-	response.toDo = GET;
+	response.contentType = get_mime_type(uri);
+	response.ressourcePath = uri;
+	// response.toDo = POST;
 	response.keepAlive = true;
-	response.bodySize = GetFileSize("/home/qgiraux/en_cours/WebServ/qgiraux/tmp.html");
+	response.bodySize = GetFileSize(uri);
 	response.returnCode = 0;
 	response.cgi_pid = 0;
 	response.configServer = NULL;
@@ -438,7 +456,7 @@ header_infos Server::headerParser(std::string rawBuffer, std::pair<std::string, 
 	response.locationIndex = 0;
 	response.queryParams = "";
 	response.timestamp = 0;
-
+	std::cout << "method = " << response.toDo << "\nuri = " << response.ressourcePath << "\nsize = " << response.bodySize<< std::endl;
 	
 	return response;
 }
