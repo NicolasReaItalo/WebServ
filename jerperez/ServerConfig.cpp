@@ -6,7 +6,7 @@
 /*   By: jerperez <jerperez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 13:29:48 by jerperez          #+#    #+#             */
-/*   Updated: 2024/09/17 14:28:28 by jerperez         ###   ########.fr       */
+/*   Updated: 2024/09/19 16:05:55 by jerperez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,11 +71,22 @@ void	ServerConfig::_pushSplitParameters(std::string name, std::string joined_par
 		parameters.push_back(parameter);
 }
 
+int	ServerConfig::_evalServerName(void)
+{
+	if (!this->BlockSimpleConfig::inDirectives("server_name"))
+		return (1);
+	BlockSimpleConfig::directive_parameters_t &nameParameter = this->_directive_parameters["listen"];
+	if (nameParameter.empty())
+		return (1);
+	this->_server_names = nameParameter;
+	return (0);
+}
+
 int	ServerConfig::_evalListen(void)
 {
 	if (!this->BlockSimpleConfig::inDirectives("listen"))
 		return (1);
-	directive_parameters_t listenParameter = this->_directive_parameters["listen"];
+	directive_parameters_t &listenParameter = this->_directive_parameters["listen"];
 	if (1 != listenParameter.size())
 		return (1);
 	std::stringstream		ss(listenParameter.front());
@@ -121,6 +132,7 @@ int	ServerConfig::_fillAll(void)
 {
 	if (this->_evalListen())
 		return (1);
+	this->_evalServerName(); //
 	if (!this->BlockSimpleConfig::inDirectives("autoindex"))
 		this->_directive_parameters["autoindex"].push_back("off");// = this->_strToParameters("off");
 	if (!this->BlockSimpleConfig::inDirectives("root"))
@@ -198,11 +210,11 @@ ServerConfig::directive_parameters_t	ServerConfig::getDirectiveParameters(int lo
 // 	return (location);
 // }
 
-int		ServerConfig::_addLocation(BlockDirective* block_directive)
+int		ServerConfig::_addLocation(DirectiveBlock* block_directive)
 {
-	BlockDirective::args_t					args = block_directive->getArgs();
-	BlockDirective::args_t::iterator		it = args.begin();
-	BlockDirective::args_t::const_iterator	it_end = args.end();
+	DirectiveBlock::args_t					args = block_directive->getArgs();
+	DirectiveBlock::args_t::iterator		it = args.begin();
+	DirectiveBlock::args_t::const_iterator	it_end = args.end();
 
 	if (it == it_end || "location" != *it || ++it == it_end)
 	{
@@ -218,14 +230,14 @@ int		ServerConfig::_addLocation(BlockDirective* block_directive)
 	}
 	LocationConfig					location(uri);
 	location.setKnownDirectives(this->_knownDirectives);
-	BlockDirective::instructions_t	instructions = block_directive->getInstructions();
-	BlockDirective::instructions_t::const_iterator	ite_end = instructions.end();
+	DirectiveBlock::instructions_t	instructions = block_directive->getInstructions();
+	DirectiveBlock::instructions_t::const_iterator	ite_end = instructions.end();
 
-	for	(BlockDirective::instructions_t::iterator ite = instructions.begin(); ite != ite_end; ++ite)
+	for	(DirectiveBlock::instructions_t::iterator ite = instructions.begin(); ite != ite_end; ++ite)
 	{
-		if (PR_DIR_TYPE_SIMPLE != (*ite)->getType())
+		if (PR_DIR_TYPE_SIMPLE != ite->getType())
 			return (1);
-		else if (location._addDirective(*ite))
+		else if (location._addDirective(&*ite))
 			return (1);
 	}
 	this->_locations.push_back(location); //vector not optimized
@@ -245,21 +257,21 @@ int	ServerConfig::addServer(Directive* unknown_directive)
 		std::cerr << "ServerConfig: incorrect server directive" << std::endl;
 		return (1);
 	}
-	BlockDirective*	server_directive = reinterpret_cast<BlockDirective*>(unknown_directive);
-	BlockDirective::instructions_t	instructions = server_directive->getInstructions();
-	BlockDirective::instructions_t::const_iterator	ite_end = instructions.end();
+	DirectiveBlock*	server_directive = reinterpret_cast<DirectiveBlock*>(unknown_directive);
+	DirectiveBlock::instructions_t	instructions = server_directive->getInstructions();
+	DirectiveBlock::instructions_t::const_iterator	ite_end = instructions.end();
 
-	for	(BlockDirective::instructions_t::iterator ite = instructions.begin(); ite != ite_end; ++ite)
+	for	(DirectiveBlock::instructions_t::iterator ite = instructions.begin(); ite != ite_end; ++ite)
 	{
-		if (PR_DIR_TYPE_BLOCK == (*ite)->getType())
+		if (PR_DIR_TYPE_BLOCK == ite->getType())
 		{
-			if (this->_addLocation(reinterpret_cast<BlockDirective*>(*ite)))
+			if (this->_addLocation(&*ite))
 			{
 				std::cerr << "ServerConfig: incorrect location" << std::endl;
 				return (1);
 			}
 		}
-		else if (_addDirective(*ite))
+		else if (_addDirective(&*ite))
 			return (1);
 	}
 	return (this->_fillAll());

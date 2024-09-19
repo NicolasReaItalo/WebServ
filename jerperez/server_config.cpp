@@ -6,12 +6,12 @@
 /*   By: jerperez <jerperez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 16:02:57 by jerperez          #+#    #+#             */
-/*   Updated: 2024/09/17 14:20:11 by jerperez         ###   ########.fr       */
+/*   Updated: 2024/09/19 16:05:55 by jerperez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ServerConfig.hpp"
-#include "BlockDirective.hpp"
+#include "DirectiveBlock.hpp"
 #include "Directive.hpp"
 #include "tokenizer.hpp"
 #include "parser.hpp"
@@ -22,27 +22,39 @@ cgi client_body_path client_max_body_size location root server_name"
 // DEBUG
 #include <iostream>
 #include <iomanip>
-#include "InvalidDirective.hpp"
 #include <sstream>
 
 
-static void	_print_dir(Directive *d)
+static void	_print_dir(DirectiveBlock d)
 {
-	int								type = d->getType();
-	std::deque<std::string>			args = d->getArgs();
+
+	int								type = d.getType();
+	//std::cout << "type:" << type << std::endl;
+	Directive						*context = d.getContext();
+	//std::cout << "context:" << context << std::endl;
+	std::deque<std::string>			args = d.getArgs();
+	std::string	context_name("");
+
+	if (0 == context)
+		context_name = "/";
+	else if (0 == context->getType())
+		context_name = "main";
+	else
+		context_name = context->getArgs().front();
+	//std::cout << __FILE__ << ":" << __LINE__ << std::endl;//
 	if (PR_DIR_TYPE_BLOCK == type)
-		std::cout << "BLOCK:\t\t[" << std::setw(10) <<  d->getContext() << std::setw(10) << (reinterpret_cast<BlockDirective*>(d))->getContext()->getArgs().front() << "]\tArgs:\t";
+		std::cout << "BLOCK:\t\t[" << std::setw(10) << context << std::setw(10) << context_name << "]\tArgs:\t";
 	else if (PR_DIR_TYPE_SIMPLE == type)
-		std::cout << "DIRECTIVE:\t[" <<  std::setw(10) <<  d->getContext() << std::setw(10) << (reinterpret_cast<BlockDirective*>(d))->getContext()->getArgs().front() << "]\tArgs:\t";
+		std::cout << "DIRECTIVE:\t[" <<  std::setw(10) << context << std::setw(10) << context_name << "]\tArgs:\t";
 	else if (-1 == type)
-		std::cout <<  std::setw(10) <<  (reinterpret_cast<InvalidDirective*>(d))->getWhat() <<  "[" << std::setw(10) <<  d->getContext() << std::setw(10) << (reinterpret_cast<BlockDirective*>(d))->getContext()->getArgs().front() << "]\tArgs:\t";
+		std::cout << "ERROR DIRECTIVE:\t[" <<  std::setw(10) << context << std::setw(10) << context_name << "]\tArgs:\t";
 	for (std::deque<std::string>::iterator it = args.begin(); it != args.end(); ++it)
 		std::cout << *it << "\t";
 	std::cout << std::endl;
 	if (PR_DIR_TYPE_BLOCK == type)
 	{
-		std::deque<Directive*>			instruction = (reinterpret_cast<BlockDirective*>(d))->getInstructions();
-		for (std::deque<Directive*>::iterator it = instruction.begin(); it != instruction.end(); ++it)
+		DirectiveBlock::instructions_t	instruction = d.getInstructions();
+		for (DirectiveBlock::instructions_t::iterator it = instruction.begin(); it != instruction.end(); ++it)
 			_print_dir(*it);
 	}
 }
@@ -139,37 +151,50 @@ static void	_debug_test_server(ServerConfig &server)
 				<<  " error_page=" << error_page << std::endl;
 }
 
+
+static void	_print_error_code(const int err_code, token_deq_t::iterator	&it_curr, token_deq_t::const_iterator it_end)
+{
+	std::cout << "parsing: error:";
+	if (it_curr != it_end)
+	{
+		if (-1 == it_curr->token_id)
+			std::cout << " at word: `" << it_curr->word << "'";
+		else
+			std::cout << " at token: `" << (char)(it_curr->token_id) << "'";
+	}
+	std::cout << " code: " << err_code << std::endl;
+}
+
+//
 int	pr_parse_config(token_deq_t &list)
 {
-	Directive*				context = new BlockDirective();
+	DirectiveBlock				context;
 	token_deq_t::iterator	it_curr = list.begin();
-	Directive*				d;
+	token_deq_t::const_iterator	it_end = list.end();
 	std::list<std::string>	knownDirectives;
+	int						err_code;
 
+	context.setType(0); //
+	//std::cout << __FILE__ << ":" << __LINE__ << ": context type: " << context.getType() << std::endl;//
 	_pushKnownDirectives(knownDirectives);
-	d = pr_next_directive(it_curr, list.end(), context);
-	while (0 != d && -1 != d->getType())
+	err_code = 0;
+	while (0 == err_code && it_curr != it_end)
 	{
-		_print_dir(d); //
+		DirectiveBlock			next_directive;
+		err_code = pr_next_directive(it_curr, it_end, &context, next_directive);
+		//std::cout << __FILE__ << ":" << __LINE__ << ": context type: " << context.getType() << std::endl;//
+		//std::cout << "pr_parse_config:pr_next_directive done" << (it_curr == it_end) << std::endl; //
+		if (err_code)
+			return (_print_error_code(err_code, it_curr, it_end), err_code); //
+		//std::cout << "_print_dir" << std::endl; //
+		_print_dir(next_directive); //
 		ServerConfig	server;
+		//std::cout << "setKnownDirectives" << std::endl; //
 		server.setKnownDirectives(&knownDirectives);
-		if (server._debugPlaceholder()) //(server.addServer(d))
-		{
-			delete d;
-			delete context;
-			std::cerr << "parser: failed to add server" << std::endl;
-			return (1);
-		}
-		delete d;
-		_debug_test_server(server);
-		d = pr_next_directive(it_curr, list.end(), context);
+		//std::cout << "_debugPlaceholder" << std::endl; //
+		if (server._debugPlaceholder())
+			return (1); //
+		_debug_test_server(server); //
 	}
-	if (d && -1 == d->getType())
-	{
-		delete d;
-		delete context;
-		return (1);
-	}
-	delete context;
 	return (0);
 }

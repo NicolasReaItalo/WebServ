@@ -6,7 +6,7 @@
 /*   By: jerperez <jerperez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 13:29:48 by jerperez          #+#    #+#             */
-/*   Updated: 2024/09/17 13:58:10 by jerperez         ###   ########.fr       */
+/*   Updated: 2024/09/19 16:05:55 by jerperez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 #include <map>
 #include <algorithm>
 #include "BlockSimpleConfig.hpp"
-#include "BlockDirective.hpp"
+#include "DirectiveBlock.hpp"
 #include "Directive.hpp"
 #include <iostream>
 #include <stdexcept>

@@ -6,20 +6,30 @@
 /*   By: jerperez <jerperez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/03 17:31:53 by jerperez          #+#    #+#             */
-/*   Updated: 2024/09/11 13:36:18 by jerperez         ###   ########.fr       */
+/*   Updated: 2024/09/19 16:05:55 by jerperez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef	PARSER_HPP
 # define PARSER_HPP
 
+# include "DirectiveBlock.hpp"
 # include "Directive.hpp"
 # include "tokenizer.hpp"
 
-Directive	*pr_next_directive(
+#define	PR_ERRDNOCONTEXT 10
+#define	PR_ERRDBADTOKEN 127
+#define	PR_ERRDNOTCLOSED 11
+#define	PR_ERRDBNOARGS 12
+#define	PR_ERRDSIMPLE 13
+#define	PR_ERRDBLOCK 14
+#define	PR_ERRDOPENFAIL 15
+
+int	pr_next_directive(
 	token_deq_t::iterator &it_list,
-	token_deq_t::const_iterator it_end, 
-	Directive *context);
+	const token_deq_t::const_iterator &it_end,
+	DirectiveBlock *context,
+	DirectiveBlock &next_directive);
 
 int	pr_parse_config(token_deq_t &list);
 

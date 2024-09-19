@@ -6,7 +6,7 @@
 /*   By: jerperez <jerperez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 13:29:48 by jerperez          #+#    #+#             */
-/*   Updated: 2024/09/17 14:28:49 by jerperez         ###   ########.fr       */
+/*   Updated: 2024/09/19 16:05:55 by jerperez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@
 #include <list>
 #include <map>
 #include <vector>
-#include "BlockDirective.hpp"
+#include "DirectiveBlock.hpp"
 #include "Directive.hpp"
 #include "BlockSimpleConfig.hpp"
 #include "LocationConfig.hpp"
@@ -33,7 +33,8 @@ class ServerConfig : public BlockSimpleConfig
 		// directive_parameters_t	&_strToParameters(std::string, char);
 		void			_pushSplitParameters(std::string name, std::string joined_string, char delimiter);
 		int				_evalListen(void);
-		int				_addLocation(BlockDirective* block_directive);
+		int				_evalServerName(void); //
+		int				_addLocation(DirectiveBlock* block_directive);
 		LocationConfig	&_returnLocation(const std::string &uri); //
 		void			_debug_print(void);
 		int				_fillAll(void);

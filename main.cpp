@@ -6,7 +6,7 @@
 /*   By: jerperez <jerperez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/03 15:20:58 by jerperez          #+#    #+#             */
-/*   Updated: 2024/09/13 12:03:55 by jerperez         ###   ########.fr       */
+/*   Updated: 2024/09/19 16:05:55 by jerperez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,8 +18,7 @@
 #include "tokenizer.hpp"
 #include "parser.hpp"
 #include "Directive.hpp"
-#include "BlockDirective.hpp"
-#include "InvalidDirective.hpp"
+#include "DirectiveBlock.hpp"
 #include <iomanip>
 #include <cstdlib>
 
