@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ServerConfig.cpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jerperez <jerperez@student.42.fr>          +#+  +:+       +#+        */
+/*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 13:29:48 by jerperez          #+#    #+#             */
-/*   Updated: 2024/09/17 10:28:19 by jerperez         ###   ########.fr       */
+/*   Updated: 2024/09/19 16:14:11 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -133,8 +133,8 @@ int	ServerConfig::_fillAll(void)
 		this->_directive_parameters["client_body_path"].push_back("/var/www/default_upload_path"); //= this->_strToParameters("/var/www/default_upload_path");
 	if (!this->BlockSimpleConfig::inDirectives("client_max_body_size"))
 		this->_directive_parameters["client_max_body_size"].push_back("500000");//  = this->_strToParameters("500000");
-	std::cout << "\e[34m##############################\e[0m" << std::endl; ///
-	this->_debug_print();
+	// std::cout << "\e[34m##############################\e[0m" << std::endl; ///
+	// this->_debug_print();
 	return (0);
 }
 

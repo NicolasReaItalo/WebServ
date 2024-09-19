@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:49:44 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/09/19 12:49:45 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/09/19 16:38:13 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,11 +20,12 @@
 > int i   : the index of the server to which the data is sent*/
 void Server::receive_data(int fd, int i)
 {
-    char buffer[maxBodySize + 1]; // +1 to ensure null-termination
+    unsigned char buffer[maxBodySize + 1]; // +1 to ensure null-termination
     ssize_t bytesRead;
 
     while (true) {
         bytesRead = read(fd, buffer, maxBodySize);
+        std::cout << buffer;
         if (bytesRead < 0) {
             if (errno == EAGAIN || errno == EWOULDBLOCK) {
                 // No more data to read
@@ -46,8 +47,7 @@ void Server::receive_data(int fd, int i)
         }
 
         buffer[bytesRead] = '\0'; // Null-terminate the buffer
-        std::string tmp(buffer);
-
+        std::string tmp(reinterpret_cast<char*>(buffer));
         /*if the request is chunked*/
         // if (is_fd_in_chunklist(fd) == true)
         // {
@@ -59,9 +59,8 @@ void Server::receive_data(int fd, int i)
         std::string head = tmp.substr(0, tmp.find("\r\n\r\n"));
         if (tmp.size() > head.size())
             body = tmp.substr(tmp.find("\r\n\r\n") + 4);
-
         header_infos header = headerParser(head, fd_set[fd]);    
-
+        std::cout << body;
         switch (header.toDo)
         {
             case POST:

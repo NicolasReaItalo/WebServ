@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   server_config.cpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jerperez <jerperez@student.42.fr>          +#+  +:+       +#+        */
+/*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 16:02:57 by jerperez          #+#    #+#             */
-/*   Updated: 2024/09/13 15:56:17 by jerperez         ###   ########.fr       */
+/*   Updated: 2024/09/19 16:14:23 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,26 +20,26 @@
 #include <iostream>
 #include <iomanip>
 #include "InvalidDirective.hpp"
-static void	_print_dir(Directive *d)
-{
-	int								type = d->getType();
-	std::deque<std::string>			args = d->getArgs();
-	if (PR_DIR_TYPE_BLOCK == type)
-		std::cout << "BLOCK:\t\t[" << std::setw(10) <<  d->getContext() << std::setw(10) << (reinterpret_cast<BlockDirective*>(d))->getContext()->getArgs().front() << "]\tArgs:\t";
-	else if (PR_DIR_TYPE_SIMPLE == type)
-		std::cout << "DIRECTIVE:\t[" <<  std::setw(10) <<  d->getContext() << std::setw(10) << (reinterpret_cast<BlockDirective*>(d))->getContext()->getArgs().front() << "]\tArgs:\t";
-	else if (-1 == type)
-		std::cout <<  std::setw(10) <<  (reinterpret_cast<InvalidDirective*>(d))->getWhat() <<  "[" << std::setw(10) <<  d->getContext() << std::setw(10) << (reinterpret_cast<BlockDirective*>(d))->getContext()->getArgs().front() << "]\tArgs:\t";
-	for (std::deque<std::string>::iterator it = args.begin(); it != args.end(); ++it)
-		std::cout << *it << "\t";
-	std::cout << std::endl;
-	if (PR_DIR_TYPE_BLOCK == type)
-	{
-		std::deque<Directive*>			instruction = (reinterpret_cast<BlockDirective*>(d))->getInstructions();
-		for (std::deque<Directive*>::iterator it = instruction.begin(); it != instruction.end(); ++it)
-			_print_dir(*it);
-	}
-}
+// static void	_print_dir(Directive *d)
+// {
+// 	int								type = d->getType();
+// 	std::deque<std::string>			args = d->getArgs();
+// 	if (PR_DIR_TYPE_BLOCK == type)
+// 		std::cout << "BLOCK:\t\t[" << std::setw(10) <<  d->getContext() << std::setw(10) << (reinterpret_cast<BlockDirective*>(d))->getContext()->getArgs().front() << "]\tArgs:\t";
+// 	else if (PR_DIR_TYPE_SIMPLE == type)
+// 		std::cout << "DIRECTIVE:\t[" <<  std::setw(10) <<  d->getContext() << std::setw(10) << (reinterpret_cast<BlockDirective*>(d))->getContext()->getArgs().front() << "]\tArgs:\t";
+// 	else if (-1 == type)
+// 		std::cout <<  std::setw(10) <<  (reinterpret_cast<InvalidDirective*>(d))->getWhat() <<  "[" << std::setw(10) <<  d->getContext() << std::setw(10) << (reinterpret_cast<BlockDirective*>(d))->getContext()->getArgs().front() << "]\tArgs:\t";
+// 	for (std::deque<std::string>::iterator it = args.begin(); it != args.end(); ++it)
+// 		std::cout << *it << "\t";
+// 	std::cout << std::endl;
+// 	if (PR_DIR_TYPE_BLOCK == type)
+// 	{
+// 		std::deque<Directive*>			instruction = (reinterpret_cast<BlockDirective*>(d))->getInstructions();
+// 		// for (std::deque<Directive*>::iterator it = instruction.begin(); it != instruction.end(); ++it)
+// 		// 	_print_dir(*it);
+// 	}
+// }
 //
 
 // static bool	_is_server(Directive* d)
@@ -141,7 +141,7 @@ int	pr_parse_config(token_deq_t &list, std::list<ServerConfig> &servers) //
 	d = pr_next_directive(it_curr, list.end(), context);
 	while (0 != d && -1 != d->getType())
 	{
-		_print_dir(d); //
+		// _print_dir(d); //
 		ServerConfig	server;
 		server.setKnownDirectives(&knownDirectives);
 		if (server.addServer(d))

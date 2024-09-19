@@ -68,6 +68,7 @@ int Server::ServerStart()
         std::cout << "server online\nhost:port =" << it->getAddress() << ":" << it->getPort() << std::endl; 
         it++;
     }
+    std::cout << "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" << std::endl;
     int ret = 0;
     while (ret == 0)
 		ret = ServerRun();

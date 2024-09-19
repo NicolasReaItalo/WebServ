@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:49:40 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/09/19 12:49:41 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/09/19 16:33:40 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,27 +14,47 @@
 
 void Server::method_post(header_infos header, std::string body, int fd, int i)
 {
-    header.fd_ressource = open(header.ressourcePath.c_str(), O_RDWR | O_CREAT);
+    header.fd_ressource = open(header.ressourcePath.c_str(), O_RDWR | O_CREAT, S_IRUSR | S_IWUSR);
     // fd_set.insert(header.fd_ressource);
-    std::cout << "test " << header.fd_ressource << "\n" ;
+    if (-1 == header.fd_ressource)
+    {
+        std::cout << "failed to open " << header.ressourcePath << std::endl;
+        sendError(500, fd, header);
+        return;
+    }
+
+    else
+    
+    std::cout << "managed to open  " << header.ressourcePath << std::endl;
     fd_set[header.fd_ressource] = std::make_pair("0", "0");
-            if (header.chunked == false)
+    if (header.chunked == false)
+    {
+        if (body.size() >= maxBodySize)//(body.size() != header.bodySize)
+        {
+                                                //return error 400 bad request
+            sendError(413, fd, header);
+            return ;
+        }
+        int bytes_written = write(header.fd_ressource, body.c_str(), body.length());
+        if (bytes_written == -1) {
+            std::cerr << "Failed to write to the resource: " << strerror(errno) << std::endl;
+            sendError(500, fd, header); // Internal Server Error
+            return;
+        }
+        sendError(201, fd, header);
+    }
+    else
+    {
+        chunk[fd] = header;
+        receive_data(fd, i);
+    }
+    if (header.keepAlive == false)
+        {
+            if (epoll_ctl(epoll_fd, EPOLL_CTL_DEL, fd, NULL) == -1) 
             {
-                if (body.size() >= maxBodySize)//(body.size() != header.bodySize)
-                {
-                                                        //return error 400 bad request
-                    std::cout << "test2-fail\n";
-                    sendError(400, fd, header);
-                    return ;
-                }
-                std::cout << "test2-pass\n";
-                write(header.fd_ressource, body.c_str(), body.length());
-                                                        //return 201 created
-                sendError(201, fd, header);
+                std::cerr << "Failed to remove fd from epoll: " << strerror(errno) << std::endl;
             }
-            else
-            {
-                chunk[fd] = header;
-                receive_data(fd, i);
-            }
+            close(fd);
+            fd_set.erase(fd);
+        }
 }

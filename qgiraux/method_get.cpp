@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:49:38 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/09/19 12:49:39 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/09/19 16:45:41 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,13 @@
 
 void Server::method_get(header_infos header, int fd, int i)
 {
+    int tr = open(header.ressourcePath.c_str(), O_RDONLY);
+    if (-1 == tr)
+    {
+        sendError(404, fd, header);
+        return;
+    }
+    close(tr);
     if (header.bodySize > CHUNK_SIZE)
     {
         send_chunk(fd, i, header);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   headerParser.cpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jerperez <jerperez@student.42.fr>          +#+  +:+       +#+        */
+/*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/12 16:20:48 by nrea              #+#    #+#             */
-/*   Updated: 2024/09/17 11:48:17 by jerperez         ###   ########.fr       */
+/*   Updated: 2024/09/19 16:22:05 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,106 +37,7 @@
 #define YELLOW	"\033[1;33m"
 #define BLUE	"\033[1;34m"
 
-/*#################################################################################################################################*/
-///DUMMY POUR TEST
 
-// #define ERROR 1
-// #define GET 2
-// #define POST 3
-// #define DELETE 4
-// #define GET_CGI 5
-// #define POST_CGI 6
-
-
-// typedef struct s_header_infos
-// {
-// 	int toDo;
-// 	std::string returnCode;
-// 	bool chunked;
-// 	long bodySize;
-// 	int timestamp;
-// 	bool keepAlive;
-// 	std::string contentType;
-// 	int cgi_pid;
-// 	std::string ressourcePath;
-// 	std::string interpreterPath;
-// 	std::string queryParams;
-// 	int locationIndex;
-// 	int fd_ressource;
-// 	class ServerConfig *configServer;
-
-// } header_infos;
-
-// class ServerConfig
-// {
-//  	public:
-
-// 	//donne le path complet de la resssource, apres alias ou root
-// 	//A VOIR: revoyer ou non une erreur si root depasse / fichier inexistant
-// 	std::string	getFullPath(std::string uri, int location);
-
-// 	// //donne l'identifiant de la location, qui est a fournir dans tous les autres appels
-// 	// int getLocation(std::string uri);
-
-// 	//Si une error page custom est fournie, renvoie sont PATH, sinon renvoie une empty string
-// 	std::string getCustomErrorPage(int loc, std::string errorCode);
-// 	// //Renvoie le premier argument de la Directive
-// 	// //Exemple: "autoindex yes;" -> getDirectiveParameter([uri], "autoindex") == "yes"
-// 	// std::string	getDirectiveParameter(int location, std::string directive_name);
-
-// 	// //Renvoie les arguments de la Directive
-// 	// //Exemple: "error_page 404 /youdieded.html;" -> getDirectiveParameters([uri], "error_page") == {"404", "/youdieded.html"}
-// 	// std::list<std::string>	getDirectiveParameters(int location, std::string directive_name);
-
-// 	// //Verifie si l'agrument est present
-// 	// //Exemple: "index GET POST DELETE;" -> inDirectiveParameters([uri], "index", "GET") == true
-// 	// bool		inDirectiveParameters(int location, std::string directive_name, std::string parameter);
-
-// 	// //Getter (address, port, server_name list)
-// 	// const std::string		&getAddress(void) const;
-// 	// const std::string		&getPort(void) const;
-// 	// const std::list<std::string>	&getServerNames(void) const;
-
-// 	// // Compare les infos requete avec le serveur
-// 	// bool		serverCmp(std::string address, std::string port, std::string server_name);
-
-// 	// //La directive existe-elle dans le block ? A utiliser pour eviter les erreurs.
-// 	// //Exemple: "patate 12 13;" -> inDirectives([uri], "patate") == true
-// 	bool		inDirectives(int location, std::string directive_name, std::string parameter);
-
-
-// };
-
-// std::string ServerConfig::getCustomErrorPage(int loc, std::string errorCode)
-// {
-// 	(void) loc;
-// 	(void) errorCode;
-// 	return std::string("dummy_error.html");
-// }
-
-// bool		ServerConfig::inDirectives(int location, std::string directive_name, std::string parameter)
-// {
-// 	(void) location;
-
-// 	if (directive_name == "limit")
-// 	{
-// 		if (parameter == "GET" || parameter == "POST")
-// 			return true;
-// 	}
-// 	return false;
-// }
-
-// std::string		ServerConfig::getFullPath(std::string uri, int location)
-// {
-// 	(void) location;
-// 	(void) uri;
-// 	return "./test-file.html";
-// }
-
-
-////////////////////FIN DUMMY
-
-/*#################################################################################################################################*/
 
 
 
@@ -314,127 +215,7 @@ header_infos Server::headerParser(std::string rawBuffer, std::pair<std::string, 
         // Extract method, URI, and ignore HTTP version
         lineStream >> method >> uri;
     }
-// 	std::vector<std::string> splitted_buffer;
-// 	std::map<std::string, std::string> header_attributes;
-// 	// std::map<std::string, std::string> header_attributes;
 
-// 	// ON RECUPERE LE BON SERVER
-
-// // ON RECUPERE LA LOCATION ( CACHE )
-
-// 	ServerConfig dummy; /////////////////////////////////////pour tests
-// 	int locationIndex = 0; // dummy config
-
-// 	splitted_buffer = splitString(rawBuffer, "\r\n");
-
-
-// 	if (splitted_buffer.size() < 3)
-// 		return return_error(HTTP_STATUS_BAD_REQUEST, dummy, locationIndex);
-// 	std::vector<std::string> tmp = splitString(splitted_buffer[0], " ");
-// 	if (tmp.size() != 3)
-// 		return_error(HTTP_STATUS_BAD_REQUEST, dummy, locationIndex);
-// 	header_attributes["method"] = tmp[0];
-// 	header_attributes["raw_uri"] = tmp[1];
-// 	header_attributes["protocol"] = tmp[2];
-
-// ///VERIFICATION DU PROTOCOLE
-// 	if (header_attributes["protocol"] != "HTTP/1.1")
-// 		return return_error(HTTP_STATUS_HTTP_VERSION_NOT_SUPPORTED, dummy, locationIndex);
-
-
-// ////----------FIN VERIFICATION DU PROTOCOLOLE--------------of
-
-// ///ON VERIFIE QUE L'URI N'EST PAS VIDE ET COMMENCE PAR '/'-------------------------------------------
-// 	if (header_attributes["raw_uri"].size() == 0 || header_attributes["raw_uri"][0] != '/')
-// 		return return_error(HTTP_STATUS_BAD_REQUEST, dummy, locationIndex);
-// ///---------------------------------------------------------------------------------------------------
-
-// ///CONVERSION DES CARACTERES SPECIAUX DE L'URI---------------------------------------------
-// 	try
-// 	{
-// 		header_attributes["uri"] = convert_uri(tmp[1]);
-// 	}
-// 	catch(const std::exception& e)
-// 	{
-// 		return return_error(HTTP_STATUS_BAD_REQUEST, dummy, locationIndex);
-// 	}
-// //--------------------------------------------------------------------------------------------
-
-// ///ON RECUPERE UNE EVENTUELLE QUERY--------------------------------------------
-// 	// on reutilise tmp pour split l'uri
-// 	tmp = splitString(header_attributes["uri"], "?");
-// 	if (tmp.size() == 2 )
-// 		header_attributes["query"] = tmp[1];
-// 	else if (tmp.size() != 1)
-// 		return return_error(HTTP_STATUS_BAD_REQUEST, dummy, locationIndex);
-// ///------------------------------------------------------------------------------
-
-// /// ON RECUPERE CHAQUE ATTRIBUT DU HEADER dans une map
-
-// 	std::vector<std::string>::iterator it;
-// 	for (it = splitted_buffer.begin() + 1; it != splitted_buffer.end(); it++)
-// 	{
-// 		if (!(*it).size())
-// 			break ;
-// 		tmp = splitString(*it, ": ");
-// 		if (tmp.size() == 2)
-// 			header_attributes[tmp[0]] = tmp[1];
-// 	}
-// //-----------------------
-
-// // ON VERIFIE QUE HOST EST PRESENT
-// 	std::map<std::string,std::string>::iterator h_it = header_attributes.find("Host");
-// 	if (h_it == header_attributes.end())
-// 		return return_error(HTTP_STATUS_BAD_REQUEST, dummy, locationIndex);
-// //---------------------------------------------------------------------
-
-// //ON SPLITTE LE HOST POUR RECUPERER LE PORT SI PRECISE
-// 	tmp = splitString(header_attributes["Host"], ":");
-// 	if (tmp.size() == 2)
-// 	{
-// 		if (! contains_only_numeric(tmp[1]))
-// 			return return_error(HTTP_STATUS_BAD_REQUEST, dummy, locationIndex);
-// 		header_attributes["Port"] = tmp[1];
-// 	}
-// 	else if ( tmp.size() != 1)
-// 		return return_error(HTTP_STATUS_BAD_REQUEST, dummy, locationIndex);
-
-// // ON VERIFIE QUE LA METHODE EST AUTORISEE
-// 	if (!dummy.inDirectiveParameters(locationIndex, "limit", header_attributes["method"]))
-// 		return return_error(HTTP_STATUS_METHOD_NOT_ALLOWED, dummy, locationIndex);
-
-// ON SWITCHE SELON LA METHODE
-
-	// if (header_attributes["method"] == "GET")
-	// 	response = handle_get(response, dummy, locationIndex, header_attributes);
-	// else if (header_attributes["method"] == "POST")
-	// 	response = handle_post(response, dummy, locationIndex, header_attributes);
-	// else if (header_attributes["method"] == "DELETE")
-	// 	response = handle_delete(response, dummy, locationIndex, header_attributes);
-////DEBUG------------------------------------------------------------------
-	// int index = 0;
-	// for (it = splitted_buffer.begin(); it != splitted_buffer.end(); it++)
-	// {
-	// 	std::cout<<BLUE<< index<< " : "<<YELLOW<<"["<<RST<<*it<<YELLOW<<"]"<<RST<<std::endl;
-	// 	if ((*it).size() == 0)
-	// 		break ;
-	// 	index++;
-	// }
-	// std::cout<<std::endl<<"--------------------------------------------------------"<<std::endl;
-	// for (h_it = header_attributes.begin(); h_it != header_attributes.end(); h_it++)
-	// {
-	// 	std::cout<<BLUE<< (*h_it).first<< " : "<<YELLOW<<"["<<RST<<(*h_it).second<<YELLOW<<"]"<<RST<<std::endl;
-	// 	index++;
-	// }
-
-	// std::cout<<std::endl<<"--------------------------------------------------------"<<std::endl;
-
-
-	// std::cout<< BLUE<< "method: "<<YELLOW<<"["<<RST<<header_attributes["method"]<<YELLOW<<"]"<<RST<<std::endl;
-	// std::cout<< BLUE<< "raw_uri: "<<YELLOW<<"["<<RST<<header_attributes["raw_uri"]<<YELLOW<<"]"<<RST<<std::endl;
-	// std::cout<< BLUE<< "uri: "<<YELLOW<<"["<<RST<<header_attributes["uri"]<<YELLOW<<"]"<<RST<<std::endl;
-	// std::cout<< BLUE<< "query: "<<YELLOW<<"["<<RST<<header_attributes["query"]<<YELLOW<<"]"<<RST<<std::endl;
-	// std::cout<< BLUE<< "protocol: "<<YELLOW<<"["<<RST<<header_attributes["protocol"]<<YELLOW<<"]"<<RST<<std::endl;
 ///--------------------------DEBUG----------------------------------
 	if (method == "GET")
 		response.toDo = GET;
@@ -447,7 +228,7 @@ header_infos Server::headerParser(std::string rawBuffer, std::pair<std::string, 
 	response.contentType = get_mime_type(uri);
 	response.ressourcePath = uri;
 	// response.toDo = POST;
-	response.keepAlive = true;
+	response.keepAlive = false;
 	response.bodySize = GetFileSize(uri);
 	response.returnCode = 0;
 	response.cgi_pid = 0;
@@ -456,7 +237,7 @@ header_infos Server::headerParser(std::string rawBuffer, std::pair<std::string, 
 	response.locationIndex = 0;
 	response.queryParams = "";
 	response.timestamp = 0;
-	std::cout << "method = " << response.toDo << "\nuri = " << response.ressourcePath << "\nsize = " << response.bodySize<< std::endl;
+	// std::cout << "method = " << response.toDo << "\nuri = " << response.ressourcePath << "\nsize = " << response.bodySize<< std::endl;
 	
 	return response;
 }
