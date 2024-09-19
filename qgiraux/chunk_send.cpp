@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:49:25 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/09/19 12:49:26 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/09/19 12:53:10 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,22 +73,14 @@ void Server::send_chunk(int fd, int i)
                             data = oss.str();
                             
             ssize_t bytesSent = send(fd, data.c_str(), data.size(), 0);
-                            if (bytesSent == -1)
-                            {
-                                std::cerr << "Failed to send data: " << strerror(errno) << std::endl;
-                                close(fd);
-                                fd_set.erase(fd);
-                                chunk.erase(fd);
-                                return;
+                            if (bytesSent == -1){
+
+                                return failed_to_send(fd);
                             }
             bytesSent = send(fd, "0\r\n\r\n", 5, 0);
-                            if (bytesSent == -1)
-                            {
-                                std::cerr << "Failed to send end chunk: " << strerror(errno) << std::endl;
-                                close(fd);
-                                fd_set.erase(fd);
-                                chunk.erase(fd);
-                                return;
+                            if (bytesSent == -1){
+
+                                return failed_to_send(fd);
                             }
                             events[i].events = EPOLLIN | EPOLLET;
                             if (epoll_ctl(epoll_fd, EPOLL_CTL_MOD, fd, &events[i]) == -1)
@@ -109,13 +101,9 @@ void Server::send_chunk(int fd, int i)
                             oss << "\r\n";
                             data = oss.str();
             ssize_t bytesSent = send(fd, data.c_str(), data.size(), MSG_MORE);
-                            if (bytesSent == -1)
-                            {
-                                std::cerr << "Failed to send data: " << strerror(errno) << std::endl;
-                                close(fd);
-                                fd_set.erase(fd);
-                                chunk.erase(fd);
-                                return;
+                            if (bytesSent == -1){
+
+                                return failed_to_send(fd);
                             }
                             events[i].events = EPOLLOUT | EPOLLET;
                             if (epoll_ctl(epoll_fd, EPOLL_CTL_MOD, fd, &events[i]) == -1)

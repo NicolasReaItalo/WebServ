@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:49:46 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/09/19 12:49:47 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/09/19 12:52:13 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,6 +102,7 @@ class Server
         void sendError(int errcode, int fd, header_infos header);
         std::string generate_error_page(int errcode);
         std::vector<unsigned char> load_file(const std::string &filename);
+        void failed_to_send(int fd);
 
     public :
         Server(std::list<ServerConfig> servers);

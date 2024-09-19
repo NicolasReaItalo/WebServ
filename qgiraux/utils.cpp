@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:50:06 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/09/19 12:50:07 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/09/19 12:52:30 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -119,4 +119,13 @@ void Server::sendError(int errcode, int fd, header_infos header)
     std::cout << "header sent\n";
     send(fd, body.c_str(), body.size(), 0);
     std::cout << "body sent\n";
+}
+
+void Server::failed_to_send(int fd)
+{
+    std::cerr << "Failed to send data: " << strerror(errno) << std::endl;
+    close(fd);
+    fd_set.erase(fd);
+    chunk.erase(fd);
+    return;
 }
