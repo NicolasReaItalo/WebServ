@@ -6,7 +6,7 @@
 /*   By: nrea <nrea@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/18 13:44:25 by nrea              #+#    #+#             */
-/*   Updated: 2024/09/19 11:11:59 by nrea             ###   ########.fr       */
+/*   Updated: 2024/09/19 15:39:57 by nrea             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,7 @@ header_infos handle_get(header_infos &response, ServerConfig  & config,int locat
 // header_infos handle_post(header_infos &response, ServerConfig  & config,int locationIndex,std::map<std::string, std::string> header_attributes);
 // header_infos handle_delete(header_infos &response, ServerConfig  & config,int locationIndex,std::map<std::string, std::string> header_attributes);
 header_infos response_error(std::string error_code, ServerConfig  & config,int locationIndex);
-
+header_infos response_autoindex(ServerConfig &config, int locationIndex, header_infos response);
 bool contains_only_numeric(std::string str);
 long GetFileSize(std::string filename);
 bool contains_forbbiden(std::string const &uri);

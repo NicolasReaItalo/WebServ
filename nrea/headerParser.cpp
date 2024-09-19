@@ -6,11 +6,28 @@
 /*   By: nrea <nrea@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/12 16:20:48 by nrea              #+#    #+#             */
-/*   Updated: 2024/09/19 12:12:28 by nrea             ###   ########.fr       */
+/*   Updated: 2024/09/19 14:55:49 by nrea             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "headerParser.hpp"
+
+
+int dummy_getLocation(ServerConfig const *serverconfig, std::string uri)
+{
+	(void) serverconfig;
+	(void) uri;
+	return 0;
+}
+
+bool dummy_isAuthorized(ServerConfig const *serverconfig, int locationIndex, std::string method)
+{
+	(void) serverconfig;
+	(void) method;
+	(void) locationIndex;
+	return true;
+}
+
 
 /*split all the attributes of the raw header buffer and returns a map of all attributes
 this function can throw a RuntimeError("bad request") exception*/
@@ -23,11 +40,7 @@ std::map<std::string, std::string> split_buffer(std::string rawBuffer)
 
 	splitted_buffer = splitString(rawBuffer, "\r\n");
 	if (splitted_buffer.size() < 2)
-	{
-		webservLogger.log(LVL_DEBUG, "splitted_buffer.size()", splitted_buffer.size());
 		throw std::runtime_error("bad request");
-	}
-
 
 	std::vector<std::string> tmp = splitString(splitted_buffer[0], " ");
 	if (tmp.size() != 3)
@@ -95,14 +108,13 @@ catch(const std::runtime_error& e)
 /// Maintenant qu'on a le host on peut recuperer le
 // bon server de config et on set sa location!
 	// ON RECUPERE LE BON SERVER
-
 	webservLogger.log(LVL_DEBUG,"HeaderParser:: looking up for the serverConfig:",interface.first, interface.second, header_attributes["Host"]);
 	const ServerConfig * serverconfig = find_server(interface,header_attributes["Host"]);
 
 //TODO TODO TODO
 // ON RECUPERE LA LOCATION ( CACHE )
 	// On verra quand ca marchera.                           =====================> TODO !!!!
-
+	locationIndex = dummy_getLocation(serverconfig,header_attributes["URI"]);
 ///VERIFICATION DU PROTOCOLE------------------
 	if (header_attributes["Protocol"] != "HTTP/1.1")
 	{
@@ -147,9 +159,9 @@ catch(const std::runtime_error& e)
 // // ON VERIFIE QUE LA METHODE EST AUTORISEE ------------------------------- DESACTIVE en attendant serverconfig
 // 	if (!defaultconfig.inDirectiveParameters(locationIndex, "limit", header_attributes["Method"]))
 // 		return response_error(HTTP_STATUS_METHOD_NOT_ALLOWED, const_cast<ServerConfig&>(*serverconfig), locationIndex);
+	if (!dummy_isAuthorized(serverconfig, locationIndex, header_attributes["Method"]))
+		return response_error(HTTP_STATUS_METHOD_NOT_ALLOWED, const_cast<ServerConfig&>(*serverconfig), locationIndex);
 // //---------------------------------------------------
-
-
 
 // ON SWITCHE SELON LA METHODE---------------------------------
 

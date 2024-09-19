@@ -6,7 +6,7 @@
 #    By: nrea <nrea@student.42.fr>                  +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/02/06 10:28:10 by jerperez          #+#    #+#              #
-#    Updated: 2024/09/19 10:18:42 by nrea             ###   ########.fr        #
+#    Updated: 2024/09/19 15:42:26 by nrea             ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -19,6 +19,7 @@ SRCS_NREA_FILES	=headerParser.cpp\
 				 find_server.cpp\
 				 handle_get.cpp\
 				 response_error.cpp\
+				 response_autoindex.cpp\
 				 Logger.cpp\
 				 utils.cpp
 

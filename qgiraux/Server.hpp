@@ -25,6 +25,7 @@
 #define ERROR 1
 #define GET 2
 #define POST 3
+#define AUTOINDEX 4
 #define DELETE 6
 #define GET_CGI 7
 #define POST_CGI 8
