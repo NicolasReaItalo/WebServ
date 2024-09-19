@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:50:06 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/09/19 16:30:07 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/09/19 18:58:38 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,6 @@ std::string Server::get_mime_type(const std::string &uri)
         std::string extension = uri.substr(idx);
         if (mimeList.find(extension) != mimeList.end())
             return mimeList[extension];
-        else return "";
     }
     return "application/octet-stream"; // Default for binary data
 }
@@ -118,6 +117,7 @@ void Server::sendError(int errcode, int fd, header_infos header)
     send(fd, head.c_str(), head.size(), 0);
 
     send(fd, body.c_str(), body.size(), 0);
+    std::cout << "ERRPAGE SENT!" << std::endl;
 
 }
 

@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:49:38 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/09/19 18:38:54 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/09/19 19:01:49 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,8 +18,10 @@
 void Server::method_get(header_infos header, int fd, int i)
 {
     int tr = open(header.ressourcePath.c_str(), O_RDONLY);
+    // std::cout << "TR == " << tr << std::endl << "ressource path == " << header.ressourcePath << std::endl;;
     if (-1 == tr)
     {
+        std::cout << "Failed to open required page -- tr = " << tr << std::endl;
         sendError(404, fd, header);
         return;
     }
@@ -31,15 +33,12 @@ void Server::method_get(header_infos header, int fd, int i)
     }
     else
     {
-        std::cout << "in GET " << header.ressourcePath << "\n";
         std::vector<unsigned char> data = load_file(header.ressourcePath);
-        // header.fd_ressource = open(header.ressourcePath.c_str(), O_RDONLY, 0);
-        // fd_set[header.fd_ressource] = std::make_pair("0", "0");
+
         char buffer[maxBodySize];
         for (unsigned long i = 0; i < maxBodySize; i++)
             buffer[i] = 0;
-        // read(header.fd_ressource, buffer, header.bodySize);
-        // std::string body = buffer;
+
         std::time_t clock = std::time(NULL);
         std::string time_str = std::ctime(&clock);
         time_str.erase(time_str.find_last_not_of("\n") + 1);
@@ -60,6 +59,7 @@ void Server::method_get(header_infos header, int fd, int i)
             if (-1 == send(fd, &(data[0]), header.bodySize, 0))
                 std::cout << "error sending body\n";
         }
+        std::cout << "SENT!!" << std::endl;
         if (header.keepAlive == false)
         {
             if (epoll_ctl(epoll_fd, EPOLL_CTL_DEL, fd, NULL) == -1) 

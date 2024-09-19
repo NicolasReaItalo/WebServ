@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:49:25 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/09/19 12:53:10 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/09/19 18:56:48 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@
 
 void Server::send_chunk(int fd, int i, header_infos header)
 {
-    std::cout << "*****chunker!!************\n";
+    std::cout << "*****GET chunker!!************\n";
     /*if not in chunklist ==> send header, set EPOLLOUT and add fd to chunk*/
     if (chunk.find(fd) == chunk.end())
     {
@@ -59,62 +59,61 @@ void Server::send_chunk(int fd, int i)
     }
 
 
-        file.seekg(chunk[fd].readIndex);
-                        std::vector<unsigned char> tmp(CHUNK_SIZE);
-        std::streamsize bytesRead = file.read(reinterpret_cast<char*>(tmp.data()), CHUNK_SIZE).gcount();
-                        std::string data;
-                        std::stringstream oss;
-        if (file.eof() || bytesRead == 0)
-        {
-                            std::cout << "finished reading " << chunk[fd].ressourcePath << std::endl;
-                            oss << std::hex << bytesRead << "\r\n"; 
-                            oss.write(reinterpret_cast<const char*>(tmp.data()), bytesRead);
-                            oss << "\r\n";
-                            data = oss.str();
-                            
-            ssize_t bytesSent = send(fd, data.c_str(), data.size(), 0);
-                            if (bytesSent == -1){
-
-                                return failed_to_send(fd);
-                            }
-            bytesSent = send(fd, "0\r\n\r\n", 5, 0);
-                            if (bytesSent == -1){
-
-                                return failed_to_send(fd);
-                            }
-                            events[i].events = EPOLLIN | EPOLLET;
-                            if (epoll_ctl(epoll_fd, EPOLL_CTL_MOD, fd, &events[i]) == -1)
-                            {
-                                std::cerr << "epoll_ctl failed: " << strerror(errno) << std::endl;
-                                close(fd);
-                                fd_set.erase(fd);
-                            }
-                            close(chunk[fd].fd_ressource);
-                            fd_set.erase(chunk[fd].fd_ressource);
-                            chunk.erase(fd);
-        }
+    file.seekg(chunk[fd].readIndex);
+    std::vector<unsigned char> tmp(CHUNK_SIZE);
+    std::streamsize bytesRead = file.read(reinterpret_cast<char*>(tmp.data()), CHUNK_SIZE).gcount();
+    std::string data;
+    std::stringstream oss;
+    if (file.eof() || bytesRead == 0)
+    {
+        oss << std::hex << bytesRead << "\r\n"; 
+        oss.write(reinterpret_cast<const char*>(tmp.data()), bytesRead);
+        oss << "\r\n";
+        data = oss.str();
                         
-        else
-        {
-                            oss << std::hex << bytesRead << "\r\n"; 
-                            oss.write(reinterpret_cast<const char*>(tmp.data()), bytesRead);
-                            oss << "\r\n";
-                            data = oss.str();
-            ssize_t bytesSent = send(fd, data.c_str(), data.size(), MSG_MORE);
-                            if (bytesSent == -1){
+        ssize_t bytesSent = send(fd, data.c_str(), data.size(), 0);
+        if (bytesSent == -1){
 
-                                return failed_to_send(fd);
-                            }
-                            events[i].events = EPOLLOUT | EPOLLET;
-                            if (epoll_ctl(epoll_fd, EPOLL_CTL_MOD, fd, &events[i]) == -1)
-                            {
-                                std::cerr << "epoll_ctl failed: " << strerror(errno) << std::endl;
-                                close(fd);
-                                fd_set.erase(fd);
-                                chunk.erase(fd);
-                                return;
-                            }
-            chunk[fd].readIndex += CHUNK_SIZE;
+            return failed_to_send(fd);
         }
-        // std::cout << data;
+        bytesSent = send(fd, "0\r\n\r\n", 5, 0);
+        if (bytesSent == -1){
+
+            return failed_to_send(fd);
+        }
+        std::cout << "DFONE!!" << std::endl;
+        events[i].events = EPOLLIN | EPOLLET;
+        if (epoll_ctl(epoll_fd, EPOLL_CTL_MOD, fd, &events[i]) == -1)
+        {
+            std::cerr << "epoll_ctl failed: " << strerror(errno) << std::endl;
+            close(fd);
+            fd_set.erase(fd);
+        }
+        close(chunk[fd].fd_ressource);
+        fd_set.erase(chunk[fd].fd_ressource);
+        chunk.erase(fd);
+    }
+                    
+    else
+    {
+        oss << std::hex << bytesRead << "\r\n"; 
+        oss.write(reinterpret_cast<const char*>(tmp.data()), bytesRead);
+        oss << "\r\n";
+        data = oss.str();
+        ssize_t bytesSent = send(fd, data.c_str(), data.size(), MSG_MORE);
+        if (bytesSent == -1){
+
+            return failed_to_send(fd);
+        }
+        events[i].events = EPOLLOUT | EPOLLET;
+        if (epoll_ctl(epoll_fd, EPOLL_CTL_MOD, fd, &events[i]) == -1)
+        {
+            std::cerr << "epoll_ctl failed: " << strerror(errno) << std::endl;
+            close(fd);
+            fd_set.erase(fd);
+            chunk.erase(fd);
+            return;
+        }
+        chunk[fd].readIndex += CHUNK_SIZE;
+    }
 }
