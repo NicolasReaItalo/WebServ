@@ -6,7 +6,7 @@
 /*   By: nrea <nrea@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/18 13:44:25 by nrea              #+#    #+#             */
-/*   Updated: 2024/09/18 16:15:48 by nrea             ###   ########.fr       */
+/*   Updated: 2024/09/19 11:11:59 by nrea             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,13 +35,16 @@
 #include <stdexcept>
 #include "http_errors.hpp"
 #include <unistd.h>
-
+#include "Logger.hpp"
 
 #define RST		"\033[0m"
 #define RED		"\033[1;31m"
 #define GREEN	"\033[1;32m"
 #define YELLOW	"\033[1;33m"
 #define BLUE	"\033[1;34m"
+
+
+extern Logger webservLogger;
 
 
 header_infos handle_get(header_infos &response, ServerConfig  & config,int locationIndex,std::map<std::string, std::string> header_attributes);

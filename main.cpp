@@ -6,7 +6,7 @@
 /*   By: nrea <nrea@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/03 15:20:58 by jerperez          #+#    #+#             */
-/*   Updated: 2024/09/18 11:12:04 by nrea             ###   ########.fr       */
+/*   Updated: 2024/09/19 10:25:40 by nrea             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@
 #include "Server.hpp"
 #include "BlockDirective.hpp"
 #include "InvalidDirective.hpp"
+#include "Logger.hpp"
 #include <iomanip>
 #include <cstdlib>
 
@@ -75,7 +76,6 @@ int	main(int ac, char *av[])
 {
 	int ret = 0;
 	std::list<ServerConfig> servers;
-
 	if (2 == ac)
 		ret = _parse(av[1], servers);
 	else

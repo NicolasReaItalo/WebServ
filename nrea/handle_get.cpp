@@ -6,7 +6,7 @@
 /*   By: nrea <nrea@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/18 13:27:16 by nrea              #+#    #+#             */
-/*   Updated: 2024/09/18 17:26:42 by nrea             ###   ########.fr       */
+/*   Updated: 2024/09/19 12:05:47 by nrea             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,16 +46,16 @@ header_infos serve_regular_file
 	response.bodySize = GetFileSize(response.ressourcePath);
 
 
-	///////TODO !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	///////TODO  DETERMINATION DU CHUNK!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	//Si la taille est trop grande on passe en chunked; //TODO
-	unsigned long max_body_size = 12092300; // hardcode il faudra fair un appel a getDirectiveParameter(-, "client_max_body_size")
+	// unsigned long max_body_size = 12092300; // hardcode il faudra fair un appel a getDirectiveParameter(-, "client_max_body_size")
 	//--------------------------------------
 
 
-	if (response.bodySize > max_body_size)
-		response.chunked = true;
-	else
-		response.chunked = false;
+	// if (response.bodySize > max_body_size)
+	// 	response.chunked = true;
+	// else
+	// 	response.chunked = false;
 
 	response.returnCode = 200;
 	response.locationIndex = locationIndex;
@@ -91,9 +91,10 @@ header_infos handle_get
 	////////TODO !!!!!
 	//ON RECUPERE LE PATH COMPLET VERS LA RESSOURCE
 	// response.ressourcePath = config.getFullPath(header_attributes["URI"], locationIndex);
-	std::string temp_root = "/home/nrea/Documents/PROJETS/webserv/github/html-files";
+	std::string temp_root = "./html-files";
 
 	response.ressourcePath  = temp_root + header_attributes["URI"]; //<<== temporaire pour tests
+	webservLogger.log(LVL_DEBUG, "full resosurce path:", response.ressourcePath );
 	ret = stat(response.ressourcePath.c_str(),  &stat_buf);
 	if (ret != 0)
 	{
@@ -116,10 +117,10 @@ header_infos handle_get
 		// Trouve ? ===> serve_regular_file
 		//Si fichier regulier pas trouve
 		// verifer si autoindex autorise
-		//Oui -> declencher autoindex et updater ressourcePath + relancer stat
-				//===> serve_regular_file
+		//Oui -> serve_auto_index
 		//Non -> erreur 403
-		return response_error(HTTP_STATUS_FORBIDDEN, config, locationIndex); // temporaire
+		webservLogger.log(LVL_ERROR, "HeaderParser:: no index file found and autoindex forbidden for: ", response.ressourcePath);
+		return response_error(HTTP_STATUS_FORBIDDEN, config, locationIndex);
 	}
 	return serve_regular_file(response, config, locationIndex, header_attributes);
 }

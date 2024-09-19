@@ -6,89 +6,32 @@
 /*   By: nrea <nrea@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/12 16:20:48 by nrea              #+#    #+#             */
-/*   Updated: 2024/09/18 17:02:53 by nrea             ###   ########.fr       */
+/*   Updated: 2024/09/19 12:12:28 by nrea             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "headerParser.hpp"
 
-
-
-/*########    UTILITIES                                                 ###########################################*/
-
-
-
-void displayHeaderInfos(header_infos const &info)
+/*split all the attributes of the raw header buffer and returns a map of all attributes
+this function can throw a RuntimeError("bad request") exception*/
+std::map<std::string, std::string> split_buffer(std::string rawBuffer)
 {
-	std::map<int, std::string> todo;
-	todo[ERROR] = "ERROR";
-	todo[GET] = "GET";
-	todo[POST] = "POST";
-	todo[DELETE] = "DELETE";
-	todo[GET_CGI] = "GET_CGI";
-	todo[POST_CGI] = "POST_CGI";
-
-
-	std::cout<< GREEN<< "===== CHAMPS SET PAR HEADER INFOS ================================="<<std::endl;
-	std::cout<< BLUE<< "action to perform: "<<YELLOW<<"["<<RST<< todo[info.toDo] <<YELLOW<<"]"<<RST<<std::endl;
-	std::cout<< BLUE<< "return code: "<<YELLOW<<"["<<RST<< info.returnCode <<YELLOW<<"]"<<RST<<std::endl;
-	std::cout<< BLUE<< "body size: "<<YELLOW<<"["<<RST<< info.bodySize <<YELLOW<<"]"<<RST<<std::endl;
-	std::cout<< BLUE<< "chunked ?: "<<YELLOW<<"["<<RST<< info.chunked <<YELLOW<<"]"<<RST<<std::endl;
-	std::cout<< BLUE<< "keep alive ?: "<<YELLOW<<"["<<RST<< info.keepAlive<<YELLOW<<"]"<<RST<<std::endl;
-	std::cout<< BLUE<< "ressource path: "<<YELLOW<<"["<<RST<< info.ressourcePath<<YELLOW<<"]"<<RST<<std::endl;
-	std::cout<< BLUE<< "content type: "<<YELLOW<<"["<<RST<< info.contentType<<YELLOW<<"]"<<RST<<std::endl;
-	std::cout<< BLUE<< "interpreter path: "<<YELLOW<<"["<<RST<< info.interpreterPath<<YELLOW<<"]"<<RST<<std::endl;
-	std::cout<< BLUE<< "query parameters : "<<YELLOW<<"["<<RST<< info.queryParams<<YELLOW<<"]"<<RST<<std::endl;
-	std::cout<< BLUE<< "location Index: "<<YELLOW<<"["<<RST<< info.locationIndex<<YELLOW<<"]"<<RST<<std::endl;
-	std::cout<< BLUE<< "Server config pointer: "<<YELLOW<<"["<<RST<< info.configServer<<YELLOW<<"]"<<RST<<std::endl;
-	std::cout<< BLUE<< "time stamp : "<<YELLOW<<"["<<RST<< info.timestamp<<YELLOW<<"]"<<RST<<std::endl;
-	std::cout<< BLUE<< "fd ressource: "<<YELLOW<<"["<<RST<< info.fd_ressource<<YELLOW<<"]"<<RST<<std::endl;
-
-
-
-}
-
-/*#################################################################################################################################*/
-
-/* returns a header_infos set to the appropriate error*/
-header_infos response_error(std::string error_code, ServerConfig  & config,int locationIndex)
-{
-	header_infos response;
-
-	response.toDo = ERROR;
-	response.returnCode = std::atoi(error_code.c_str());//error_code;
-	response.contentType = "text/html";
-	// response.ressourcePath =  config.getCustomErrorPage(locationIndex,std::atoi(error_code.c_str())); //config.getCustomErrorPage(locationIndex, error_code);
-	response.ressourcePath = "./generic-error.html"; // pour TEST
-	response.bodySize = GetFileSize(response.ressourcePath.c_str());
-	response.configServer = &config;
-	response.locationIndex = locationIndex;
-
-	//la caracteristique keep-alive depend de l'erreur:  a ameliorer pour la rendre + generale
-	response.keepAlive = error_code != HTTP_STATUS_BAD_REQUEST && error_code != HTTP_STATUS_INTERNAL_SERVER_ERROR;
-	return response;
-}
-
-
-header_infos Server::headerParser(std::string rawBuffer, std::pair<std::string, std::string> interface)
-{
-	header_infos response;
-	std::vector<std::string> splitted_buffer;
 	std::map<std::string, std::string> header_attributes;
+	std::vector<std::string> splitted_buffer;
 
-
-
-	ServerConfig defaultconfig; ///ServerConfig par defaut pour les messages d'erreurs
-	int locationIndex = 0; // defaultconfig config
+	webservLogger.log(LVL_DEBUG, "HeaderParser :: split_buffer()");
 
 	splitted_buffer = splitString(rawBuffer, "\r\n");
-	if (splitted_buffer.size() < 3)
-		return response_error(HTTP_STATUS_BAD_REQUEST, defaultconfig, locationIndex);
+	if (splitted_buffer.size() < 2)
+	{
+		webservLogger.log(LVL_DEBUG, "splitted_buffer.size()", splitted_buffer.size());
+		throw std::runtime_error("bad request");
+	}
 
 
 	std::vector<std::string> tmp = splitString(splitted_buffer[0], " ");
 	if (tmp.size() != 3)
-		response_error(HTTP_STATUS_BAD_REQUEST, defaultconfig, locationIndex);
+		throw std::runtime_error("bad request");
 	header_attributes["Method"] = tmp[0];
 	header_attributes["Raw_URI"] = tmp[1];
 	header_attributes["Protocol"] = tmp[2];
@@ -104,13 +47,38 @@ header_infos Server::headerParser(std::string rawBuffer, std::pair<std::string, 
 		if (tmp.size() == 2)
 			header_attributes[tmp[0]] = tmp[1];
 	}
-//-----------------------
+
+	return header_attributes;
+}
+
+
+
+header_infos Server::headerParser(std::string rawBuffer, std::pair<std::string, std::string> interface)
+{
+	header_infos response;
+	std::map<std::string, std::string> header_attributes;
+	std::vector<std::string> tmp;
+	ServerConfig defaultconfig; ///ServerConfig par defaut pour les messages d'erreurs en cas de pb de parsing
+	int locationIndex = 0; // defaultconfig location
+
+
+	webservLogger.log(LVL_INFO, "HeaderParser:: A new request header has been received", interface.first, interface.second);
+	// webservLogger.log(LVL_DEBUG,"raw header [",rawBuffer,"]");
+
+try
+{
+	header_attributes = split_buffer(rawBuffer);
+}
+catch(const std::runtime_error& e)
+{
+	webservLogger.log(LVL_ERROR, "An error has been encountered during split_buffer()");
+	return response_error(HTTP_STATUS_BAD_REQUEST, defaultconfig, locationIndex);
+}
 
 // ON VERIFIE QUE HOST EST PRESENT
 	std::map<std::string,std::string>::iterator h_it = header_attributes.find("Host");
 	if (h_it == header_attributes.end())
 		return response_error(HTTP_STATUS_BAD_REQUEST, defaultconfig, locationIndex);
-//---------------------------------------------------------------------
 
 //ON SPLITTE LE HOST POUR RECUPERER LE PORT SI PRECISE
 	tmp = splitString(header_attributes["Host"], ":");
@@ -124,31 +92,24 @@ header_infos Server::headerParser(std::string rawBuffer, std::pair<std::string, 
 	else if ( tmp.size() != 1)
 		return response_error(HTTP_STATUS_BAD_REQUEST, defaultconfig, locationIndex);
 
-
 /// Maintenant qu'on a le host on peut recuperer le
 // bon server de config et on set sa location!
 	// ON RECUPERE LE BON SERVER
 
-	const ServerConfig * serverconfig = find_server(interface,header_attributes["host"]);
-
-	//DEBUG
-	std::cout<< BLUE << "address:"<<RST <<serverconfig->getAddress()<<std::endl;
-	std::cout<< BLUE << "Port:"<<RST <<serverconfig->getPort()<<std::endl;
-
+	webservLogger.log(LVL_DEBUG,"HeaderParser:: looking up for the serverConfig:",interface.first, interface.second, header_attributes["Host"]);
+	const ServerConfig * serverconfig = find_server(interface,header_attributes["Host"]);
 
 //TODO TODO TODO
 // ON RECUPERE LA LOCATION ( CACHE )
 	// On verra quand ca marchera.                           =====================> TODO !!!!
 
-
-
-
 ///VERIFICATION DU PROTOCOLE------------------
 	if (header_attributes["Protocol"] != "HTTP/1.1")
+	{
+		webservLogger.log(LVL_ERROR, "protocol not supported", header_attributes["Protocol"]);
 		return response_error(HTTP_STATUS_HTTP_VERSION_NOT_SUPPORTED, const_cast<ServerConfig&>(*serverconfig), locationIndex);
+	}
 ////---------------------------------------
-
-
 
 ///ON VERIFIE QUE L'URI N'EST PAS VIDE ET COMMENCE PAR '/'-------------------------------------------
 	if (header_attributes["Raw_URI"].size() == 0 || header_attributes["Raw_URI"][0] != '/')
@@ -162,6 +123,7 @@ header_infos Server::headerParser(std::string rawBuffer, std::pair<std::string, 
 	}
 	catch(const std::exception& e)
 	{
+		webservLogger.log(LVL_ERROR, "forbidden character converter", header_attributes["Raw_URI"]);
 		return response_error(HTTP_STATUS_BAD_REQUEST, const_cast<ServerConfig&>(*serverconfig), locationIndex);
 	}
 //--------------------------------------------------------------------------------------------
@@ -192,7 +154,10 @@ header_infos Server::headerParser(std::string rawBuffer, std::pair<std::string, 
 // ON SWITCHE SELON LA METHODE---------------------------------
 
 	if (header_attributes["Method"] == "GET")
+	{
+		webservLogger.log(LVL_DEBUG, "HeaderParser: GET method has been detected ==> handle_get()");
 		response = handle_get(response, defaultconfig, locationIndex, header_attributes);
+	}
 	// else if (header_attributes["Method"] == "POST")
 	// 	response = handle_post(response, defaultconfig, locationIndex, header_attributes);
 	// else if (header_attributes["Method"] == "DELETE")
@@ -200,35 +165,10 @@ header_infos Server::headerParser(std::string rawBuffer, std::pair<std::string, 
 
 //-------------------------------------------------------------
 
-//DEBUG------------------------------------------------------------------
-
-	std::cout<<std::endl<<BLUE<<"------------------REQUEST HEADER------------------------"<<RST<<std::endl;
-	std::cout<< rawBuffer;
-	std::cout<<std::endl<<BLUE<<"--------------------------------------------------------"<<RST<<std::endl;
-	displayHeaderInfos(response);
-
-// /--------------------------DEBUG----------------------------------
-
+	webservLogger.log(LVL_DEBUG, "HeaderParser: returning response", response.ressourcePath );
 	return response;
 }
 
-
-
-// header_infos handle_post(header_infos &response, ServerConfig  & config,int locationIndex,std::map<std::string, std::string> header_attributes)
-// {
-// 	(void) config;
-// 	(void) locationIndex;
-// 	(void) header_attributes;
-
-// 	return response;
-// }
-// header_infos handle_delete(header_infos &response, ServerConfig  & config,int locationIndex,std::map<std::string, std::string> header_attributes)
-// {
-// 	(void) config;
-// 	(void) locationIndex;
-// 	(void) header_attributes;
-// 	return response;
-// }
 
 
 
