@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:49:46 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/09/19 12:52:13 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/09/19 18:37:41 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@
 
 #define MAX_EVENTS 500
 #define BUFFER_SIZE 100000
-#define CHUNK_SIZE 100
+#define CHUNK_SIZE 10000
 
 #define ERROR 1
 #define GET 2
@@ -88,7 +88,7 @@ class Server
         void receive_data(int fd, int i);
 
         void method_get(header_infos header, int fd, int i);
-        void method_post(header_infos header, std::string body, int fd, int i);
+        void method_post(header_infos header, std::vector<unsigned char> body, int fd, int i);
         void method_delete(header_infos header, int fd);
         
         std::string get_mime_type(const std::string &uri);

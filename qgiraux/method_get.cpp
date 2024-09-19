@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:49:38 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/09/19 16:45:41 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/09/19 18:38:54 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,7 @@ void Server::method_get(header_infos header, int fd, int i)
             if (-1 == send(fd, head.c_str(), head.size(), 0))
                 std::cout << "error sending header\n";
             
-            if (-1 == send(fd, reinterpret_cast<const char*>(data.data()), header.bodySize, 0))
+            if (-1 == send(fd, &(data[0]), header.bodySize, 0))
                 std::cout << "error sending body\n";
         }
         if (header.keepAlive == false)
