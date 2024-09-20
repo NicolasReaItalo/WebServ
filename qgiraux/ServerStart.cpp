@@ -71,8 +71,7 @@ int Server::ServerStart()
     }
     std::cout << "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" << std::endl;
     int ret = 0;
-    while (ret == 0)
+    while (ret == 0 && stopper==0)
 		ret = ServerRun();
-	closeAllFd();
 	return (0);
 }

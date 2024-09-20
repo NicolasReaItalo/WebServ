@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:49:46 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/09/20 16:44:22 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/09/20 17:27:09 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,7 @@
 #include <set>
 #include <utility>
 #include <vector>
+#include <csignal>
 
 #define MAX_EVENTS 500
 #define BUFFER_SIZE 100000
@@ -62,6 +63,8 @@ typedef struct s_header_infos
 	class ConfigServer *configServer;
 } header_infos;
 
+extern volatile sig_atomic_t stopper;
+
 class Server
 {
     private :
@@ -86,6 +89,7 @@ class Server
         void set_errorList();
         /*on an event pollin*/
         void receive_data(int fd, int i);
+        void closeAllFd();
 
         void method_get(header_infos header, int fd, int i);
         void method_post(header_infos header, std::vector<unsigned char> body, int fd, int i);
@@ -112,7 +116,9 @@ class Server
         Server(std::list<ConfigServer> servers);
         int ServerStart();
         int ServerRun();
-        void closeAllFd();
+        void ServerClose();
+        ~Server();
+        
 
 };
 

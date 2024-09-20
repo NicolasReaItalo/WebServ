@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:49:52 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/09/19 12:49:53 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/09/20 17:28:43 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,8 @@ int set_nonblocking(int sockfd) {
 int Server::ServerRun()
 {
     nfds = epoll_wait(epoll_fd, events, MAX_EVENTS, 10);
+    if (stopper == 1)
+        return 1;
     if (nfds == -1)
 	{
 		std::cerr << "epoll_wait failed: " << strerror(errno) << std::endl;

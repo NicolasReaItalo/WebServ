@@ -6,13 +6,11 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/03 15:20:58 by jerperez          #+#    #+#             */
-/*   Updated: 2024/09/20 16:22:24 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/09/20 17:30:53 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 
-#include <sys/stat.h>
-#include <fcntl.h>
 #include <iostream>
 #include <fstream>
 #include "tokenizer.hpp"
@@ -25,16 +23,12 @@
 #include <csignal>
 
 
-Server* globalServer = NULL;
 
-void signalHandler(int signum)
-{
-	if (globalServer)
-	{
-		globalServer->closeAllFd();
-		std::cout << "servers closed" << std::endl;
-		exit (signum) ;
-	}
+volatile sig_atomic_t stopper = 0;
+
+void handle_sigint(int sig) {
+    std::cout << "Caught signal " << sig << ", stopping server..." << std::endl;
+    stopper = 1;
 }
 
 static int	_parse(char *pathname, std::list<ConfigServer> &servers)
@@ -70,15 +64,13 @@ int	main(int ac, char *av[])
 	int ret = 0;
 	std::list<ConfigServer> servers;
 
-	signal(SIGINT, signalHandler);
+	signal(SIGINT, handle_sigint);
 	if (2 == ac)
 		ret = _parse(av[1], servers);
 	else
 		return 2;
 	Server server(servers);
-	globalServer = &server;
 	server.ServerStart();
 	std::cout << "<<<EXIT>>>\n";
 	return 0;
-
 }
