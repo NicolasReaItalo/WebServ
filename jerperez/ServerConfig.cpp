@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ServerConfig.cpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
+/*   By: jerperez <jerperez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 13:29:48 by jerperez          #+#    #+#             */
-/*   Updated: 2024/09/19 16:14:11 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/09/20 14:16:21 by jerperez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,21 +53,21 @@
 // BlockSimpleConfig::directive_parameters_t	&ServerConfig::_strToParameters(std::string joined_parameter, char delimiter)
 // {
 // 	directive_parameters_t	parameters;
-// 	std::stringstream		ss(joined_parameter); 
+// 	std::stringstream		ss(joined_parameter);
 // 	std::string				parameter;
- 
-//     while (std::getline(ss, parameter, ' ')) 
+
+//     while (std::getline(ss, parameter, ' '))
 // 		parameters.push_back(parameter);
 // 	return (parameters);
 // }
 
 void	ServerConfig::_pushSplitParameters(std::string name, std::string joined_parameter, char delimiter=' ')
 {
-	std::stringstream				ss(joined_parameter); 
+	std::stringstream				ss(joined_parameter);
 	std::string						parameter;
 	directive_parameters_t			&parameters = this->_directive_parameters[name];
- 
-    while (std::getline(ss, parameter, delimiter)) 
+
+    while (std::getline(ss, parameter, delimiter))
 		parameters.push_back(parameter);
 }
 
@@ -161,7 +161,7 @@ std::string	ServerConfig::getDirectiveOutput(int location, std::string directive
 	if (-1 != location)
 	{
 		LocationConfig	&lConfig = this->_locations[location];
-		if (lConfig.inIODirectives(directive_name)) // 
+		if (lConfig.inIODirectives(directive_name)) //
 			return (lConfig.getDirectiveOutput(directive_name, input));
 	}
 	return (BlockSimpleConfig::getDirectiveOutput(directive_name, input));

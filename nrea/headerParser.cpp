@@ -3,330 +3,243 @@
 /*                                                        :::      ::::::::   */
 /*   headerParser.cpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
+/*   By: jerperez <jerperez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/12 16:20:48 by nrea              #+#    #+#             */
-/*   Updated: 2024/09/19 19:02:45 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/09/20 14:17:53 by jerperez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-// #include <Server.hpp>
-
-#include <iostream>
-#include <list>
-#include <vector>
-#include <map>
-#include <sys/epoll.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#include <cerrno>
-#include <cstring>
-#include <unistd.h>
-#include <fcntl.h>
-#include <algorithm>
-#include <set>
-#include <exception>
-#include "ServerConfig.hpp"
-#include "Server.hpp"
-#include <sys/stat.h>
-#include "http_errors.hpp"
-#define RST		"\033[0m"
-#define RED		"\033[1;31m"
-#define GREEN	"\033[1;32m"
-#define YELLOW	"\033[1;33m"
-#define BLUE	"\033[1;34m"
+#include "headerParser.hpp"
 
 
-
-
-
-/*########    UTILITIES                                                 ###########################################*/
-
-
-std::vector<std::string> splitString(const std::string& str, std::string delimiter)
+int dummy_getLocation(ServerConfig const *serverconfig, std::string uri)
 {
-	std::vector<std::string> tokens;
-	std::size_t start = 0;
-	std::size_t end = str.find(delimiter);
-
-	while (end != std::string::npos)
-	{
-		tokens.push_back(str.substr(start, end - start));
-		start = end + delimiter.size();
-		end = str.find(delimiter, start);
-	}
-	tokens.push_back(str.substr(start));
-	return tokens;
+	(void) serverconfig;
+	(void) uri;
+	return 0;
 }
 
-//remove special characters
-std::string  convert_uri(std::string const &uri)
+bool dummy_isAuthorized(ServerConfig const *serverconfig, int locationIndex, std::string method)
 {
-	std::string converted = uri;
-	std::map<std::string, std::string> conversion;
-	conversion["%20"] = " ";
-	conversion["%21"] = "!";
-	conversion["%22"] = "\"";
-	conversion["%23"] = "#";
-	conversion["%24"] = "$";
-	conversion["%25"] = "%";
-	conversion["%26"] = "&";
-	conversion["%27"] = "'";
-	conversion["%28"] = "(";
-	conversion["%29"] = ")";
-	conversion["%2A"] = "*";
-	conversion["%2B"] = "+";
-	conversion["%2C"] = ",";
-	conversion["%2D"] = "-";
-	conversion["%2E"] = ".";
-	conversion["%2F"] = "/";
-	conversion["%3A"] = ":";
-	conversion["%3B"] = ";";
-	conversion["%3C"] = "<";
-	conversion["%3D"] = "=";
-	conversion["%3E"] = ">";
-	conversion["%3F"] = "?";
-	conversion["%40"] = "@";
-	conversion["%5B"] = "[";
-	conversion["%5C"] = "\\";
-	conversion["%5D"] = "]";
-	conversion["%5E"] = "^";
-	conversion["%5F"] = "_";
-	conversion["%60"] = "`";
-	conversion["%7B"] = "{";
-	conversion["%7D"] = "}";
-	conversion["%7E"] = "~";
-
-	std::size_t pos = converted.find('%');
-	while (pos != std::string::npos)
-	{
-		if (pos + 2 >= converted.size())
-		{
-			throw std::runtime_error("BAD REQUEST");
-		}
-
-		std::string code = converted.substr(pos, 3);
-		std::map<std::string, std::string>::iterator it = conversion.find(code);
-		if (it != conversion.end())
-		{
-			converted.replace(pos, 3, it->second);
-		}
-		else
-		{
-			throw std::runtime_error("BAD REQUEST");
-		}
-		pos = converted.find('%', pos + it->second.length());
-	}
-	// cas du +
-	pos = converted.find('+');
-	while (pos != std::string::npos)
-	{
-		converted.replace(pos, 1, " ");
-		pos = converted.find('%', pos + 1);
-	}
-
-	return converted;
-}
-
-bool contains_forbbiden(std::string const &uri)
-{
-	std::string auth = "ABCDEFGHIJKLMNOPQRSTUVWXYZ\
-	abcdefghijklmnopqrstuvwxyz0123456789-._~:/?#[]@!$&'()*+,;=%";
-
-	for(std::string::const_iterator it = uri.begin(); it != uri.end(); ++it)
-	{
-		if ( auth.find(*it) == std::string::npos)
-		{
-			std::cout << "["<<*it<<"]"<<std::endl;
-			return true;
-		}
-	}
-	return false;
-}
-
-
-long GetFileSize(std::string filename)
-{
-    struct stat stat_buf;
-    int rc = stat(filename.c_str(), &stat_buf);
-    return rc == 0 ? stat_buf.st_size : -1;
-}
-
-
-bool contains_only_numeric(std::string str)
-{
-	std::string numeric = "0123456789";
-	std::string::iterator it;
-	for (it = str.begin(); it != str.end(); it++)
-	{
-		if (numeric.find(*it) == std::string::npos)
-			return false;
-	}
+	(void) serverconfig;
+	(void) method;
+	(void) locationIndex;
 	return true;
 }
-/*#################################################################################################################################*/
+
+
+/*split all the attributes of the raw header buffer and returns a map of all attributes
+this function can throw a RuntimeError("bad request") exception*/
+std::map<std::string, std::string> split_buffer(std::string rawBuffer)
+{
+	std::map<std::string, std::string> header_attributes;
+	std::vector<std::string> splitted_buffer;
+
+	//webservLogger.log(LVL_DEBUG, "HeaderParser :: split_buffer()");
+
+	splitted_buffer = splitString(rawBuffer, "\r\n");
+	if (splitted_buffer.size() < 2)
+		throw std::runtime_error("bad request");
+
+	std::vector<std::string> tmp = splitString(splitted_buffer[0], " ");
+	if (tmp.size() != 3)
+		throw std::runtime_error("bad request");
+	header_attributes["Method"] = tmp[0];
+	header_attributes["Raw_URI"] = tmp[1];
+	header_attributes["Protocol"] = tmp[2];
+
+/// ON RECUPERE CHAQUE ATTRIBUT DU HEADER dans une map
+
+	std::vector<std::string>::iterator it;
+	for (it = splitted_buffer.begin() + 1; it != splitted_buffer.end(); it++)
+	{
+		if (!(*it).size())
+			break ;
+		tmp = splitString(*it, ": ");
+		if (tmp.size() == 2)
+			header_attributes[tmp[0]] = tmp[1];
+	}
+
+	return header_attributes;
+}
 
 
 
-
-// header_infos handle_get(header_infos &response, ServerConfig  & config,int locationIndex,std::map<std::string, std::string> header_attributes);
-// header_infos handle_post(header_infos &response, ServerConfig  & config,int locationIndex,std::map<std::string, std::string> header_attributes);
-// header_infos handle_delete(header_infos &response, ServerConfig  & config,int locationIndex,std::map<std::string, std::string> header_attributes);
-
-
-
-
-
-/* */
-header_infos return_error(std::string error_code, ServerConfig  & config,int locationIndex)
+header_infos Server::headerParser(std::string rawBuffer, std::pair<std::string, std::string> interface)
 {
 	header_infos response;
+	std::map<std::string, std::string> header_attributes;
+	std::vector<std::string> tmp;
+	ServerConfig defaultconfig; ///ServerConfig par defaut pour les messages d'erreurs en cas de pb de parsing
+	int locationIndex = 0; // defaultconfig location
+	{
+	std::ostringstream oss;
+	oss <<"[HeaderParser] A new request header has been received "<< interface.first<<":"<< interface.second;
+	webservLogger.log(LVL_INFO, oss);
+	}
 
-	(void)error_code;
-	response.toDo = ERROR;
-	response.returnCode = 0;//error_code;
-	response.contentType = "text/html";
-	response.ressourcePath = config.getCustomErrorPage(locationIndex, 0); //config.getCustomErrorPage(locationIndex, error_code);
-	response.bodySize = GetFileSize(response.ressourcePath.c_str());
-	response.configServer = &config;
-	response.locationIndex = locationIndex;
+try
+{
+	header_attributes = split_buffer(rawBuffer);
+}
+catch(const std::runtime_error& e)
+{
+	{
+	std::ostringstream oss;
+	oss <<"[HeaderParser] The request header is not properly formatted";
+	webservLogger.log(LVL_DEBUG, oss);
+	}
+	return response_error(HTTP_STATUS_BAD_REQUEST, defaultconfig, locationIndex);
+}
 
-	//la caracteristique keep-alive depend de l'erreur:  a ameliorer pour la rendre + generale
-	response.keepAlive = error_code != "400" && error_code != "512";
+// ON VERIFIE QUE HOST EST PRESENT
+	std::map<std::string,std::string>::iterator h_it = header_attributes.find("Host");
+	if (h_it == header_attributes.end())
+	{
+		{
+		std::ostringstream oss;
+		oss <<"[HeaderParser] The request header is not properly formatted";
+		webservLogger.log(LVL_DEBUG, oss);
+		}
+		return response_error(HTTP_STATUS_BAD_REQUEST, defaultconfig, locationIndex);
+	}
+
+//ON SPLITTE LE HOST POUR RECUPERER LE PORT SI PRECISE
+	tmp = splitString(header_attributes["Host"], ":");
+	if (tmp.size() == 2)
+	{
+		if (! contains_only_numeric(tmp[1]))
+			return response_error(HTTP_STATUS_BAD_REQUEST, defaultconfig, locationIndex);
+		header_attributes["Host"] = tmp[0];
+		header_attributes["Port"] = tmp[1];
+	}
+	else if ( tmp.size() != 1)
+	{
+		{
+		std::ostringstream oss;
+		oss <<"[HeaderParser] The request header is not properly formatted";
+		webservLogger.log(LVL_DEBUG, oss);
+		}
+		return response_error(HTTP_STATUS_BAD_REQUEST, defaultconfig, locationIndex);
+	}
+
+/// Maintenant qu'on a le host on peut recuperer le
+// bon server de config et on set sa location!
+	// ON RECUPERE LE BON SERVER
+	//webservLogger.log(LVL_DEBUG,"HeaderParser:: looking up for the serverConfig:",interface.first, interface.second, header_attributes["Host"]);
+	const ServerConfig * serverconfig = find_server(interface,header_attributes["Host"]);
+	{
+	std::ostringstream oss;
+	oss <<"[HeaderParser] find_server() ==> "<<serverconfig;
+	webservLogger.log(LVL_DEBUG, oss);
+	}
+//TODO TODO TODO
+// ON RECUPERE LA LOCATION ( CACHE )
+	// On verra quand ca marchera.                           =====================> TODO !!!!
+	locationIndex = dummy_getLocation(serverconfig,header_attributes["URI"]);
+	{
+	std::ostringstream oss;
+	oss <<"[HeaderParser] get_location() ==> "<<locationIndex;
+	webservLogger.log(LVL_DEBUG, oss);
+	}
+///VERIFICATION DU PROTOCOLE------------------
+	if (header_attributes["Protocol"] != "HTTP/1.1")
+	{
+		{
+		std::ostringstream oss;
+		oss <<"[HeaderParser] The protocol is not supported ==> "<<header_attributes["Protocol"];
+		webservLogger.log(LVL_DEBUG, oss);
+		}
+		return response_error(HTTP_STATUS_HTTP_VERSION_NOT_SUPPORTED, const_cast<ServerConfig&>(*serverconfig), locationIndex);
+	}
+////---------------------------------------
+
+///ON VERIFIE QUE L'URI N'EST PAS VIDE ET COMMENCE PAR '/'-------------------------------------------
+	if (header_attributes["Raw_URI"].size() == 0 || header_attributes["Raw_URI"][0] != '/')
+	{
+		{
+		std::ostringstream oss;
+		oss <<"[HeaderParser] The uri is empty or dos not start with '/' ==> "<<header_attributes["Raw_URI"];
+		webservLogger.log(LVL_DEBUG, oss);
+		}
+		return response_error(HTTP_STATUS_BAD_REQUEST, const_cast<ServerConfig&>(*serverconfig), locationIndex);
+	}
+///---------------------------------------------------------------------------------------------------
+
+///CONVERSION DES CARACTERES SPECIAUX DE L'URI---------------------------------------------
+	try
+	{
+		header_attributes["Converted_URI"] = convert_uri(header_attributes["Raw_URI"]);
+	}
+	catch(const std::exception& e)
+	{
+		{
+		std::ostringstream oss;
+		oss <<"[HeaderParser] The uri contains forbidden special characters  ==> "<<header_attributes["Raw_URI"];
+		webservLogger.log(LVL_DEBUG, oss);
+		}
+
+		return response_error(HTTP_STATUS_BAD_REQUEST, const_cast<ServerConfig&>(*serverconfig), locationIndex);
+	}
+//--------------------------------------------------------------------------------------------
+
+///ON RECUPERE UNE EVENTUELLE QUERY--------------------------------------------
+	// on reutilise tmp pour split l'uri
+	tmp = splitString(header_attributes["Converted_URI"], "?");
+	if (tmp.size() == 2 )
+	{
+		header_attributes["URI"] = tmp[0];
+		header_attributes["Query"] = tmp[1];
+	}
+	else if (tmp.size() != 1)
+	{
+		{
+		std::ostringstream oss;
+		oss <<"[HeaderParser] The URI is not properly formatted ==> "<<header_attributes["Raw_URI"];
+		webservLogger.log(LVL_DEBUG, oss);
+		}
+		return response_error(HTTP_STATUS_BAD_REQUEST, const_cast<ServerConfig&>(*serverconfig), locationIndex);
+	}
+	else
+		header_attributes["URI"] = tmp[0];
+
+///------------------------------------------------------------------------------
+
+
+// // ON VERIFIE QUE LA METHODE EST AUTORISEE ------------------------------- DESACTIVE en attendant serverconfig
+// 	if (!defaultconfig.inDirectiveParameters(locationIndex, "limit", header_attributes["Method"]))
+// 		return response_error(HTTP_STATUS_METHOD_NOT_ALLOWED, const_cast<ServerConfig&>(*serverconfig), locationIndex);
+	if (!dummy_isAuthorized(serverconfig, locationIndex, header_attributes["Method"]))
+	{
+		{
+		std::ostringstream oss;
+		oss <<"[HeaderParser] The method  "<<header_attributes["Method"] << " is forbidden";
+		webservLogger.log(LVL_DEBUG, oss);
+		}
+		return response_error(HTTP_STATUS_METHOD_NOT_ALLOWED, const_cast<ServerConfig&>(*serverconfig), locationIndex);
+	}
+// //---------------------------------------------------
+
+// ON SWITCHE SELON LA METHODE---------------------------------
+
+	if (header_attributes["Method"] == "GET")
+	{
+		{
+		std::ostringstream oss;
+		oss <<"[HeaderParser] GET method detected ==> starting handle_get()";
+		webservLogger.log(LVL_DEBUG, oss);
+		}
+		response = handle_get(response, defaultconfig, locationIndex, header_attributes);
+	}
+	// else if (header_attributes["Method"] == "POST")
+	// 	response = handle_post(response, defaultconfig, locationIndex, header_attributes);
+	// else if (header_attributes["Method"] == "DELETE")
+	// 	response = handle_delete(response, defaultconfig, locationIndex, header_attributes);
+
 	return response;
 }
-#include <sstream>
-header_infos Server::headerParser(std::string rawBuffer, std::pair<std::string, std::string> address)
-{
-	 (void)address;
-	 (void)rawBuffer;
-	header_infos response;
 
-	std::istringstream stream(rawBuffer);
-    std::string line;
-
-	std::string method;
-    std::string uri;
-    // Get the first line of the HTTP request
-    if (std::getline(stream, line)) {
-        std::istringstream lineStream(line);
-        
-        // Extract method, URI, and ignore HTTP version
-        lineStream >> method >> uri;
-    }
-
-///--------------------------DEBUG----------------------------------
-	if (method == "GET")
-		response.toDo = GET;
-	if (method == "POST")
-		response.toDo = POST;
-	if (method == "DELETE")
-		response.toDo = DELETE;
-	response.chunked = false;
-	response.interpreterPath = "";
-	response.contentType = get_mime_type(uri);
-	response.ressourcePath = uri;
-	// response.toDo = POST;
-	response.keepAlive = false;
-	response.bodySize = GetFileSize(uri);
-	response.returnCode = 0;
-	response.cgi_pid = 0;
-	response.configServer = NULL;
-	response.fd_ressource = -1;
-	response.locationIndex = 0;
-	response.queryParams = "";
-	response.timestamp = 0;
-	// std::cout << "method = " << response.toDo << "\nuri = " << response.ressourcePath << "\nsize = " << response.bodySize<< std::endl;
-	
-	return response;
-}
-
-
-
-
-// header_infos handle_get(header_infos &response, ServerConfig  & config,int locationIndex,std::map<std::string, std::string> header_attributes)
-// {
-// 	(void) header_attributes;
-// 	//ON RECUPERE LE PATH COMPLET VERS LA RESSOURCE
-// 	response.ressourcePath = config.getFullPath(header_attributes["uri"], locationIndex);
-
-
-// 	return response;
-// }
-
-
-
-
-
-
-// header_infos handle_post(header_infos &response, ServerConfig  & config,int locationIndex,std::map<std::string, std::string> header_attributes)
-// {
-// 	(void) config;
-// 	(void) locationIndex;
-// 	(void) header_attributes;
-
-// 	return response;
-// }
-// header_infos handle_delete(header_infos &response, ServerConfig  & config,int locationIndex,std::map<std::string, std::string> header_attributes)
-// {
-// 	(void) config;
-// 	(void) locationIndex;
-// 	(void) header_attributes;
-// 	return response;
-// }
-
-
-
-
-void displayHeaderInfos(header_infos const &info)
-{
-	std::map<int, std::string> todo;
-	todo[1] = "ERROR";
-	todo[2] = "GET";
-	todo[3] = "POST";
-	todo[4] = "DELETE";
-	todo[5] = "GET_CGI";
-	todo[6] = "POST_CGI";
-
-
-	std::cout<< GREEN<< "===== CHAMPS SET PAR HEADER INFOS ================================="<<std::endl;
-	std::cout<< BLUE<< "action to perform: "<<YELLOW<<"["<<RST<< todo[info.toDo] <<YELLOW<<"]"<<RST<<std::endl;
-	std::cout<< BLUE<< "return code: "<<YELLOW<<"["<<RST<< info.returnCode <<YELLOW<<"]"<<RST<<std::endl;
-	std::cout<< BLUE<< "body size: "<<YELLOW<<"["<<RST<< info.bodySize <<YELLOW<<"]"<<RST<<std::endl;
-	std::cout<< BLUE<< "chunked ?: "<<YELLOW<<"["<<RST<< info.chunked <<YELLOW<<"]"<<RST<<std::endl;
-	std::cout<< BLUE<< "keep alive ?: "<<YELLOW<<"["<<RST<< info.keepAlive<<YELLOW<<"]"<<RST<<std::endl;
-	std::cout<< BLUE<< "ressource path: "<<YELLOW<<"["<<RST<< info.ressourcePath<<YELLOW<<"]"<<RST<<std::endl;
-	std::cout<< BLUE<< "content type: "<<YELLOW<<"["<<RST<< info.contentType<<YELLOW<<"]"<<RST<<std::endl;
-	std::cout<< BLUE<< "interpreter path: "<<YELLOW<<"["<<RST<< info.interpreterPath<<YELLOW<<"]"<<RST<<std::endl;
-	std::cout<< BLUE<< "query parameters : "<<YELLOW<<"["<<RST<< info.queryParams<<YELLOW<<"]"<<RST<<std::endl;
-	std::cout<< BLUE<< "location Index: "<<YELLOW<<"["<<RST<< info.locationIndex<<YELLOW<<"]"<<RST<<std::endl;
-	std::cout<< BLUE<< "Server config pointer: "<<YELLOW<<"["<<RST<< info.configServer<<YELLOW<<"]"<<RST<<std::endl;
-	std::cout<< GREEN<< "===== CHAMPS LAISSES LIBRES================================="<<std::endl;
-	std::cout<< BLUE<< "time stamp : "<<YELLOW<<"["<<RST<< info.timestamp<<YELLOW<<"]"<<RST<<std::endl;
-	std::cout<< BLUE<< "fd ressource: "<<YELLOW<<"["<<RST<< info.fd_ressource<<YELLOW<<"]"<<RST<<std::endl;
-
-
-
-}
-
-
-
-
-// int main()
-// {
-// 	std::string ok_req = "GEhT /my%20directory/index.php?name=TOTO+lasticot&age=10 HTTP/1.1\r\n\
-// Host: www.example.org\r\n\
-// Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8\r\n\
-// Accept-Language: fr,fr-FR;q=0.8,en-US;q=0.5,en;q=0.3\r\n\
-// Accept-Encoding: gzip, deflate, br\r\n\
-// Alt-Used: www.rfc-editor.org\r\n\
-// Connection: keep-alive\r\n\r\n";
-
-// 	displayHeaderInfos(headerParser(ok_req));
-
-// 	return 0;
-// }
 
 
 

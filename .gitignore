@@ -1,0 +1,8 @@
+*.d
+*.o
+*.out
+webserv
+.vscode/tasks.json
+html-files/cat.jpeg
+html-files/generic-error.html
+html-files/test.html

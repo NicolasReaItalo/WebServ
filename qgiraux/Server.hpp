@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
+/*   By: jerperez <jerperez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:49:46 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/09/19 18:52:34 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/09/20 14:19:39 by jerperez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,7 @@
 #define ERROR 1
 #define GET 2
 #define POST 3
+#define AUTOINDEX 4
 #define DELETE 6
 #define GET_CGI 7
 #define POST_CGI 8
@@ -90,9 +91,12 @@ class Server
         void method_get(header_infos header, int fd, int i);
         void method_post(header_infos header, std::vector<unsigned char> body, int fd, int i);
         void method_delete(header_infos header, int fd);
-        
+
         std::string get_mime_type(const std::string &uri);
-        header_infos headerParser(std::string rawBuffer, std::pair<std::string, std::string> address);
+        header_infos headerParser(std::string rawBuffer, std::pair<std::string, std::string> interface);
+		const ServerConfig * find_server(std::pair<std::string, std::string> interface, std::string host);
+		header_infos handle_get(header_infos &response, ServerConfig  & config,int locationIndex,std::map<std::string, std::string> header_attributes);
+		header_infos serve_regular_file(header_infos &response, ServerConfig  & config,int locationIndex,std::map<std::string, std::string> header_attributes);
 
         void chunked_post(int fd, std::string tmp);
         void send_chunk(int fd, int i, header_infos header);

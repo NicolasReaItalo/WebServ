@@ -6,7 +6,7 @@
 /*   By: jerperez <jerperez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/03 15:20:58 by jerperez          #+#    #+#             */
-/*   Updated: 2024/09/13 12:03:55 by jerperez         ###   ########.fr       */
+/*   Updated: 2024/09/20 14:16:14 by jerperez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@
 #include "Server.hpp"
 #include "BlockDirective.hpp"
 #include "InvalidDirective.hpp"
+#include "Logger.hpp"
 #include <iomanip>
 #include <cstdlib>
 
@@ -55,9 +56,8 @@ static int	_parse(char *pathname, std::list<ServerConfig> &servers)
 
 int	main(int ac, char *av[])
 {
-	int ret;
+	int ret = 0;
 	std::list<ServerConfig> servers;
-
 	if (2 == ac)
 		ret = _parse(av[1], servers);
 	else

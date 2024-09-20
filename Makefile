@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: jerperez <jerperez@student.42.fr>          +#+  +:+       +#+         #
+#    By: nrea <nrea@student.42.fr>                  +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/02/06 10:28:10 by jerperez          #+#    #+#              #
-#    Updated: 2024/09/17 12:41:36 by jerperez         ###   ########.fr        #
+#    Updated: 2024/09/19 15:42:26 by nrea             ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -15,7 +15,13 @@ NAME = webserv
 CXX = c++
 CPPFLAGS = -Wall -Wextra -Werror -g3 -std=c++98	-I./qgiraux -I./nrea -I./jerperez
 
-SRCS_NREA_FILES	=headerParser.cpp 
+SRCS_NREA_FILES	=headerParser.cpp\
+				 find_server.cpp\
+				 handle_get.cpp\
+				 response_error.cpp\
+				 response_autoindex.cpp\
+				 Logger.cpp\
+				 utils.cpp
 
 SRCS_NREA	= 	$(addprefix nrea/, $(SRCS_NREA_FILES))
 
