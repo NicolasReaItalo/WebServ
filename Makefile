@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: jerperez <jerperez@student.42.fr>          +#+  +:+       +#+         #
+#    By: nrea <nrea@student.42.fr>                  +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/02/06 10:28:10 by jerperez          #+#    #+#              #
-#    Updated: 2024/09/20 14:27:47 by jerperez         ###   ########.fr        #
+#    Updated: 2024/09/20 15:37:16 by nrea             ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -16,7 +16,7 @@ CXX = c++
 CPPFLAGS = -Wall -Wextra -Werror -g3 -std=c++98	-I./qgiraux -I./nrea -I./jerperez
 
 SRCS_NREA_FILES	=headerParser.cpp\
-				 find_server.cpp\
+				 findServer.cpp\
 				 handle_get.cpp\
 				 response_error.cpp\
 				 response_autoindex.cpp\
