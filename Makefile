@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: nrea <nrea@student.42.fr>                  +#+  +:+       +#+         #
+#    By: jerperez <jerperez@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/02/06 10:28:10 by jerperez          #+#    #+#              #
-#    Updated: 2024/09/19 15:42:26 by nrea             ###   ########.fr        #
+#    Updated: 2024/09/20 14:27:47 by jerperez         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -42,14 +42,13 @@ SRCS_QGIRAUX	= 	$(addprefix qgiraux/, $(SRCS_QGIRAUX_FILES))
 
 SRCS_JERPEREZ_FILES	= tokenizer.cpp\
 			parser.cpp\
-			BlockDirective.cpp\
+			DirectiveBlock.cpp\
 			Directive.cpp\
-			InvalidDirective.cpp\
 			unquote.cpp\
 			server_config.cpp\
-			ServerConfig.cpp\
-			BlockSimpleConfig.cpp\
-			LocationConfig.cpp\
+			ConfigServer.cpp\
+			ConfigBlock.cpp\
+			ConfigLocation.cpp\
 
 SRCS_JERPEREZ	= 	$(addprefix jerperez/, $(SRCS_JERPEREZ_FILES))
 

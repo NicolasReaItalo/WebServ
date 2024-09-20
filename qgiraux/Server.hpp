@@ -6,7 +6,7 @@
 /*   By: jerperez <jerperez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:49:46 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/09/20 14:19:39 by jerperez         ###   ########.fr       */
+/*   Updated: 2024/09/20 14:32:47 by jerperez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
-#include "ServerConfig.hpp"
+#include "ConfigServer.hpp"
 #include <cerrno>
 #include <cstring>
 #include <unistd.h>
@@ -58,9 +58,8 @@ typedef struct s_header_infos
 	int fd_ressource;
 	int cgi_pid;
 	int locationIndex;
-	class ServerConfig *configServer;
     std::streampos readIndex;
-
+	class ConfigServer *configServer;
 } header_infos;
 
 class Server
@@ -68,7 +67,7 @@ class Server
     private :
 
         int list_size;
-        std::list<ServerConfig> servers;
+        std::list<ConfigServer> servers;
         std::vector<int> server_fd;
         int epoll_fd, new_socket;
         int nfds;

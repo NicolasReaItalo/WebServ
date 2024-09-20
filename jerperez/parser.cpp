@@ -6,23 +6,24 @@
 /*   By: jerperez <jerperez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/03 17:54:04 by jerperez          #+#    #+#             */
-/*   Updated: 2024/09/09 14:56:04 by jerperez         ###   ########.fr       */
+/*   Updated: 2024/09/19 16:05:55 by jerperez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "InvalidDirective.hpp"
-#include "BlockDirective.hpp"
+#include "DirectiveBlock.hpp"
 #include "Directive.hpp"
 #include "tokenizer.hpp"
 #include "parser.hpp"
 #include <string>
 #include <cstring>
 
+
+
 /* returns true if space
  */
 static bool	_isspace(char c)
 {
-	return (NULL != (char *)(std::strchr(TK_SPACE, c)));
+	return NULL != (char *)(std::strchr(TK_SPACE, c));
 }
 
 /* Gets arguments (words) before token
@@ -31,7 +32,7 @@ static bool	_isspace(char c)
  */
 static char	_get_directive_args(
 	token_deq_t::iterator &it_list,
-	token_deq_t::const_iterator it_end,
+	const token_deq_t::const_iterator &it_end,
 	std::deque<std::string> &args)
 {
 	while (it_list != it_end && _isspace(it_list->token_id))
@@ -41,15 +42,17 @@ static char	_get_directive_args(
 		if (-1 == it_list->token_id)
 			args.push_back(it_list->word);
 		else if (TK_DIRECTIVE_END == it_list->token_id)
-			return (TK_DIRECTIVE_END);
+			return TK_DIRECTIVE_END;
 		else if (TK_BLOCK_CLOSE == it_list->token_id)
-			return (TK_BLOCK_CLOSE);
+			return TK_BLOCK_CLOSE;
 		if (it_list != it_end)
 			++it_list;
 		while (it_list != it_end && _isspace(it_list->token_id))
 			++it_list;
 	}
-	return ('\0');
+	if (it_list == it_end)
+		return '\0';
+	return it_list->token_id;
 }
 
 /* Gets instructions (Directives) before token
@@ -58,23 +61,23 @@ static char	_get_directive_args(
  */
 static char	_add_block_instructions(
 	token_deq_t::iterator &it_list,
-	token_deq_t::const_iterator it_end,
-	BlockDirective *curr)
+	const token_deq_t::const_iterator &it_end,
+	DirectiveBlock *context)
 {
-	Directive	*d;
+	int	err_code;
 
 	while (it_list != it_end)
 	{
-		if ('{' == it_list->token_id)
-			return ('{');
-		else if ('}' == it_list->token_id)
-			return ('}');
+		if (TK_BLOCK_OPEN == it_list->token_id)
+			return TK_BLOCK_OPEN;
+		else if (TK_BLOCK_CLOSE == it_list->token_id)
+			return TK_BLOCK_CLOSE;
 		else
 		{
-			d = pr_next_directive(it_list, it_end, curr);
-			if (d && -1 == d->getType())
-				return ('\0');
-			curr->addInstruction(d);
+			DirectiveBlock &d = context->nextInstructionRef();
+			err_code = pr_next_directive(it_list, it_end, context, d);
+			if (err_code)
+				return (err_code);
 		}
 		while (it_list != it_end && _isspace(it_list->token_id))
 			++it_list;
@@ -82,64 +85,98 @@ static char	_add_block_instructions(
 	return ('\0');
 }
 
-/* Gets next directive starting at iterator
- * Sets iterator after last used token
- * Returns new Directive (Directive/BlockDirective)
- * Returns 0 if end
+/* Updates next directive starting at iterator
+ * Sets iterator at current token
+ * Returns 0 if OK
+ * Returns 127 + char code if error
+ * Returns 127 + '{' code if not simple directive
  */
-Directive	*pr_next_directive(
+static int	_next_directive_simple(
 	token_deq_t::iterator &it_list,
-	token_deq_t::const_iterator it_end,
-	Directive *context)
+	const token_deq_t::const_iterator &it_end,
+	DirectiveBlock *context,
+	DirectiveBlock &directive)
 {
-	std::deque<std::string>	args;
+	std::deque<std::string>	&args = directive.getArgsRef();
 	char					curr_token;
 
-	if (0 == context)
-		return (new InvalidDirective(args, context, "null context"));
-	//
 	curr_token = _get_directive_args(it_list, it_end, args);
-	if (';' == curr_token)
-	{
-		++it_list;
-		return (new Directive(args, context));
-	}
+	if (TK_DIRECTIVE_END == curr_token)
+		return 0;
 	if (true == args.empty())
 	{
-		if (it_list == it_end)
-			return (0);
-		else if ('}' == curr_token)
+		if (true == (it_list == it_end))
+			return 0;
+		if (TK_BLOCK_CLOSE == curr_token)
 		{
-			if (true == reinterpret_cast<BlockDirective*>(context)->closeBlock())
-				return (0);
+			if (context->closeBlock())
+				return PR_ERRDBADTOKEN + curr_token;
 			else
-				return (new InvalidDirective(args, context, "unexpected } token, no arguments"));
+				return 0;
 		}
 	}
-	else if ((it_list == it_end) || ('}' == curr_token))
-		return (new InvalidDirective(args, context, "bad directive"));
-	else if ('{' == it_list->token_id)
-		++it_list;
-	else if (false == args.empty())
-		return (new InvalidDirective(args, context, "missing expected ; token"));
-	//
-	BlockDirective			*new_block;
+	else if (it_list == it_end || TK_BLOCK_CLOSE == curr_token)
+		return PR_ERRDNOTCLOSED;
+	else if (TK_BLOCK_OPEN == curr_token)
+		return PR_ERRDBADTOKEN + TK_BLOCK_OPEN;
+	return PR_ERRDSIMPLE;
+}
 
-	if (true == args.empty())
-		return (new InvalidDirective(args, context, "block directive missing name"));
-	new_block = new BlockDirective(args, context);
-	new_block->openBlock();
-	curr_token = _add_block_instructions(it_list, it_end, new_block);
-	if ('}' == curr_token)
+/* Updates next directive starting at iterator
+ * Sets iterator at current token
+ * Returns 0 if end
+ */
+static int	_next_directive_block(
+	token_deq_t::iterator &it_list,
+	const token_deq_t::const_iterator &it_end,
+	DirectiveBlock &next_directive)
+{
+	if (true == next_directive.getArgs().empty())
+		return PR_ERRDBNOARGS;
+	if (next_directive.openBlock())
+		return PR_ERRDOPENFAIL;
+	if (TK_BLOCK_CLOSE == _add_block_instructions(it_list, it_end, &next_directive))
+		return (0);
+	return PR_ERRDNOTCLOSED;
+}
+
+/* Gets next directive starting at iterator
+ * Sets iterator after at last used token
+ * context cannot be NULL
+ */
+int	pr_next_directive(
+	token_deq_t::iterator &it_list,
+	const token_deq_t::const_iterator &it_end,
+	DirectiveBlock *context,
+	DirectiveBlock &next_directive)
+{
+	int	err_code;
+
+	if (0 == context)
+		return PR_ERRDNOCONTEXT;
+	next_directive.setContext(context);
+	err_code = _next_directive_simple(it_list, it_end, context, next_directive);
+	if (0 == err_code)
 	{
+		next_directive.setType(PR_DIR_TYPE_SIMPLE);
+		if (it_end != it_list)
+			++it_list;
+		return 0;
+	}
+	else if ((PR_ERRDBADTOKEN + TK_BLOCK_OPEN) != err_code)
+	{
+		next_directive.setType(-1);
+		return err_code;
+	}
+	if (it_end != it_list)
 		++it_list;
-		return (new_block);
-	}
-	if (false == new_block->getInstructions().empty())
+	if (0 == _next_directive_block(it_list, it_end, next_directive))
 	{
-		delete new_block;
-		return (new InvalidDirective(args, context, "missing expected } token"));
+		next_directive.setType(PR_DIR_TYPE_BLOCK);
+		if (it_end != it_list)
+			++it_list;
+		return 0;
 	}
-	delete new_block;
-	return (new InvalidDirective(args, context, "missing expected } token, no instructions"));
+	next_directive.setType(-1);
+	return PR_ERRDBLOCK;
 }

@@ -6,7 +6,7 @@
 /*   By: jerperez <jerperez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/03 15:20:49 by jerperez          #+#    #+#             */
-/*   Updated: 2024/09/09 15:39:32 by jerperez         ###   ########.fr       */
+/*   Updated: 2024/09/19 16:41:54 by jerperez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,6 @@
 
 #include <string>
 #include <deque>
-#include <iostream>
 #include <fstream>
 
 #define TK_SPACE_NEWLINE	'\n'
@@ -27,8 +26,7 @@
 #define	TK_BLOCK_OPEN		'{'
 #define	TK_BLOCK_CLOSE		'}'
 #define	TK_METACHAR			TK_SPACE";{}"
-
-#define	TK_CHAR
+#define	TK_ERRQUOTE			127
 
 typedef struct s_token
 {

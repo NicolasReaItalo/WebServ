@@ -5,7 +5,7 @@
 int Server::ServerStart()
 {
     list_size = servers.size();
-    std::list<ServerConfig>::iterator it = servers.begin();
+    std::list<ConfigServer>::iterator it = servers.begin();
 
     //create the epoll
     epoll_fd = epoll_create1(0);

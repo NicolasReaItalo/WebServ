@@ -6,7 +6,7 @@
 /*   By: jerperez <jerperez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/03 15:21:14 by jerperez          #+#    #+#             */
-/*   Updated: 2024/09/09 17:12:55 by jerperez         ###   ########.fr       */
+/*   Updated: 2024/09/19 16:44:01 by jerperez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,10 +92,10 @@ static int	_add_token_quote(std::string line, token_deq_t &list, std::string &wo
 		else if (TK_COMMENT == *quote_char)
 		{
 			*quote_char = 0;
-			return (0);
+			return 0;
 		}
 		else
-			return (0xBADC0DE);
+			return 0xBADC0DE;
 	}
 	if (TK_COMMENT == *quote_char)
 		*quote_char = 0;
@@ -103,7 +103,7 @@ static int	_add_token_quote(std::string line, token_deq_t &list, std::string &wo
 		_add_c_to_token(TK_SPACE_NEWLINE, quote_char, word, list);
 	else
 		word += '\n';
-	return (0);
+	return 0;
 }
 
 /* Tokenizes file
@@ -120,8 +120,8 @@ int	tk_tokenize(std::fstream &input_file, token_deq_t &list)
 	while (std::getline(input_file, line) && 0 == errcode)
 		errcode = _add_token_quote(line, list, word, &quote_char);
 	if (errcode)
-		return (errcode);
+		return errcode;
 	else if (quote_char)
-		return (1);
-	return (0);
+		return TK_ERRQUOTE + quote_char;
+	return 0;
 }
