@@ -6,7 +6,7 @@
 /*   By: nrea <nrea@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 10:17:49 by nrea              #+#    #+#             */
-/*   Updated: 2024/09/19 11:02:53 by nrea             ###   ########.fr       */
+/*   Updated: 2024/09/20 12:45:31 by nrea             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,75 +28,24 @@ Logger::Logger(int level):_level(level)
 	_level_colors[LVL_DEBUG] = DEBUG_CLR;
 	_level_colors[LVL_INFO] = INFO_CLR;
 	_level_colors[LVL_ERROR] = ERROR_CLR;
+	_level_str[LVL_DEBUG] = "[DEBUG]";
+	_level_str[LVL_INFO] =  "[INFO] ";
+	_level_str[LVL_ERROR] = "[ERROR]";
+
 }
 
 Logger::~Logger()
 {
 }
 
-void	Logger::log(int level, std::string msg)
+void	Logger::log(int level, std::ostringstream &oss)
 {
 	if (level >= _level)
 	{
 		std::cout<< _level_colors[level]<<" ";
+		std::cout<< _level_str[level]<<" ";
 		std::cout<< timestamp() << " ";
-		std::cout<< msg << " ";
+		std::cout<< oss.str() << " ";
 		std::cout<<CLR_RST<<std::endl;
 	}
 }
-
-void	Logger::log(int level, std::string msg, std::size_t value)
-{
-	if (level >= _level)
-	{
-		std::cout<< _level_colors[level]<<" ";
-		std::cout<< timestamp() << " ";
-		std::cout<< msg << " ";
-		std::cout<< value << " ";
-		std::cout<<CLR_RST<<std::endl;
-	}
-
-}
-
-void	Logger::log(int level, std::string msg1, std::string msg2)
-{
-	if (level >= _level)
-	{
-		std::cout<< _level_colors[level]<<" ";
-		std::cout<< timestamp() << " ";
-		std::cout<< msg1 << " ";
-		std::cout<< msg2 << " ";
-		std::cout<<CLR_RST<<std::endl;
-	}
-}
-void	Logger::log(int level, std::string msg1, std::string msg2, std::string msg3)
-{
-	if (level >= _level)
-	{
-		std::cout<< _level_colors[level]<<" ";
-		std::cout<< timestamp() << " ";
-		std::cout<< msg1 << " ";
-		std::cout<< msg2 << " ";
-		std::cout<< msg3 << " ";
-		std::cout<<CLR_RST<<std::endl;
-	}
-}
-
-void	Logger::log(int level, std::string msg1, std::string msg2, std::string msg3,  std::string msg4)
-{
-	if (level >= _level)
-	{
-		std::cout<< _level_colors[level]<<" ";
-		std::cout<< timestamp() << " ";
-		std::cout<< msg1 << " ";
-		std::cout<< msg2 << " ";
-		std::cout<< msg3 << " ";
-		std::cout<< msg4 << " ";
-		std::cout<<CLR_RST<<std::endl;
-	}
-}
-
-// Logger::Logger(int level, std::string file_name):_level(level),_file_name(file_name)
-// {
-
-// }

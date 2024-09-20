@@ -6,7 +6,7 @@
 /*   By: nrea <nrea@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/18 13:44:25 by nrea              #+#    #+#             */
-/*   Updated: 2024/09/20 10:32:23 by nrea             ###   ########.fr       */
+/*   Updated: 2024/09/20 13:23:33 by nrea             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,4 +61,6 @@ std::string  convert_uri(std::string const &uri);
 std::vector<std::string> splitString(const std::string& str, std::string delimiter);
 
 bool matchContentTypes(std::string file_content_type, std::string accepted_types);
+
+std::string str_todo(int todo);
 #endif

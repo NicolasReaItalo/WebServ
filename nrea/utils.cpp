@@ -6,7 +6,7 @@
 /*   By: nrea <nrea@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/18 14:15:21 by nrea              #+#    #+#             */
-/*   Updated: 2024/09/20 10:32:11 by nrea             ###   ########.fr       */
+/*   Updated: 2024/09/20 13:23:14 by nrea             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,18 @@ std::vector<std::string> splitString(const std::string& str, std::string delimit
 	return tokens;
 }
 
-
+std::string str_todo(int todo)
+{
+	std::map<int, std::string> m;
+	m[ERROR] = "ERROR";
+	m[GET] = "GET";
+	m[POST] = "POST";
+	m[AUTOINDEX] = "AUTOINDEX";
+	m[DELETE] = "DELETE";
+	m[GET_CGI] = "GET_CGI";
+	m[POST_CGI] = "POST_CGI";
+	return m[todo];
+}
 
 
 bool matchContentTypes(std::string file_content_type, std::string accepted_types)
@@ -37,7 +48,7 @@ bool matchContentTypes(std::string file_content_type, std::string accepted_types
 		return true;
 	if (accepted_types.find(file_content_type) != std::string::npos)
 		return true;
-	webservLogger.log(LVL_DEBUG, "HeaderParser not matching accepted  :", file_content_type);
+	//webservLogger.log(LVL_DEBUG, "HeaderParser not matching accepted  :", file_content_type);
 	return false;
 }
 
