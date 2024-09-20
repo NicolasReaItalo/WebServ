@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   headerParser.cpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jerperez <jerperez@student.42.fr>          +#+  +:+       +#+        */
+/*   By: nrea <nrea@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/12 16:20:48 by nrea              #+#    #+#             */
-/*   Updated: 2024/09/20 14:33:56 by jerperez         ###   ########.fr       */
+/*   Updated: 2024/09/20 15:31:20 by nrea             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -128,10 +128,10 @@ catch(const std::runtime_error& e)
 // bon server de config et on set sa location!
 	// ON RECUPERE LE BON SERVER
 	//webservLogger.log(LVL_DEBUG,"HeaderParser:: looking up for the serverConfig:",interface.first, interface.second, header_attributes["Host"]);
-	const ConfigServer * serverconfig = find_server(interface,header_attributes["Host"]);
+	const ConfigServer * serverconfig = findServer(interface,header_attributes["Host"]);
 	{
 	std::ostringstream oss;
-	oss <<"[HeaderParser] find_server() ==> "<<serverconfig;
+	oss <<"[HeaderParser] findServer() ==> "<<serverconfig;
 	webservLogger.log(LVL_DEBUG, oss);
 	}
 //TODO TODO TODO
