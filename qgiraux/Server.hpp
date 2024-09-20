@@ -81,6 +81,9 @@ class Server
         std::string get_mime_type(const std::string &uri);
         header_infos headerParser(std::string rawBuffer, std::pair<std::string, std::string> interface);
 		const ServerConfig * find_server(std::pair<std::string, std::string> interface, std::string host);
+		header_infos handle_get(header_infos &response, ServerConfig  & config,int locationIndex,std::map<std::string, std::string> header_attributes);
+		header_infos serve_regular_file(header_infos &response, ServerConfig  & config,int locationIndex,std::map<std::string, std::string> header_attributes);
+
         void chunked_post(int fd, std::string tmp);
         void send_chunk(int fd, int i, header_infos header);
         void send_chunk(int fd, int i);

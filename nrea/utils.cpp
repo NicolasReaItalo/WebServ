@@ -6,7 +6,7 @@
 /*   By: nrea <nrea@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/18 14:15:21 by nrea              #+#    #+#             */
-/*   Updated: 2024/09/19 12:01:04 by nrea             ###   ########.fr       */
+/*   Updated: 2024/09/20 10:32:11 by nrea             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,31 +29,7 @@ std::vector<std::string> splitString(const std::string& str, std::string delimit
 }
 
 
-std::string retrieve_mime_type(const std::string &uri)  /// temporaire a refactorer cf  issue #5!!!
-{
 
-	std::map<std::string, std::string> mimeList;
-	mimeList[".html"]   = "text/html";
-    mimeList[".htm"]    = "text/html";
-    mimeList[".png"]    = "image/png";
-    mimeList[".jpg"]    = "image/jpg";
-    mimeList[".jpeg"]   = "image/jpeg";
-    mimeList[".gif"]    = "image/gif";
-    mimeList[".ico"]    = "image/ico";
-    mimeList[".css"]    = "text/css";
-    mimeList[".js"]     = "application/javascript";
-    mimeList[".json"]   = "application/json";
-    mimeList[".pdf"]    = "application/pdf";
-    mimeList[".css"]    = "text/css";
-    std::string::size_type idx = uri.rfind('.');
-    if (idx != std::string::npos) {
-        std::string extension = uri.substr(idx);
-        if (mimeList.find(extension) != mimeList.end())
-            return mimeList[extension];
-        else return "";
-    }
-    return "application/octet-stream"; // Default for binary data
-}
 
 bool matchContentTypes(std::string file_content_type, std::string accepted_types)
 {
@@ -65,7 +41,7 @@ bool matchContentTypes(std::string file_content_type, std::string accepted_types
 	return false;
 }
 
-//remove special characters
+//remove special characters  --> A completer
 std::string  convert_uri(std::string const &uri)
 {
 	std::string converted = uri;
@@ -151,14 +127,25 @@ bool contains_forbbiden(std::string const &uri)
 }
 
 
-long GetFileSize(std::string filename)
+long getFileSize(std::string filename)
 {
     struct stat stat_buf;
     int rc = stat(filename.c_str(), &stat_buf);
     return rc == 0 ? stat_buf.st_size : -1;
 }
 
-
+std::string getFileExtension(std::string uri)
+{
+	std::string wrong = "/."; //if found around '.' ==> not an extension
+	std::string extension = "";
+	size_t dot = uri.rfind(".");
+	if ( dot != std::string::npos && dot && wrong.find(uri[dot-1]) == std::string::npos &&
+		wrong.find(uri[dot+1]) == std::string::npos ) // a refactoriser pour eviter overflow dans le cas ou uri se finit par '.'
+	{
+		extension = uri.substr(dot + 1, uri.size() - dot - 1 );
+	}
+	return extension;
+}
 
 bool contains_only_numeric(std::string str)
 {

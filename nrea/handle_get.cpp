@@ -6,7 +6,7 @@
 /*   By: nrea <nrea@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/18 13:27:16 by nrea              #+#    #+#             */
-/*   Updated: 2024/09/19 16:17:01 by nrea             ###   ########.fr       */
+/*   Updated: 2024/09/20 10:40:55 by nrea             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,20 +39,9 @@ bool dummy_get_autoindex_status(ServerConfig &serverconfig, int locationIndex)
 }
 
 /*===================================================================================================*/
-std::string get_extension(std::string uri)
-{
-	std::string wrong = "/."; //if found around '.' ==> not an extension
-	std::string extension = "";
-	size_t dot = uri.rfind(".");
-	if ( dot != std::string::npos && dot && wrong.find(uri[dot-1]) == std::string::npos &&
-		wrong.find(uri[dot+1]) == std::string::npos ) // a refactoriser pour eviter overflow dans le cas ou uri se finit par '.'
-	{
-		extension = uri.substr(dot + 1, uri.size() - dot - 1 );
-	}
-	return extension;
-}
 
-header_infos serve_regular_file
+
+header_infos Server::serve_regular_file
 (header_infos &response, ServerConfig  & config,int locationIndex,std::map<std::string, std::string> header_attributes)
 {
 	struct stat stat_buf;
@@ -77,14 +66,14 @@ header_infos serve_regular_file
 
 	//==========TODO TODO TODO TODO==========================================================
 	// On checke si le fichier est un CGI SI OUI// TODO =======> nouvelle branche
-	std::string extension = get_extension(response.ressourcePath);
-	webservLogger.log(LVL_DEBUG, "extension found [", extension,"]");
+	std::string extension = getFileExtension(response.ressourcePath);
+	webservLogger.log(LVL_DEBUG, "HeaderParser:: extension found [", extension,"]");
 
 
 	// LA RESSOURCE N'EST PAS UN CGI
 	//=======================================================================================
 	//ON Ddetermine sa taille
-	response.bodySize = GetFileSize(response.ressourcePath);
+	response.bodySize = getFileSize(response.ressourcePath);
 
 
 	///////TODO  DETERMINATION DU CHUNK!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -108,7 +97,7 @@ header_infos serve_regular_file
 	response.cgi_pid = 0;
 
 	// on DETERMINE LE  MIME TYPE DE LA RESSOURCE ==> a deplacer
-	response.contentType = retrieve_mime_type(response.ressourcePath);
+	response.contentType = get_mime_type(response.ressourcePath);
 
 	//On verifie que le content-type est autorise
 	if (!matchContentTypes(response.contentType, header_attributes["Accept"]))
@@ -119,7 +108,7 @@ header_infos serve_regular_file
 }
 
 
-header_infos handle_get
+header_infos Server::handle_get
 (header_infos &response, ServerConfig  & config,int locationIndex,std::map<std::string, std::string> header_attributes)
 {
 	struct stat stat_buf;
@@ -131,7 +120,7 @@ header_infos handle_get
 	//ON RECUPERE LE PATH COMPLET VERS LA RESSOURCE
 	// response.ressourcePath = config.getFullPath(header_attributes["URI"], locationIndex);
 	response.ressourcePath  = dummy_get_fullPath(config, locationIndex, header_attributes["URI"]);
-	webservLogger.log(LVL_DEBUG, "full ressource path:", response.ressourcePath );
+	webservLogger.log(LVL_DEBUG, "HeaderParser::full ressource path:", response.ressourcePath );
 
 // test access
 	ret = stat(response.ressourcePath.c_str(),  &stat_buf);

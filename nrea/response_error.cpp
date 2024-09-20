@@ -6,7 +6,7 @@
 /*   By: nrea <nrea@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 10:13:31 by nrea              #+#    #+#             */
-/*   Updated: 2024/09/19 16:15:52 by nrea             ###   ########.fr       */
+/*   Updated: 2024/09/20 09:58:01 by nrea             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ header_infos response_error(std::string error_code, ServerConfig  & config,int l
 	response.contentType = "text/html";
 	// response.ressourcePath =  config.getCustomErrorPage(locationIndex,std::atoi(error_code.c_str())); //config.getCustomErrorPage(locationIndex, error_code);
 	response.ressourcePath = "./html-files/generic-error.html"; // pour TEST
-	response.bodySize = GetFileSize(response.ressourcePath.c_str());
+	response.bodySize = getFileSize(response.ressourcePath.c_str());
 	response.configServer = &config;
 	response.locationIndex = locationIndex;
 
