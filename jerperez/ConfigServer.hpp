@@ -6,7 +6,7 @@
 /*   By: jerperez <jerperez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 13:29:48 by jerperez          #+#    #+#             */
-/*   Updated: 2024/09/20 15:18:17 by jerperez         ###   ########.fr       */
+/*   Updated: 2024/09/20 17:04:23 by jerperez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ class ConfigServer : public ConfigBlock
 		//
 		int				_addLocation(DirectiveBlock* block_directive);
 		int				_fillAll(void);
-		_map_para_t		&_getDirectiveParametersRef(void); //
+		_map_para_t		&_getDirectiveParametersRef(void);
 		//
 		void			_debug_print(void);
 	protected:
@@ -57,6 +57,7 @@ class ConfigServer : public ConfigBlock
 		bool				serverCmp(const std::string &address, const std::string &port) const;
 		bool				serverCmp(const std::string &address, const std::string &port, const std::string &server_name) const;
 	 	bool				inDirectives(int location, std::string directive_name);
+		bool				inIODirectives(int location, std::string directive_name);
 		const std::string 	&getDirectiveParameter(int location, std::string directive_name);
 		bool				inDirectiveParameters(int location, std::string directive_name, std::string parameter);
 		const parameters_t	&getDirectiveParameters(int location, std::string directive_name);

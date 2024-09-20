@@ -6,7 +6,7 @@
 /*   By: jerperez <jerperez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/03 17:54:04 by jerperez          #+#    #+#             */
-/*   Updated: 2024/09/19 16:05:55 by jerperez         ###   ########.fr       */
+/*   Updated: 2024/09/20 16:10:39 by jerperez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,9 +21,22 @@
 
 /* returns true if space
  */
-static bool	_isspace(char c)
+// static bool	_isspace(char c)
+// {
+// 	return NULL != (char *)(std::strchr(TK_SPACE, c));
+// }
+
+/* skip space
+ *
+ */
+static void	_skip_space(token_deq_t::iterator &it_list,
+	const token_deq_t::const_iterator &it_end)
 {
-	return NULL != (char *)(std::strchr(TK_SPACE, c));
+	while ((it_list != it_end) \
+		&& NULL != (char *)(std::strchr(TK_SPACE, it_list->token_id)))
+	{
+		++it_list;
+	}
 }
 
 /* Gets arguments (words) before token
@@ -35,8 +48,7 @@ static char	_get_directive_args(
 	const token_deq_t::const_iterator &it_end,
 	std::deque<std::string> &args)
 {
-	while (it_list != it_end && _isspace(it_list->token_id))
-		++it_list;
+	_skip_space(it_list, it_end);
 	while (it_list != it_end && TK_BLOCK_OPEN != it_list->token_id)
 	{
 		if (-1 == it_list->token_id)
@@ -47,8 +59,7 @@ static char	_get_directive_args(
 			return TK_BLOCK_CLOSE;
 		if (it_list != it_end)
 			++it_list;
-		while (it_list != it_end && _isspace(it_list->token_id))
-			++it_list;
+		_skip_space(it_list, it_end);
 	}
 	if (it_list == it_end)
 		return '\0';
@@ -79,8 +90,7 @@ static char	_add_block_instructions(
 			if (err_code)
 				return (err_code);
 		}
-		while (it_list != it_end && _isspace(it_list->token_id))
-			++it_list;
+		_skip_space(it_list, it_end);
 	}
 	return ('\0');
 }
@@ -159,8 +169,9 @@ int	pr_next_directive(
 	if (0 == err_code)
 	{
 		next_directive.setType(PR_DIR_TYPE_SIMPLE);
-		if (it_end != it_list)
+		if (it_list != it_end)
 			++it_list;
+		_skip_space(it_list, it_end);
 		return 0;
 	}
 	else if ((PR_ERRDBADTOKEN + TK_BLOCK_OPEN) != err_code)
@@ -173,8 +184,9 @@ int	pr_next_directive(
 	if (0 == _next_directive_block(it_list, it_end, next_directive))
 	{
 		next_directive.setType(PR_DIR_TYPE_BLOCK);
-		if (it_end != it_list)
+		if (it_list != it_end)
 			++it_list;
+		_skip_space(it_list, it_end);
 		return 0;
 	}
 	next_directive.setType(-1);

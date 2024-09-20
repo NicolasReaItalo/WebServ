@@ -6,7 +6,7 @@
 /*   By: jerperez <jerperez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 16:02:57 by jerperez          #+#    #+#             */
-/*   Updated: 2024/09/20 14:56:19 by jerperez         ###   ########.fr       */
+/*   Updated: 2024/09/20 16:12:35 by jerperez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -190,10 +190,9 @@ int	pr_parse_config(token_deq_t &list, std::list<ConfigServer> &servers)
 			_print_dir(next_directive); //
 		ConfigServer	server;
 		server.setKnownDirectives(&knownDirectives);
-		if (server.addServer(&next_directive))
-			return (0); //WARNING
-		// if (server._debugPlaceholder())
-		// 	return (1); //
+		err_code = server.addServer(&next_directive);
+		if (err_code)
+			return (err_code); //_print_error_code
 		if (CF_DEBUG)
 			_debug_test_server(server); //
 		servers.push_back(server);
