@@ -6,7 +6,7 @@
 /*   By: nrea <nrea@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/12 16:20:48 by nrea              #+#    #+#             */
-/*   Updated: 2024/09/20 16:56:30 by nrea             ###   ########.fr       */
+/*   Updated: 2024/09/20 19:56:19 by nrea             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,13 @@ bool dummy_isAuthorized(ConfigServer const *serverconfig, int locationIndex, std
 	return true;
 }
 
+bool dummy_isReturn(ConfigServer const *serverconfig, int locationIndex, std::string method)
+{
+	(void) serverconfig;
+	(void) method;
+	(void) locationIndex;
+	return true;
+}
 
 /*split all the attributes of the raw header buffer and returns a map of all attributes
 this function can throw a RuntimeError("bad request") exception*/
@@ -28,8 +35,6 @@ std::map<std::string, std::string> split_buffer(std::string rawBuffer)
 {
 	std::map<std::string, std::string> header_attributes;
 	std::vector<std::string> splitted_buffer;
-
-	//webservLogger.log(LVL_DEBUG, "HeaderParser :: split_buffer()");
 
 	splitted_buffer = splitString(rawBuffer, "\r\n");
 	if (splitted_buffer.size() < 2)
@@ -57,8 +62,6 @@ std::map<std::string, std::string> split_buffer(std::string rawBuffer)
 	return header_attributes;
 }
 
-
-
 header_infos Server::headerParser(std::string rawBuffer, std::pair<std::string, std::string> interface)
 {
 	header_infos response;
@@ -72,19 +75,19 @@ header_infos Server::headerParser(std::string rawBuffer, std::pair<std::string, 
 	webservLogger.log(LVL_INFO, oss);
 	}
 
-try
-{
-	header_attributes = split_buffer(rawBuffer);
-}
-catch(const std::runtime_error& e)
-{
+	try
 	{
-	std::ostringstream oss;
-	oss <<"[HeaderParser] The request header is not properly formatted";
-	webservLogger.log(LVL_DEBUG, oss);
+		header_attributes = split_buffer(rawBuffer);
 	}
-	return response_error(HTTP_STATUS_BAD_REQUEST, defaultconfig, locationIndex);
-}
+	catch(const std::runtime_error& e)
+	{
+		{
+		std::ostringstream oss;
+		oss <<"[HeaderParser] The request header is not properly formatted";
+		webservLogger.log(LVL_DEBUG, oss);
+		}
+		return response_error(HTTP_STATUS_BAD_REQUEST, defaultconfig, locationIndex);
+	}
 
 // ON VERIFIE QUE HOST EST PRESENT
 	std::map<std::string,std::string>::iterator h_it = header_attributes.find("Host");
@@ -196,6 +199,18 @@ catch(const std::runtime_error& e)
 	std::ostringstream oss;
 	oss <<"[HeaderParser] get_location("<< header_attributes["URI"]<<") ==> "<<locationIndex;
 	webservLogger.log(LVL_DEBUG, oss);
+	}
+
+//TODO TODO TODO
+//	// Si il existe un return dans la location on redirige directement
+	if (serverconfig->inDirectives(locationIndex,"return"))
+	{
+		ConfigBlock::parameters_t  test = serverconfig->getDirectiveParameters(locationIndex, "return");
+		{
+		std::ostringstream oss;
+		oss <<"[HeaderParser] return found  "<<test.front()<< " | "<< test.back() ;
+		webservLogger.log(LVL_DEBUG, oss);
+		}
 	}
 
 // // ON VERIFIE QUE LA METHODE EST AUTORISEE ------------------------------- DESACTIVE en attendant serverconfig

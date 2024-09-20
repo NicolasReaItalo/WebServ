@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   headerParser.hpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jerperez <jerperez@student.42.fr>          +#+  +:+       +#+        */
+/*   By: nrea <nrea@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/18 13:44:25 by nrea              #+#    #+#             */
-/*   Updated: 2024/09/20 14:33:56 by jerperez         ###   ########.fr       */
+/*   Updated: 2024/09/20 17:46:45 by nrea             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,9 +47,6 @@
 extern Logger webservLogger;
 
 
-header_infos handle_get(header_infos &response, ConfigServer  & config,int locationIndex,std::map<std::string, std::string> header_attributes);
-// header_infos handle_post(header_infos &response, ConfigServer  & config,int locationIndex,std::map<std::string, std::string> header_attributes);
-// header_infos handle_delete(header_infos &response, ConfigServer  & config,int locationIndex,std::map<std::string, std::string> header_attributes);
 header_infos response_error(std::string error_code, ConfigServer  & config,int locationIndex);
 header_infos response_autoindex(ConfigServer &config, int locationIndex, header_infos response);
 bool contains_only_numeric(std::string str);

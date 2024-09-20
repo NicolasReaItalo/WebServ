@@ -6,7 +6,7 @@
 /*   By: nrea <nrea@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/18 13:27:16 by nrea              #+#    #+#             */
-/*   Updated: 2024/09/20 16:53:37 by nrea             ###   ########.fr       */
+/*   Updated: 2024/09/20 19:42:30 by nrea             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,6 @@ const std::list<std::string> dummy_get_indexes(ConfigServer &serverconfig, int l
 	return indexes;
 }
 
-
 bool dummy_get_autoindex_status(ConfigServer &serverconfig, int locationIndex)
 {
 	(void) serverconfig;
@@ -50,41 +49,33 @@ unsigned long dummy_get_client_max_body_size(ConfigServer &serverconfig, int loc
 header_infos handleFileErrror(int error, header_infos &response, ConfigServer  & config,int locationIndex)
 {
 		{
-		std::ostringstream oss;
-		oss <<"[handleFileErrror]  "<<error ;
-		webservLogger.log(LVL_DEBUG, oss);
-
-
+			std::ostringstream oss;
+			oss <<"[handleFileErrror]  "<<error ;
+			webservLogger.log(LVL_DEBUG, oss);
 		}
 	if (ENOENT == error)
 	{
 		{
-		std::ostringstream oss;
-		oss <<"[handle_get] The ressource "<<response.ressourcePath <<" does not exist";
-		webservLogger.log(LVL_DEBUG, oss);
-
-
+			std::ostringstream oss;
+			oss <<"[handle_get] The ressource "<<response.ressourcePath <<" does not exist";
+			webservLogger.log(LVL_DEBUG, oss);
 		}
 		return response_error(HTTP_STATUS_NOT_FOUND, config, locationIndex);
 	}
 	else if (EACCES == error)
 	{
 		{
-		std::ostringstream oss;
-		oss <<"[handle_get] The ressource "<<response.ressourcePath <<" is forbidden";
-		webservLogger.log(LVL_DEBUG, oss);
-
-
+			std::ostringstream oss;
+			oss <<"[handle_get] The ressource "<<response.ressourcePath <<" is forbidden";
+			webservLogger.log(LVL_DEBUG, oss);
 		}
 		return  response_error(HTTP_STATUS_FORBIDDEN, config, locationIndex);
 	}
 
 	{
-	std::ostringstream oss;
-	oss <<"[handle_get] An internal error has occured";
-	webservLogger.log(LVL_DEBUG, oss);
-
-
+		std::ostringstream oss;
+		oss <<"[handle_get] An internal error has occured";
+		webservLogger.log(LVL_DEBUG, oss);
 	}
 	return  response_error(HTTP_STATUS_INTERNAL_SERVER_ERROR, config, locationIndex);
 }
@@ -100,16 +91,14 @@ header_infos Server::serve_regular_file
 	ret = stat(response.ressourcePath.c_str(),  &stat_buf);
 	if (ret != 0)
 		return handleFileErrror(errno,response,config, locationIndex);
-	//on checke si le fichier est regulier et accesible en lecture
+	//on checke si le fichier est regulier et accessible en lecture
 	//sinon on retourne erreur 403
 	if (!S_ISREG(stat_buf.st_mode) || access(response.ressourcePath.c_str(), R_OK))
 	{
 		{
-		std::ostringstream oss;
-		oss <<"[serve_regular_file] "<<response.ressourcePath <<" is not a redable regular file";
-		webservLogger.log(LVL_DEBUG, oss);
-
-
+			std::ostringstream oss;
+			oss <<"[serve_regular_file] "<<response.ressourcePath <<" is not a readable regular file";
+			webservLogger.log(LVL_DEBUG, oss);
 		}
 		return response_error(HTTP_STATUS_FORBIDDEN, config, locationIndex);
 	}
@@ -119,7 +108,6 @@ header_infos Server::serve_regular_file
 	std::string extension = getFileExtension(response.ressourcePath);
 	//webservLogger.log(LVL_DEBUG, "HeaderParser:: extension found [", extension,"]");
 
-
 	// LA RESSOURCE N'EST PAS UN CGI
 	//=======================================================================================
 	//ON Ddetermine sa taille
@@ -128,7 +116,6 @@ header_infos Server::serve_regular_file
 	///////TODO  DETERMINATION DU CHUNK!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	//Si la taille est trop grande on passe en chunked; //TODO
 	// --------------------------------------
-
 
 	if (response.bodySize > dummy_get_client_max_body_size(config, locationIndex))
 		response.chunked = true;
@@ -170,14 +157,14 @@ header_infos Server::handle_get
 
 	response.toDo = GET;
 
+
 	////////TODO !!!!!
 	//ON RECUPERE LE PATH COMPLET VERS LA RESSOURCE
 	// response.ressourcePath = config.getFullPath(header_attributes["URI"], locationIndex);
 	response.ressourcePath  = dummy_get_fullPath(config, locationIndex, header_attributes["URI"]);
-	//webservLogger.log(LVL_DEBUG, "HeaderParser::full ressource path:", response.ressourcePath );
 	{
 	std::ostringstream oss;
-	oss <<"[HeaderParser] fullpath: "<<response.ressourcePath;
+	oss <<"[HeaderParser] retrieving full path from "<<"["<<header_attributes["URI"] <<"]-->["<<response.ressourcePath<<"]";
 	webservLogger.log(LVL_DEBUG, oss);
 	}
 
