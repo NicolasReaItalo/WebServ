@@ -6,11 +6,11 @@
 /*   By: jerperez <jerperez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 16:02:57 by jerperez          #+#    #+#             */
-/*   Updated: 2024/09/19 16:05:55 by jerperez         ###   ########.fr       */
+/*   Updated: 2024/09/20 11:56:57 by jerperez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "ServerConfig.hpp"
+#include "ConfigServer.hpp"
 #include "DirectiveBlock.hpp"
 #include "Directive.hpp"
 #include "tokenizer.hpp"
@@ -18,6 +18,9 @@
 
 #define PR_KNOWN_DIRECTIVES "autoindex alias error_page index limit listen \
 cgi client_body_path client_max_body_size location root server_name"
+
+
+#define	CF_DEBUG 1
 
 // DEBUG
 #include <iostream>
@@ -67,7 +70,7 @@ static void	_print_dir(DirectiveBlock d)
 // 	//if (args.empty())
 // }
 
-static void	_pushKnownDirectives(std::list<std::string>	&knownDirectives)
+static void	_pushKnownDirectives(ConfigBlock::parameters_t	&knownDirectives)
 {
 	if (false == knownDirectives.empty())
 		return ;
@@ -79,7 +82,7 @@ static void	_pushKnownDirectives(std::list<std::string>	&knownDirectives)
 }
 
 
-static void	_debug_test_server(ServerConfig &server)
+static void	_debug_test_server(ConfigServer &server)
 {
 	std::string	uri;
 	int			location;
@@ -171,30 +174,26 @@ int	pr_parse_config(token_deq_t &list)
 	DirectiveBlock				context;
 	token_deq_t::iterator	it_curr = list.begin();
 	token_deq_t::const_iterator	it_end = list.end();
-	std::list<std::string>	knownDirectives;
+	ConfigBlock::parameters_t	knownDirectives;
 	int						err_code;
 
-	context.setType(0); //
-	//std::cout << __FILE__ << ":" << __LINE__ << ": context type: " << context.getType() << std::endl;//
+	context.setType(0);
 	_pushKnownDirectives(knownDirectives);
 	err_code = 0;
 	while (0 == err_code && it_curr != it_end)
 	{
 		DirectiveBlock			next_directive;
 		err_code = pr_next_directive(it_curr, it_end, &context, next_directive);
-		//std::cout << __FILE__ << ":" << __LINE__ << ": context type: " << context.getType() << std::endl;//
-		//std::cout << "pr_parse_config:pr_next_directive done" << (it_curr == it_end) << std::endl; //
 		if (err_code)
 			return (_print_error_code(err_code, it_curr, it_end), err_code); //
-		//std::cout << "_print_dir" << std::endl; //
-		_print_dir(next_directive); //
-		ServerConfig	server;
-		//std::cout << "setKnownDirectives" << std::endl; //
+		if (CF_DEBUG)
+			_print_dir(next_directive); //
+		ConfigServer	server;
 		server.setKnownDirectives(&knownDirectives);
-		//std::cout << "_debugPlaceholder" << std::endl; //
 		if (server._debugPlaceholder())
 			return (1); //
-		_debug_test_server(server); //
+		if (CF_DEBUG)
+			_debug_test_server(server); //
 	}
 	return (0);
 }

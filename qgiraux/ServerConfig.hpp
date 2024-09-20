@@ -6,7 +6,7 @@
 #include <map>
 #include <list>
 
-class ServerConfig
+class ConfigServer
 {
  	public:
 

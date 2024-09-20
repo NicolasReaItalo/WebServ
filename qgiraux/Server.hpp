@@ -9,7 +9,7 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
-#include "ServerConfig.hpp"
+#include "ConfigServer.hpp"
 #include <cerrno>
 #include <cstring>
 #include <unistd.h>
@@ -44,7 +44,7 @@ typedef struct s_header_infos
 	int fd_ressource;
 	int cgi_pid;
 	int locationIndex;
-	class ServerConfig *configServer;
+	class ConfigServer *configServer;
 } header_infos;
 
 class Server
@@ -52,7 +52,7 @@ class Server
     private :
 
         int list_size;
-        std::list<ServerConfig> servers;
+        std::list<ConfigServer> servers;
         std::vector<int> server_fd;
         int epoll_fd, new_socket;
         int nfds;

@@ -6,7 +6,7 @@
 #    By: jerperez <jerperez@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/02/06 10:28:10 by jerperez          #+#    #+#              #
-#    Updated: 2024/09/19 16:05:55 by jerperez         ###   ########.fr        #
+#    Updated: 2024/09/19 17:39:24 by jerperez         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -38,9 +38,9 @@ SRCS_JERPEREZ_FILES	= tokenizer.cpp\
 			Directive.cpp\
 			unquote.cpp\
 			server_config.cpp\
-			ServerConfig.cpp\
-			BlockSimpleConfig.cpp\
-			LocationConfig.cpp\
+			ConfigServer.cpp\
+			ConfigBlock.cpp\
+			ConfigLocation.cpp\
 
 SRCS_JERPEREZ	= 	$(addprefix jerperez/, $(SRCS_JERPEREZ_FILES))
 

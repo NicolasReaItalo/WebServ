@@ -6,7 +6,7 @@
 /*   By: jerperez <jerperez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/12 16:20:48 by nrea              #+#    #+#             */
-/*   Updated: 2024/09/17 11:48:17 by jerperez         ###   ########.fr       */
+/*   Updated: 2024/09/19 17:39:24 by jerperez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@
 #include <algorithm>
 #include <set>
 #include <exception>
-#include "ServerConfig.hpp"
+#include "ConfigServer.hpp"
 #include "Server.hpp"
 #include <sys/stat.h>
 #include "http_errors.hpp"
@@ -63,11 +63,11 @@
 // 	std::string queryParams;
 // 	int locationIndex;
 // 	int fd_ressource;
-// 	class ServerConfig *configServer;
+// 	class ConfigServer *configServer;
 
 // } header_infos;
 
-// class ServerConfig
+// class ConfigServer
 // {
 //  	public:
 
@@ -107,14 +107,14 @@
 
 // };
 
-// std::string ServerConfig::getCustomErrorPage(int loc, std::string errorCode)
+// std::string ConfigServer::getCustomErrorPage(int loc, std::string errorCode)
 // {
 // 	(void) loc;
 // 	(void) errorCode;
 // 	return std::string("dummy_error.html");
 // }
 
-// bool		ServerConfig::inDirectives(int location, std::string directive_name, std::string parameter)
+// bool		ConfigServer::inDirectives(int location, std::string directive_name, std::string parameter)
 // {
 // 	(void) location;
 
@@ -126,7 +126,7 @@
 // 	return false;
 // }
 
-// std::string		ServerConfig::getFullPath(std::string uri, int location)
+// std::string		ConfigServer::getFullPath(std::string uri, int location)
 // {
 // 	(void) location;
 // 	(void) uri;
@@ -269,16 +269,16 @@ bool contains_only_numeric(std::string str)
 
 
 
-// header_infos handle_get(header_infos &response, ServerConfig  & config,int locationIndex,std::map<std::string, std::string> header_attributes);
-// header_infos handle_post(header_infos &response, ServerConfig  & config,int locationIndex,std::map<std::string, std::string> header_attributes);
-// header_infos handle_delete(header_infos &response, ServerConfig  & config,int locationIndex,std::map<std::string, std::string> header_attributes);
+// header_infos handle_get(header_infos &response, ConfigServer  & config,int locationIndex,std::map<std::string, std::string> header_attributes);
+// header_infos handle_post(header_infos &response, ConfigServer  & config,int locationIndex,std::map<std::string, std::string> header_attributes);
+// header_infos handle_delete(header_infos &response, ConfigServer  & config,int locationIndex,std::map<std::string, std::string> header_attributes);
 
 
 
 
 
 /* */
-header_infos return_error(std::string error_code, ServerConfig  & config,int locationIndex)
+header_infos return_error(std::string error_code, ConfigServer  & config,int locationIndex)
 {
 	header_infos response;
 
@@ -307,7 +307,7 @@ header_infos Server::headerParser(std::string rawBuffer)
 
 // ON RECUPERE LA LOCATION ( CACHE )
 
-	ServerConfig dummy; /////////////////////////////////////pour tests
+	ConfigServer dummy; /////////////////////////////////////pour tests
 	int locationIndex = 0; // dummy config
 
 	splitted_buffer = splitString(rawBuffer, "\r\n");
@@ -429,7 +429,7 @@ header_infos Server::headerParser(std::string rawBuffer)
 
 
 
-// header_infos handle_get(header_infos &response, ServerConfig  & config,int locationIndex,std::map<std::string, std::string> header_attributes)
+// header_infos handle_get(header_infos &response, ConfigServer  & config,int locationIndex,std::map<std::string, std::string> header_attributes)
 // {
 // 	(void) header_attributes;
 // 	//ON RECUPERE LE PATH COMPLET VERS LA RESSOURCE
@@ -444,7 +444,7 @@ header_infos Server::headerParser(std::string rawBuffer)
 
 
 
-// header_infos handle_post(header_infos &response, ServerConfig  & config,int locationIndex,std::map<std::string, std::string> header_attributes)
+// header_infos handle_post(header_infos &response, ConfigServer  & config,int locationIndex,std::map<std::string, std::string> header_attributes)
 // {
 // 	(void) config;
 // 	(void) locationIndex;
@@ -452,7 +452,7 @@ header_infos Server::headerParser(std::string rawBuffer)
 
 // 	return response;
 // }
-// header_infos handle_delete(header_infos &response, ServerConfig  & config,int locationIndex,std::map<std::string, std::string> header_attributes)
+// header_infos handle_delete(header_infos &response, ConfigServer  & config,int locationIndex,std::map<std::string, std::string> header_attributes)
 // {
 // 	(void) config;
 // 	(void) locationIndex;
