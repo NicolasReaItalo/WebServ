@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jerperez <jerperez@student.42.fr>          +#+  +:+       +#+        */
+/*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:49:46 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/09/20 14:33:56 by jerperez         ###   ########.fr       */
+/*   Updated: 2024/09/20 16:29:40 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,7 +81,7 @@ class Server
         std::map<int, header_infos> chunk;
         unsigned long maxBodySize;
 
-        void closeAllFd();
+        
         void set_mimeList();
         void set_errorList();
         /*on an event pollin*/
@@ -90,6 +90,7 @@ class Server
         void method_get(header_infos header, int fd, int i);
         void method_post(header_infos header, std::vector<unsigned char> body, int fd, int i);
         void method_delete(header_infos header, int fd);
+        void method_error(header_infos header, int fd, int i);
 
         std::string get_mime_type(const std::string &uri);
         header_infos headerParser(std::string rawBuffer, std::pair<std::string, std::string> interface);
@@ -111,6 +112,7 @@ class Server
         Server(std::list<ConfigServer> servers);
         int ServerStart();
         int ServerRun();
+        void closeAllFd();
 
 };
 

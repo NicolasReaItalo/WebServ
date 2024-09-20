@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pollin.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jerperez <jerperez@student.42.fr>          +#+  +:+       +#+        */
+/*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:49:44 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/09/20 15:09:55 by jerperez         ###   ########.fr       */
+/*   Updated: 2024/09/20 16:36:58 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,6 +81,7 @@ void Server::receive_data(int fd, int i)
                         method_delete(header, fd);
                         return;
 					case ERROR:
+                        method_error(header, fd, i);
 					/*if header.ressourcepath.empty() sendError() else GET*/
 						return;
                     default:

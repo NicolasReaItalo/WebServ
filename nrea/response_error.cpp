@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   response_error.cpp                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jerperez <jerperez@student.42.fr>          +#+  +:+       +#+        */
+/*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 10:13:31 by nrea              #+#    #+#             */
-/*   Updated: 2024/09/20 15:07:53 by jerperez         ###   ########.fr       */
+/*   Updated: 2024/09/20 16:37:48 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,12 +16,11 @@
 header_infos response_error(std::string error_code, ConfigServer  & config,int locationIndex)
 {
 	header_infos response;
-
-	response.toDo = GET; //a passer en ERROR
+	response.toDo = ERROR;
 	response.returnCode = std::atoi(error_code.c_str());//error_code;
 	response.contentType = "text/html";
 	// response.ressourcePath =  config.getCustomErrorPage(locationIndex,std::atoi(error_code.c_str())); //config.getCustomErrorPage(locationIndex, error_code);
-	response.ressourcePath = "./html-files/generic-error.html"; // pour TEST
+	response.ressourcePath = ""; // pour TEST
 	response.bodySize = getFileSize(response.ressourcePath.c_str());
 	response.configServer = &config;
 	response.locationIndex = locationIndex;

@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:49:38 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/09/19 19:01:49 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/09/20 16:26:02 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,6 @@ void Server::method_get(header_infos header, int fd, int i)
     // std::cout << "TR == " << tr << std::endl << "ressource path == " << header.ressourcePath << std::endl;;
     if (-1 == tr)
     {
-        std::cout << "Failed to open required page -- tr = " << tr << std::endl;
         sendError(404, fd, header);
         return;
     }
@@ -59,7 +58,6 @@ void Server::method_get(header_infos header, int fd, int i)
             if (-1 == send(fd, &(data[0]), header.bodySize, 0))
                 std::cout << "error sending body\n";
         }
-        std::cout << "SENT!!" << std::endl;
         if (header.keepAlive == false)
         {
             if (epoll_ctl(epoll_fd, EPOLL_CTL_DEL, fd, NULL) == -1) 

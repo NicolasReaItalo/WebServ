@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:49:25 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/09/20 13:29:37 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/09/20 16:23:58 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,7 @@ void Server::send_chunk(int fd, int i)
     std::streamsize bytesRead = file.read(reinterpret_cast<char*>(tmp.data()), CHUNK_SIZE).gcount();
     std::string data;
     std::stringstream oss;
-    if (file.eof() || bytesRead < (int)maxBodySize)
+    if (file.eof() || bytesRead < 0)
     {
         oss << std::hex << bytesRead << "\r\n"; 
         oss.write(reinterpret_cast<const char*>(&tmp[0]), bytesRead);
@@ -80,7 +80,6 @@ void Server::send_chunk(int fd, int i)
 
             return failed_to_send(fd);
         }
-        std::cout << "DFONE!!" << std::endl;
         events[i].events = EPOLLIN | EPOLLET;
         if (epoll_ctl(epoll_fd, EPOLL_CTL_MOD, fd, &events[i]) == -1)
         {
