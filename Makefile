@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: nrea <nrea@student.42.fr>                  +#+  +:+       +#+         #
+#    By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/02/06 10:28:10 by jerperez          #+#    #+#              #
-#    Updated: 2024/09/20 15:37:16 by nrea             ###   ########.fr        #
+#    Updated: 2024/09/20 16:44:13 by qgiraux          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -33,6 +33,7 @@ SRCS_QGIRAUX_FILES	= 	chunk_receive.cpp\
 				method_get.cpp\
 				ServerStop.cpp\
 				method_post.cpp\
+				method_error.cpp\
 				ServerRun.cpp\
 				utils.cpp\
 				constructor.cpp\
