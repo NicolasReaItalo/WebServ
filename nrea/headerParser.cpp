@@ -6,19 +6,12 @@
 /*   By: nrea <nrea@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/12 16:20:48 by nrea              #+#    #+#             */
-/*   Updated: 2024/09/20 16:36:01 by nrea             ###   ########.fr       */
+/*   Updated: 2024/09/20 16:56:30 by nrea             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "headerParser.hpp"
 
-
-int dummy_getLocation(ConfigServer const *serverconfig, std::string uri)
-{
-	(void) serverconfig;
-	(void) uri;
-	return 0;
-}
 
 bool dummy_isAuthorized(ConfigServer const *serverconfig, int locationIndex, std::string method)
 {
@@ -205,13 +198,8 @@ catch(const std::runtime_error& e)
 	webservLogger.log(LVL_DEBUG, oss);
 	}
 
-
-
-
 // // ON VERIFIE QUE LA METHODE EST AUTORISEE ------------------------------- DESACTIVE en attendant serverconfig
-// 	if (!defaultconfig.inDirectiveParameters(locationIndex, "limit", header_attributes["Method"]))
-// 		return response_error(HTTP_STATUS_METHOD_NOT_ALLOWED, const_cast<ConfigServer&>(*serverconfig), locationIndex);
-	if (!dummy_isAuthorized(serverconfig, locationIndex, header_attributes["Method"]))
+	if (serverconfig->inDirectiveParameters(locationIndex,"limit",header_attributes["Method"]))
 	{
 		{
 		std::ostringstream oss;
@@ -219,6 +207,11 @@ catch(const std::runtime_error& e)
 		webservLogger.log(LVL_DEBUG, oss);
 		}
 		return response_error(HTTP_STATUS_METHOD_NOT_ALLOWED, const_cast<ConfigServer&>(*serverconfig), locationIndex);
+	}
+	{
+	std::ostringstream oss;
+	oss <<"[HeaderParser] The method  "<<header_attributes["Method"] << " is authorized";
+	webservLogger.log(LVL_DEBUG, oss);
 	}
 // //---------------------------------------------------
 

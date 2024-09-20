@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   handle_get.cpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jerperez <jerperez@student.42.fr>          +#+  +:+       +#+        */
+/*   By: nrea <nrea@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/18 13:27:16 by nrea              #+#    #+#             */
-/*   Updated: 2024/09/20 14:33:56 by jerperez         ###   ########.fr       */
+/*   Updated: 2024/09/20 16:53:37 by nrea             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -175,6 +175,11 @@ header_infos Server::handle_get
 	// response.ressourcePath = config.getFullPath(header_attributes["URI"], locationIndex);
 	response.ressourcePath  = dummy_get_fullPath(config, locationIndex, header_attributes["URI"]);
 	//webservLogger.log(LVL_DEBUG, "HeaderParser::full ressource path:", response.ressourcePath );
+	{
+	std::ostringstream oss;
+	oss <<"[HeaderParser] fullpath: "<<response.ressourcePath;
+	webservLogger.log(LVL_DEBUG, oss);
+	}
 
 // test access
 	ret = stat(response.ressourcePath.c_str(),  &stat_buf);
@@ -193,7 +198,7 @@ header_infos Server::handle_get
 			}
 			{
 			std::ostringstream oss;
-			oss <<"[handle_get] "<<" looking for matching indexes with path";
+			oss <<"[handle_get] "<<" looking for matching indexes with path "<<response.ressourcePath;
 			webservLogger.log(LVL_DEBUG, oss);
 
 
