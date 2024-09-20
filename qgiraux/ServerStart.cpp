@@ -66,6 +66,7 @@ int Server::ServerStart()
             return 1;
         }
         std::cout << "server online\nhost:port =" << it->getAddress() << ":" << it->getPort() << std::endl; 
+		std::cout << "Server name =" << it->getServerNames().front() << std::endl;
         it++;
     }
     std::cout << "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" << std::endl;

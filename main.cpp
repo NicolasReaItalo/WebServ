@@ -6,7 +6,7 @@
 /*   By: jerperez <jerperez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/03 15:20:58 by jerperez          #+#    #+#             */
-/*   Updated: 2024/09/20 14:27:34 by jerperez         ###   ########.fr       */
+/*   Updated: 2024/09/20 14:35:08 by jerperez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,9 +21,9 @@
 #include "DirectiveBlock.hpp"
 #include <iomanip>
 #include <cstdlib>
+#include "Server.hpp"
 
-
-static int	_parse(char *pathname, std::list<ServerConfig> &servers)
+static int	_parse(char *pathname, std::list<ConfigServer> &servers)
 {
 	std::fstream 					f;
 	token_deq_t						list;
@@ -54,7 +54,7 @@ static int	_parse(char *pathname, std::list<ServerConfig> &servers)
 int	main(int ac, char *av[])
 {
 	int ret = 0;
-	std::list<ServerConfig> servers;
+	std::list<ConfigServer> servers;
 	if (2 == ac)
 		ret = _parse(av[1], servers);
 	else

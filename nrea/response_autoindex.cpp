@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   response_autoindex.cpp                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nrea <nrea@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: jerperez <jerperez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 15:25:39 by nrea              #+#    #+#             */
-/*   Updated: 2024/09/19 15:32:26 by nrea             ###   ########.fr       */
+/*   Updated: 2024/09/20 14:33:56 by jerperez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "headerParser.hpp"
 
-header_infos response_autoindex(ServerConfig &config, int locationIndex, header_infos response)
+header_infos response_autoindex(ConfigServer &config, int locationIndex, header_infos response)
 {
 	response.toDo = AUTOINDEX;
 	response.returnCode = 200;

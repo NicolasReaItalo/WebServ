@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   headerParser.hpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nrea <nrea@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: jerperez <jerperez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/18 13:44:25 by nrea              #+#    #+#             */
-/*   Updated: 2024/09/20 13:23:33 by nrea             ###   ########.fr       */
+/*   Updated: 2024/09/20 14:33:56 by jerperez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@
 #include <algorithm>
 #include <set>
 #include <exception>
-#include "ServerConfig.hpp"
+#include "ConfigServer.hpp"
 #include "Server.hpp"
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -47,11 +47,11 @@
 extern Logger webservLogger;
 
 
-header_infos handle_get(header_infos &response, ServerConfig  & config,int locationIndex,std::map<std::string, std::string> header_attributes);
-// header_infos handle_post(header_infos &response, ServerConfig  & config,int locationIndex,std::map<std::string, std::string> header_attributes);
-// header_infos handle_delete(header_infos &response, ServerConfig  & config,int locationIndex,std::map<std::string, std::string> header_attributes);
-header_infos response_error(std::string error_code, ServerConfig  & config,int locationIndex);
-header_infos response_autoindex(ServerConfig &config, int locationIndex, header_infos response);
+header_infos handle_get(header_infos &response, ConfigServer  & config,int locationIndex,std::map<std::string, std::string> header_attributes);
+// header_infos handle_post(header_infos &response, ConfigServer  & config,int locationIndex,std::map<std::string, std::string> header_attributes);
+// header_infos handle_delete(header_infos &response, ConfigServer  & config,int locationIndex,std::map<std::string, std::string> header_attributes);
+header_infos response_error(std::string error_code, ConfigServer  & config,int locationIndex);
+header_infos response_autoindex(ConfigServer &config, int locationIndex, header_infos response);
 bool contains_only_numeric(std::string str);
 long getFileSize(std::string filename);
 std::string getFileExtension(std::string uri);

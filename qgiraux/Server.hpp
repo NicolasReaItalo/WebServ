@@ -6,7 +6,7 @@
 /*   By: jerperez <jerperez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:49:46 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/09/20 14:32:47 by jerperez         ###   ########.fr       */
+/*   Updated: 2024/09/20 14:33:56 by jerperez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,9 +93,9 @@ class Server
 
         std::string get_mime_type(const std::string &uri);
         header_infos headerParser(std::string rawBuffer, std::pair<std::string, std::string> interface);
-		const ServerConfig * find_server(std::pair<std::string, std::string> interface, std::string host);
-		header_infos handle_get(header_infos &response, ServerConfig  & config,int locationIndex,std::map<std::string, std::string> header_attributes);
-		header_infos serve_regular_file(header_infos &response, ServerConfig  & config,int locationIndex,std::map<std::string, std::string> header_attributes);
+		const ConfigServer * find_server(std::pair<std::string, std::string> interface, std::string host);
+		header_infos handle_get(header_infos &response, ConfigServer  & config,int locationIndex,std::map<std::string, std::string> header_attributes);
+		header_infos serve_regular_file(header_infos &response, ConfigServer  & config,int locationIndex,std::map<std::string, std::string> header_attributes);
 
         void chunked_post(int fd, std::string tmp);
         void send_chunk(int fd, int i, header_infos header);
@@ -108,7 +108,7 @@ class Server
         void failed_to_send(int fd);
 
     public :
-        Server(std::list<ServerConfig> servers);
+        Server(std::list<ConfigServer> servers);
         int ServerStart();
         int ServerRun();
 

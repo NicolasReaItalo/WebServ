@@ -6,7 +6,7 @@
 /*   By: jerperez <jerperez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/03 17:31:53 by jerperez          #+#    #+#             */
-/*   Updated: 2024/09/19 16:05:55 by jerperez         ###   ########.fr       */
+/*   Updated: 2024/09/20 14:33:56 by jerperez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 # include "DirectiveBlock.hpp"
 # include "Directive.hpp"
 # include "tokenizer.hpp"
-# include "ServerConfig.hpp"//
+# include "ConfigServer.hpp"//
 # include <list>//
 
 #define	PR_ERRDNOCONTEXT 10
@@ -33,7 +33,7 @@ int	pr_next_directive(
 	DirectiveBlock *context,
 	DirectiveBlock &next_directive);
 
-int	pr_parse_config(token_deq_t &list, std::list<ServerConfig> &servers);
+int	pr_parse_config(token_deq_t &list, std::list<ConfigServer> &servers);
 //nt	pr_parse_config(token_deq_t &list); //
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: jerperez <jerperez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 16:02:57 by jerperez          #+#    #+#             */
-/*   Updated: 2024/09/20 14:30:58 by jerperez         ###   ########.fr       */
+/*   Updated: 2024/09/20 14:56:19 by jerperez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@
 cgi client_body_path client_max_body_size location root server_name"
 
 
-#define	CF_DEBUG 1
+#define	CF_DEBUG 0
 
 // DEBUG
 #include <iostream>
@@ -190,8 +190,10 @@ int	pr_parse_config(token_deq_t &list, std::list<ConfigServer> &servers)
 			_print_dir(next_directive); //
 		ConfigServer	server;
 		server.setKnownDirectives(&knownDirectives);
-		if (server._debugPlaceholder())
-			return (1); //
+		if (server.addServer(&next_directive))
+			return (0); //WARNING
+		// if (server._debugPlaceholder())
+		// 	return (1); //
 		if (CF_DEBUG)
 			_debug_test_server(server); //
 		servers.push_back(server);

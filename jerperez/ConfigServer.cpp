@@ -6,7 +6,7 @@
 /*   By: jerperez <jerperez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 13:29:48 by jerperez          #+#    #+#             */
-/*   Updated: 2024/09/20 13:33:30 by jerperez         ###   ########.fr       */
+/*   Updated: 2024/09/20 14:54:18 by jerperez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ int	ConfigServer::_evalServerName(void)
 {
 	if (!this->ConfigBlock::inDirectives("server_name"))
 		return (1);
-	ConfigBlock::parameters_t &nameParameter = this->_directive_parameters["listen"];
+	ConfigBlock::parameters_t &nameParameter = this->_directive_parameters["server_name"];
 	if (nameParameter.empty())
 		return (1);
 	this->_server_names = nameParameter;
@@ -106,8 +106,9 @@ int	ConfigServer::_fillAll(void)
 		this->_directive_parameters["client_body_path"].push_back("/var/www/default_upload_path"); //= this->_strToParameters("/var/www/default_upload_path");
 	if (!this->ConfigBlock::inDirectives("client_max_body_size"))
 		this->_directive_parameters["client_max_body_size"].push_back("500000");//  = this->_strToParameters("500000");
-	std::cout << "\e[34m##############################\e[0m" << std::endl; ///
-	this->_debug_print();
+	//std::cout << "\e[34m##############################\e[0m" << std::endl; ///
+	if (0)
+		this->_debug_print(); //CHANGE ME
 	return (0);
 }
 

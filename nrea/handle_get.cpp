@@ -3,24 +3,24 @@
 /*                                                        :::      ::::::::   */
 /*   handle_get.cpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nrea <nrea@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: jerperez <jerperez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/18 13:27:16 by nrea              #+#    #+#             */
-/*   Updated: 2024/09/20 13:35:46 by nrea             ###   ########.fr       */
+/*   Updated: 2024/09/20 14:33:56 by jerperez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "headerParser.hpp"
 
 
-std::string dummy_get_fullPath(ServerConfig &serverconfig, int locationIndex, std::string uri)
+std::string dummy_get_fullPath(ConfigServer &serverconfig, int locationIndex, std::string uri)
 {
 	(void) serverconfig;
 	(void) locationIndex;
 	return "./html-files" + uri;
 }
 
-const std::list<std::string> dummy_get_indexes(ServerConfig &serverconfig, int locationIndex)
+const std::list<std::string> dummy_get_indexes(ConfigServer &serverconfig, int locationIndex)
 {
 	(void) serverconfig;
 	(void) locationIndex;
@@ -32,14 +32,14 @@ const std::list<std::string> dummy_get_indexes(ServerConfig &serverconfig, int l
 }
 
 
-bool dummy_get_autoindex_status(ServerConfig &serverconfig, int locationIndex)
+bool dummy_get_autoindex_status(ConfigServer &serverconfig, int locationIndex)
 {
 	(void) serverconfig;
 	(void) locationIndex;
 	return false;
 }
 
-unsigned long dummy_get_client_max_body_size(ServerConfig &serverconfig, int locationIndex)
+unsigned long dummy_get_client_max_body_size(ConfigServer &serverconfig, int locationIndex)
 {
 	(void) serverconfig;
 	(void) locationIndex;
@@ -47,7 +47,7 @@ unsigned long dummy_get_client_max_body_size(ServerConfig &serverconfig, int loc
 }
 /*===================================================================================================*/
 
-header_infos handleFileErrror(int error, header_infos &response, ServerConfig  & config,int locationIndex)
+header_infos handleFileErrror(int error, header_infos &response, ConfigServer  & config,int locationIndex)
 {
 		{
 		std::ostringstream oss;
@@ -92,7 +92,7 @@ header_infos handleFileErrror(int error, header_infos &response, ServerConfig  &
 
 
 header_infos Server::serve_regular_file
-(header_infos &response, ServerConfig  & config,int locationIndex,std::map<std::string, std::string> header_attributes)
+(header_infos &response, ConfigServer  & config,int locationIndex,std::map<std::string, std::string> header_attributes)
 {
 	struct stat stat_buf;
 	int ret;
@@ -163,7 +163,7 @@ header_infos Server::serve_regular_file
 
 
 header_infos Server::handle_get
-(header_infos &response, ServerConfig  & config,int locationIndex,std::map<std::string, std::string> header_attributes)
+(header_infos &response, ConfigServer  & config,int locationIndex,std::map<std::string, std::string> header_attributes)
 {
 	struct stat stat_buf;
 	int ret;

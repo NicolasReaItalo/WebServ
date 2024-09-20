@@ -6,21 +6,21 @@
 /*   By: jerperez <jerperez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/12 16:20:48 by nrea              #+#    #+#             */
-/*   Updated: 2024/09/20 14:32:14 by jerperez         ###   ########.fr       */
+/*   Updated: 2024/09/20 14:33:56 by jerperez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "headerParser.hpp"
 
 
-int dummy_getLocation(ServerConfig const *serverconfig, std::string uri)
+int dummy_getLocation(ConfigServer const *serverconfig, std::string uri)
 {
 	(void) serverconfig;
 	(void) uri;
 	return 0;
 }
 
-bool dummy_isAuthorized(ServerConfig const *serverconfig, int locationIndex, std::string method)
+bool dummy_isAuthorized(ConfigServer const *serverconfig, int locationIndex, std::string method)
 {
 	(void) serverconfig;
 	(void) method;
@@ -71,7 +71,7 @@ header_infos Server::headerParser(std::string rawBuffer, std::pair<std::string, 
 	header_infos response;
 	std::map<std::string, std::string> header_attributes;
 	std::vector<std::string> tmp;
-	ServerConfig defaultconfig; ///ServerConfig par defaut pour les messages d'erreurs en cas de pb de parsing
+	ConfigServer defaultconfig; ///ConfigServer par defaut pour les messages d'erreurs en cas de pb de parsing
 	int locationIndex = 0; // defaultconfig location
 	{
 	std::ostringstream oss;
@@ -128,7 +128,7 @@ catch(const std::runtime_error& e)
 // bon server de config et on set sa location!
 	// ON RECUPERE LE BON SERVER
 	//webservLogger.log(LVL_DEBUG,"HeaderParser:: looking up for the serverConfig:",interface.first, interface.second, header_attributes["Host"]);
-	const ServerConfig * serverconfig = find_server(interface,header_attributes["Host"]);
+	const ConfigServer * serverconfig = find_server(interface,header_attributes["Host"]);
 	{
 	std::ostringstream oss;
 	oss <<"[HeaderParser] find_server() ==> "<<serverconfig;
@@ -151,7 +151,7 @@ catch(const std::runtime_error& e)
 		oss <<"[HeaderParser] The protocol is not supported ==> "<<header_attributes["Protocol"];
 		webservLogger.log(LVL_DEBUG, oss);
 		}
-		return response_error(HTTP_STATUS_HTTP_VERSION_NOT_SUPPORTED, const_cast<ServerConfig&>(*serverconfig), locationIndex);
+		return response_error(HTTP_STATUS_HTTP_VERSION_NOT_SUPPORTED, const_cast<ConfigServer&>(*serverconfig), locationIndex);
 	}
 ////---------------------------------------
 
@@ -163,7 +163,7 @@ catch(const std::runtime_error& e)
 		oss <<"[HeaderParser] The uri is empty or dos not start with '/' ==> "<<header_attributes["Raw_URI"];
 		webservLogger.log(LVL_DEBUG, oss);
 		}
-		return response_error(HTTP_STATUS_BAD_REQUEST, const_cast<ServerConfig&>(*serverconfig), locationIndex);
+		return response_error(HTTP_STATUS_BAD_REQUEST, const_cast<ConfigServer&>(*serverconfig), locationIndex);
 	}
 ///---------------------------------------------------------------------------------------------------
 
@@ -180,7 +180,7 @@ catch(const std::runtime_error& e)
 		webservLogger.log(LVL_DEBUG, oss);
 		}
 
-		return response_error(HTTP_STATUS_BAD_REQUEST, const_cast<ServerConfig&>(*serverconfig), locationIndex);
+		return response_error(HTTP_STATUS_BAD_REQUEST, const_cast<ConfigServer&>(*serverconfig), locationIndex);
 	}
 //--------------------------------------------------------------------------------------------
 
@@ -199,7 +199,7 @@ catch(const std::runtime_error& e)
 		oss <<"[HeaderParser] The URI is not properly formatted ==> "<<header_attributes["Raw_URI"];
 		webservLogger.log(LVL_DEBUG, oss);
 		}
-		return response_error(HTTP_STATUS_BAD_REQUEST, const_cast<ServerConfig&>(*serverconfig), locationIndex);
+		return response_error(HTTP_STATUS_BAD_REQUEST, const_cast<ConfigServer&>(*serverconfig), locationIndex);
 	}
 	else
 		header_attributes["URI"] = tmp[0];
@@ -209,7 +209,7 @@ catch(const std::runtime_error& e)
 
 // // ON VERIFIE QUE LA METHODE EST AUTORISEE ------------------------------- DESACTIVE en attendant serverconfig
 // 	if (!defaultconfig.inDirectiveParameters(locationIndex, "limit", header_attributes["Method"]))
-// 		return response_error(HTTP_STATUS_METHOD_NOT_ALLOWED, const_cast<ServerConfig&>(*serverconfig), locationIndex);
+// 		return response_error(HTTP_STATUS_METHOD_NOT_ALLOWED, const_cast<ConfigServer&>(*serverconfig), locationIndex);
 	if (!dummy_isAuthorized(serverconfig, locationIndex, header_attributes["Method"]))
 	{
 		{
@@ -217,7 +217,7 @@ catch(const std::runtime_error& e)
 		oss <<"[HeaderParser] The method  "<<header_attributes["Method"] << " is forbidden";
 		webservLogger.log(LVL_DEBUG, oss);
 		}
-		return response_error(HTTP_STATUS_METHOD_NOT_ALLOWED, const_cast<ServerConfig&>(*serverconfig), locationIndex);
+		return response_error(HTTP_STATUS_METHOD_NOT_ALLOWED, const_cast<ConfigServer&>(*serverconfig), locationIndex);
 	}
 // //---------------------------------------------------
 

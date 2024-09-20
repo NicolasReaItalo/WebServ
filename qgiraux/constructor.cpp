@@ -3,17 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   constructor.cpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
+/*   By: jerperez <jerperez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:49:28 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/09/19 12:49:29 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/09/20 14:33:56 by jerperez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Server.hpp"
 
 
-Server::Server(std::list<ServerConfig> servers) : servers(servers)
+Server::Server(std::list<ConfigServer> servers) : servers(servers)
 {
     list_size = servers.size();
     std::vector<int> vect(list_size);

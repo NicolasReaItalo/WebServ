@@ -6,7 +6,7 @@
 /*   By: jerperez <jerperez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:49:44 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/09/20 14:23:15 by jerperez         ###   ########.fr       */
+/*   Updated: 2024/09/20 15:09:55 by jerperez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,6 +80,9 @@ void Server::receive_data(int fd, int i)
                     case DELETE:
                         method_delete(header, fd);
                         return;
+					case ERROR:
+					/*if header.ressourcepath.empty() sendError() else GET*/
+						return;
                     default:
                         std::cerr << "Unknown method" << std::endl;
                         return;
