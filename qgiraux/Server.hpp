@@ -6,7 +6,7 @@
 /*   By: nrea <nrea@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:49:46 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/09/20 15:31:20 by nrea             ###   ########.fr       */
+/*   Updated: 2024/09/20 16:18:42 by nrea             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,7 +93,7 @@ class Server
 
         std::string get_mime_type(const std::string &uri);
         header_infos headerParser(std::string rawBuffer, std::pair<std::string, std::string> interface);
-		const ConfigServer * findServer(std::pair<std::string, std::string> interface, std::string host);
+		ConfigServer * findServer(std::pair<std::string, std::string> interface, std::string host);
 		header_infos handle_get(header_infos &response, ConfigServer  & config,int locationIndex,std::map<std::string, std::string> header_attributes);
 		header_infos serve_regular_file(header_infos &response, ConfigServer  & config,int locationIndex,std::map<std::string, std::string> header_attributes);
 

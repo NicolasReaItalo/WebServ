@@ -6,7 +6,7 @@
 /*   By: nrea <nrea@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/12 16:20:48 by nrea              #+#    #+#             */
-/*   Updated: 2024/09/20 15:31:20 by nrea             ###   ########.fr       */
+/*   Updated: 2024/09/20 16:36:01 by nrea             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -128,21 +128,13 @@ catch(const std::runtime_error& e)
 // bon server de config et on set sa location!
 	// ON RECUPERE LE BON SERVER
 	//webservLogger.log(LVL_DEBUG,"HeaderParser:: looking up for the serverConfig:",interface.first, interface.second, header_attributes["Host"]);
-	const ConfigServer * serverconfig = findServer(interface,header_attributes["Host"]);
+	ConfigServer * serverconfig = findServer(interface,header_attributes["Host"]);
 	{
 	std::ostringstream oss;
 	oss <<"[HeaderParser] findServer() ==> "<<serverconfig;
 	webservLogger.log(LVL_DEBUG, oss);
 	}
-//TODO TODO TODO
-// ON RECUPERE LA LOCATION ( CACHE )
-	// On verra quand ca marchera.                           =====================> TODO !!!!
-	locationIndex = dummy_getLocation(serverconfig,header_attributes["URI"]);
-	{
-	std::ostringstream oss;
-	oss <<"[HeaderParser] get_location() ==> "<<locationIndex;
-	webservLogger.log(LVL_DEBUG, oss);
-	}
+
 ///VERIFICATION DU PROTOCOLE------------------
 	if (header_attributes["Protocol"] != "HTTP/1.1")
 	{
@@ -205,6 +197,15 @@ catch(const std::runtime_error& e)
 		header_attributes["URI"] = tmp[0];
 
 ///------------------------------------------------------------------------------
+// ON RECUPERE LA LOCATION pour la mettre en cache pour les appels suivant a configServer
+	locationIndex = serverconfig->getLocation(header_attributes["URI"]);
+	{
+	std::ostringstream oss;
+	oss <<"[HeaderParser] get_location("<< header_attributes["URI"]<<") ==> "<<locationIndex;
+	webservLogger.log(LVL_DEBUG, oss);
+	}
+
+
 
 
 // // ON VERIFIE QUE LA METHODE EST AUTORISEE ------------------------------- DESACTIVE en attendant serverconfig
