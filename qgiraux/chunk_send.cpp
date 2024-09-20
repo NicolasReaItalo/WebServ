@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:49:25 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/09/19 18:56:48 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/09/20 13:29:37 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,16 +58,15 @@ void Server::send_chunk(int fd, int i)
         return ; // Return an empty vector
     }
 
-
     file.seekg(chunk[fd].readIndex);
     std::vector<unsigned char> tmp(CHUNK_SIZE);
     std::streamsize bytesRead = file.read(reinterpret_cast<char*>(tmp.data()), CHUNK_SIZE).gcount();
     std::string data;
     std::stringstream oss;
-    if (file.eof() || bytesRead == 0)
+    if (file.eof() || bytesRead < (int)maxBodySize)
     {
         oss << std::hex << bytesRead << "\r\n"; 
-        oss.write(reinterpret_cast<const char*>(tmp.data()), bytesRead);
+        oss.write(reinterpret_cast<const char*>(&tmp[0]), bytesRead);
         oss << "\r\n";
         data = oss.str();
                         

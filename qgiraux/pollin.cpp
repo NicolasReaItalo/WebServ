@@ -6,12 +6,13 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:49:44 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/09/19 18:42:58 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/09/20 11:48:45 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Server.hpp"
 #include <vector>
+#include <sys/socket.h>
 
 /* Reads the data received from the client and either:
     - sends to the correct method or
@@ -28,13 +29,11 @@ void Server::receive_data(int fd, int i)
     bool headerParsed = false; // Flag to track whether the header has been parsed
 
     while (true) {
-        bytesRead = read(fd, buffer, maxBodySize);
+        bytesRead = recv(fd, buffer, maxBodySize, 0);
 
         if (bytesRead < 0) {
-            if (errno == EAGAIN || errno == EWOULDBLOCK) {
-                // No more data to read
-                break;
-            } else {
+            if (errno == EAGAIN || errno == EWOULDBLOCK) 
+            {
                 // Read error
                 std::cerr << "Read error on fd: " << fd << ", error: " << strerror(errno) << std::endl;
                 close(fd);
