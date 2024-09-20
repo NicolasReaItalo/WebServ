@@ -6,7 +6,7 @@
 /*   By: jerperez <jerperez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 13:29:48 by jerperez          #+#    #+#             */
-/*   Updated: 2024/09/20 14:54:18 by jerperez         ###   ########.fr       */
+/*   Updated: 2024/09/20 15:18:21 by jerperez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,9 +18,9 @@
 #include <stdlib.h>
 #include <algorithm>
 
-//DEPRECIATED
-std::string ConfigServer::getCustomErrorPage(int loc, int errorCode) {(void)loc; (void)errorCode; return ("");};//
-//DEPRECIATED END
+// //DEPRECIATED
+// std::string ConfigServer::getCustomErrorPage(int loc, int errorCode) {(void)loc; (void)errorCode; return ("");};//
+// //DEPRECIATED END
 
 void	ConfigServer::_pushSplitParameters(std::string name, std::string joined_parameter, char delimiter=' ')
 {

@@ -6,7 +6,7 @@
 /*   By: jerperez <jerperez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 13:29:48 by jerperez          #+#    #+#             */
-/*   Updated: 2024/09/20 13:30:18 by jerperez         ###   ########.fr       */
+/*   Updated: 2024/09/20 15:18:17 by jerperez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,7 @@ class ConfigServer : public ConfigBlock
 		//
 		int					_debugPlaceholder(int debug_input=0); //
 		// DEPRECIATED
-		std::string	getCustomErrorPage(int location, int errorCode);
+		//std::string	getCustomErrorPage(int location, int errorCode);
 
 };
 
