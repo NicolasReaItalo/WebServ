@@ -6,7 +6,7 @@
 /*   By: jerperez <jerperez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:49:44 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/09/20 14:19:16 by jerperez         ###   ########.fr       */
+/*   Updated: 2024/09/20 14:23:15 by jerperez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,14 +26,7 @@ void Server::receive_data(int fd, int i)
     std::vector<unsigned char> body;
     std::string headerStr = ""; // String to hold the header part
 
-    /*if the request is chunked*/
-    if (is_fd_in_chunklist(fd) == true)
-    {
-        return chunked_post(fd, tmp);
-    }
-    std::string head = tmp.substr(0, tmp.find("\r\n\r\n"));
-    std::string body = tmp.substr(tmp.find("\r\n") + 2);
-    header_infos header = headerParser(head, fd_set[fd]);
+    bool headerParsed = false; // Flag to track whether the header has been parsed
 
     while (true) {
         bytesRead = recv(fd, buffer, maxBodySize, 0);
