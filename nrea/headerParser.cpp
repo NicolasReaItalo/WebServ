@@ -6,28 +6,12 @@
 /*   By: nrea <nrea@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/12 16:20:48 by nrea              #+#    #+#             */
-/*   Updated: 2024/09/20 19:56:19 by nrea             ###   ########.fr       */
+/*   Updated: 2024/09/23 14:33:07 by nrea             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "headerParser.hpp"
 
-
-bool dummy_isAuthorized(ConfigServer const *serverconfig, int locationIndex, std::string method)
-{
-	(void) serverconfig;
-	(void) method;
-	(void) locationIndex;
-	return true;
-}
-
-bool dummy_isReturn(ConfigServer const *serverconfig, int locationIndex, std::string method)
-{
-	(void) serverconfig;
-	(void) method;
-	(void) locationIndex;
-	return true;
-}
 
 /*split all the attributes of the raw header buffer and returns a map of all attributes
 this function can throw a RuntimeError("bad request") exception*/
@@ -241,8 +225,15 @@ header_infos Server::headerParser(std::string rawBuffer, std::pair<std::string, 
 		}
 		response = handle_get(response, defaultconfig, locationIndex, header_attributes);
 	}
-	// else if (header_attributes["Method"] == "POST")
-	// 	response = handle_post(response, defaultconfig, locationIndex, header_attributes);
+	else if (header_attributes["Method"] == "POST")
+	{
+		{
+		std::ostringstream oss;
+		oss <<"[HeaderParser] POST method detected ==> starting handle_post()";
+		webservLogger.log(LVL_DEBUG, oss);
+		}
+		response = handle_post(response, defaultconfig, locationIndex, header_attributes);
+	}
 	// else if (header_attributes["Method"] == "DELETE")
 	// 	response = handle_delete(response, defaultconfig, locationIndex, header_attributes);
 

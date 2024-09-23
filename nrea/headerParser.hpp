@@ -6,7 +6,7 @@
 /*   By: nrea <nrea@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/18 13:44:25 by nrea              #+#    #+#             */
-/*   Updated: 2024/09/20 17:46:45 by nrea             ###   ########.fr       */
+/*   Updated: 2024/09/23 12:48:10 by nrea             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,10 @@
 #include "http_errors.hpp"
 #include <unistd.h>
 #include "Logger.hpp"
+#include "FileInfos.hpp"
+
+#include "dummy.hpp"
+
 
 #define RST		"\033[0m"
 #define RED		"\033[1;31m"
@@ -52,10 +56,13 @@ header_infos response_autoindex(ConfigServer &config, int locationIndex, header_
 bool contains_only_numeric(std::string str);
 long getFileSize(std::string filename);
 std::string getFileExtension(std::string uri);
+std::string getParentDir(std::string uri);
 
 bool contains_forbbiden(std::string const &uri);
 std::string  convert_uri(std::string const &uri);
 std::vector<std::string> splitString(const std::string& str, std::string delimiter);
+
+
 
 bool matchContentTypes(std::string file_content_type, std::string accepted_types);
 
