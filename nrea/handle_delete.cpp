@@ -6,7 +6,7 @@
 /*   By: nrea <nrea@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/24 11:18:45 by nrea              #+#    #+#             */
-/*   Updated: 2024/09/24 12:08:42 by nrea             ###   ########.fr       */
+/*   Updated: 2024/09/24 14:12:16 by nrea             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,7 @@ int locationIndex, std::map<std::string, std::string> header_attributes)
 			return response_error(HTTP_STATUS_FORBIDDEN, config, locationIndex);
 		}
 	response.toDo = DELETE;
-	response.returnCode = 200;
+	response.returnCode = 204; //SUCCESS NO CONTENT
 	response.locationIndex = locationIndex;
 	response.configServer = &config;
 	response.keepAlive = false;
