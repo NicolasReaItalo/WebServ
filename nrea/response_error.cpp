@@ -6,7 +6,7 @@
 /*   By: nrea <nrea@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 10:13:31 by nrea              #+#    #+#             */
-/*   Updated: 2024/09/20 17:13:02 by nrea             ###   ########.fr       */
+/*   Updated: 2024/09/24 12:08:34 by nrea             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,11 +35,6 @@ header_infos response_error(std::string error_code, ConfigServer  & config,int l
 
 	//la caracteristique keep-alive depend de l'erreur:  a ameliorer pour la rendre + generale
 	response.keepAlive = error_code != HTTP_STATUS_BAD_REQUEST && error_code != HTTP_STATUS_INTERNAL_SERVER_ERROR;
-	{
-		std::ostringstream oss;
-		oss <<"[HeaderParser] Response "<<response.returnCode <<" ";
-		oss <<str_todo(response.toDo) <<" "<<response.ressourcePath;
-		webservLogger.log(LVL_DEBUG, oss);
-	}
+
 	return response;
 }

@@ -6,7 +6,7 @@
 /*   By: nrea <nrea@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/12 16:20:48 by nrea              #+#    #+#             */
-/*   Updated: 2024/09/23 14:33:07 by nrea             ###   ########.fr       */
+/*   Updated: 2024/09/24 12:41:07 by nrea             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -214,6 +214,17 @@ header_infos Server::headerParser(std::string rawBuffer, std::pair<std::string, 
 	}
 // //---------------------------------------------------
 
+////////TODO !!!!!
+	//ON RECUPERE LE PATH COMPLET VERS LA RESSOURCE
+	// response.ressourcePath = config.getFullPath(header_attributes["URI"], locationIndex);
+	response.ressourcePath  = dummy_get_fullPath(*serverconfig, locationIndex, header_attributes["URI"]);
+	{
+		std::ostringstream oss;
+		oss <<"[HeaderParser] retrieving full path from "
+		<<"["<<header_attributes["URI"] <<"]-->["<<response.ressourcePath<<"]";
+		webservLogger.log(LVL_DEBUG, oss);
+	}
+
 // ON SWITCHE SELON LA METHODE---------------------------------
 
 	if (header_attributes["Method"] == "GET")
@@ -234,9 +245,29 @@ header_infos Server::headerParser(std::string rawBuffer, std::pair<std::string, 
 		}
 		response = handle_post(response, defaultconfig, locationIndex, header_attributes);
 	}
-	// else if (header_attributes["Method"] == "DELETE")
-	// 	response = handle_delete(response, defaultconfig, locationIndex, header_attributes);
-
+	else if (header_attributes["Method"] == "DELETE")
+		response = handle_delete(response, defaultconfig, locationIndex, header_attributes);
+	else
+		return response_error(HTTP_STATUS_METHOD_NOT_ALLOWED, const_cast<ConfigServer&>(*serverconfig), locationIndex);
+	{
+		std::ostringstream oss;
+		oss <<"[HeaderParser] RESPONSE  {"<<response.returnCode <<"} ";
+		oss <<"{"<<str_todo(response.toDo)<<"}"<<"{"<<response.ressourcePath <<"}";
+		if (response.keepAlive)
+			oss<<"{keep-alive}";
+		else
+			oss<<"{close}";
+		oss <<"\n                                              ";
+		if (response.chunked)
+			oss<<"{chunked}";
+		else
+			oss<<"{not chunked}";
+		oss<<"";
+		oss<<"{body-size: " << response.bodySize;
+		oss<<"} ";
+		oss<<"{content-type: " << response.contentType<<"}";
+ 		webservLogger.log(LVL_DEBUG, oss);
+	}
 	return response;
 }
 

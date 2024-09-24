@@ -6,7 +6,7 @@
 /*   By: nrea <nrea@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/18 13:27:16 by nrea              #+#    #+#             */
-/*   Updated: 2024/09/23 12:48:16 by nrea             ###   ########.fr       */
+/*   Updated: 2024/09/24 12:09:11 by nrea             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,8 @@
 
 /*===================================================================================================*/
 
-header_infos handleFileErrror(int error, header_infos &response, ConfigServer  & config,int locationIndex)
+header_infos handleFileErrror
+(int error, header_infos &response, ConfigServer  & config,int locationIndex)
 {
 		{
 			std::ostringstream oss;
@@ -51,8 +52,8 @@ header_infos handleFileErrror(int error, header_infos &response, ConfigServer  &
 
 
 
-header_infos Server::serve_regular_file
-(header_infos &response, ConfigServer  & config,int locationIndex,std::map<std::string, std::string> header_attributes)
+header_infos Server::serve_regular_file(header_infos &response,
+ConfigServer  & config,int locationIndex,std::map<std::string, std::string> header_attributes)
 {
 	struct stat stat_buf;
 	int ret;
@@ -108,32 +109,18 @@ header_infos Server::serve_regular_file
 		return response_error(HTTP_STATUS_NOT_ACCEPTABLE, config, locationIndex);
 	///voir le keep-alive
 	response.keepAlive = header_attributes["Connection"] == "keep-alive";
-	{
-		std::ostringstream oss;
-		oss <<"[HeaderParser] Response "<<response.returnCode <<" ";
-		oss <<str_todo(response.toDo) <<" "<<response.ressourcePath;
-		webservLogger.log(LVL_DEBUG, oss);
-	}
+
 	return response;
 }
 
 
-header_infos Server::handle_get
-(header_infos &response, ConfigServer  & config,int locationIndex,std::map<std::string, std::string> header_attributes)
+header_infos Server::handle_get(header_infos &response,
+ ConfigServer  & config,int locationIndex,std::map<std::string, std::string> header_attributes)
 {
 	struct stat stat_buf;
 	int ret;
 
 	response.toDo = GET;
-	////////TODO !!!!!
-	//ON RECUPERE LE PATH COMPLET VERS LA RESSOURCE
-	// response.ressourcePath = config.getFullPath(header_attributes["URI"], locationIndex);
-	response.ressourcePath  = dummy_get_fullPath(config, locationIndex, header_attributes["URI"]);
-	{
-		std::ostringstream oss;
-		oss <<"[HeaderParser] retrieving full path from "<<"["<<header_attributes["URI"] <<"]-->["<<response.ressourcePath<<"]";
-		webservLogger.log(LVL_DEBUG, oss);
-	}
 
 // test access
 	ret = stat(response.ressourcePath.c_str(),  &stat_buf);
@@ -178,7 +165,8 @@ header_infos Server::handle_get
 
 		{
 			std::ostringstream oss;
-			oss <<"[handle_get] "<<" No matching index found - checking if autoindex allowed in " <<response.ressourcePath ;
+			oss <<"[handle_get] "<<
+			" No matching index found - checking if autoindex allowed in " <<response.ressourcePath ;
 			webservLogger.log(LVL_DEBUG, oss);
 		}
 

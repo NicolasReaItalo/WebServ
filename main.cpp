@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
+/*   By: nrea <nrea@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/03 15:20:58 by jerperez          #+#    #+#             */
-/*   Updated: 2024/09/20 16:22:24 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/09/24 11:38:43 by nrea             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,7 +74,7 @@ int	main(int ac, char *av[])
 	if (2 == ac)
 		ret = _parse(av[1], servers);
 	else
-		return 2;
+		return ret;
 	Server server(servers);
 	globalServer = &server;
 	server.ServerStart();

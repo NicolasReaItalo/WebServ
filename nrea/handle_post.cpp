@@ -6,27 +6,16 @@
 /*   By: nrea <nrea@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/23 10:46:13 by nrea              #+#    #+#             */
-/*   Updated: 2024/09/23 16:17:53 by nrea             ###   ########.fr       */
+/*   Updated: 2024/09/24 12:08:14 by nrea             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 # include "headerParser.hpp"
 
 header_infos Server::handle_post
-(header_infos &response, ConfigServer  & config,int locationIndex,std::map<std::string, std::string> header_attributes)
+(header_infos &response, ConfigServer  & config,
+int locationIndex,std::map<std::string, std::string> header_attributes)
 {
-		////////TODO !!!!!
-	//ON RECUPERE LE PATH COMPLET VERS LA RESSOURCE
-	// response.ressourcePath = config.getFullPath(header_attributes["URI"], locationIndex);
-	response.ressourcePath  = dummy_get_fullPath(config, locationIndex, header_attributes["URI"]);
-	{
-		std::ostringstream oss;
-		oss <<"[HeaderParser] retrieving full path from "
-		<<"["<<header_attributes["URI"] <<"]-->["<<response.ressourcePath<<"]";
-		webservLogger.log(LVL_DEBUG, oss);
-	}
-
-
 	//TODO nouvelle branche sur : multipart/form-data;boundary="boundary"
 	FileInfos file;
 	// On considere que c'est ue requete POST vers le PATH complet
@@ -132,12 +121,7 @@ header_infos Server::handle_post
 
 	response.toDo = POST;
 	response.keepAlive = header_attributes["Connection"] == "keep-alive";
-	{
-		std::ostringstream oss;
-		oss <<"[HeaderParser] Response "<<response.returnCode <<" ";
-		oss <<str_todo(response.toDo) <<" "<<response.ressourcePath;
-		webservLogger.log(LVL_DEBUG, oss);
-	}
+
 
 	response.returnCode = 201;
 	// response pour initialiser ces champs vides
