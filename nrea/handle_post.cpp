@@ -6,7 +6,7 @@
 /*   By: nrea <nrea@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/23 10:46:13 by nrea              #+#    #+#             */
-/*   Updated: 2024/09/24 12:08:14 by nrea             ###   ########.fr       */
+/*   Updated: 2024/09/24 15:07:41 by nrea             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,15 +46,15 @@ int locationIndex,std::map<std::string, std::string> header_attributes)
 	// On test maintenant les droits sur le dossier parent
 	std::string parent = getParentDir(response.ressourcePath);
 	FileInfos parent_dir = FileInfos(parent);
-	// if ( !parent_dir.file_exist())
-	// {
-	// 	{
-	// 	std::ostringstream oss;
-	// 	oss <<"[handle_post]  :" <<parent;
-	// 	webservLogger.log(LVL_DEBUG, oss);
-	// 	}
-	// 	return response_error(HTTP_STATUS_INTERNAL_SERVER_ERROR, config, locationIndex);
-	// }
+	if ( !parent_dir.file_exist())
+	{
+		{
+		std::ostringstream oss;
+		oss <<"[handle_post]  :" <<parent;
+		webservLogger.log(LVL_DEBUG, oss);
+		}
+		return response_error(HTTP_STATUS_INTERNAL_SERVER_ERROR, config, locationIndex);
+	}
 	{
 		std::ostringstream oss;
 		oss <<"[handle_post] The parent directory of the ressource is :"<<parent;
@@ -104,20 +104,20 @@ int locationIndex,std::map<std::string, std::string> header_attributes)
 
 
 // On verifie que le type du fichier recu est accepte par le server
-	if (header_attributes["Content-Type"] != "")
-	{
-		if (!matchContentTypes(header_attributes["Content-Type"],dummy_server_accepted_types() ))
-		{
-			return response_error(HTTP_STATUS_CONFLICT, config, locationIndex); // A verifier
-		}
-		response.contentType = header_attributes["Content-Type"];
-	}
-	else
-	{
-		response.contentType = get_mime_type(response.ressourcePath);
-		if (!matchContentTypes(response.contentType,dummy_server_accepted_types()))
-			return response_error(HTTP_STATUS_CONFLICT, config, locationIndex); // A verifier
-	}
+	// if (header_attributes["Content-Type"] != "")
+	// {
+	// 	if (!matchContentTypes(header_attributes["Content-Type"],dummy_server_accepted_types() ))
+	// 	{
+	// 		return response_error(HTTP_STATUS_CONFLICT, config, locationIndex); // A verifier
+	// 	}
+	// 	response.contentType = header_attributes["Content-Type"];
+	// }
+	// else
+	// {
+	// 	response.contentType = get_mime_type(response.ressourcePath);
+	// 	if (!matchContentTypes(response.contentType,dummy_server_accepted_types()))
+	// 		return response_error(HTTP_STATUS_CONFLICT, config, locationIndex); // A verifier
+	// }
 
 	response.toDo = POST;
 	response.keepAlive = header_attributes["Connection"] == "keep-alive";

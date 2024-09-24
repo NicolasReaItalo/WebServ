@@ -6,7 +6,7 @@
 /*   By: nrea <nrea@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/12 16:20:48 by nrea              #+#    #+#             */
-/*   Updated: 2024/09/24 12:41:07 by nrea             ###   ########.fr       */
+/*   Updated: 2024/09/24 15:44:51 by nrea             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,8 @@ header_infos Server::headerParser(std::string rawBuffer, std::pair<std::string, 
 	int locationIndex = 0; // defaultconfig location
 	{
 	std::ostringstream oss;
-	oss <<"[HeaderParser] A new request header has been received "<< interface.first<<":"<< interface.second;
+	oss <<"[HeaderParser] A new request header has been received "<< interface.first<<":"<< interface.second
+	<<std::endl<<rawBuffer;
 	webservLogger.log(LVL_INFO, oss);
 	}
 
