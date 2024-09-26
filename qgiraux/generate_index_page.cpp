@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/23 12:07:33 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/09/23 14:41:24 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/09/26 16:36:06 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,7 @@ std::string Server::generate_index_page(std::map<std::string, std::string> index
     << "<title>\n"
     << "Index\n"
     << "</title>\n"
+    << "<link rel=\"stylesheet\"href=\"style.css\"> "
     << "</head>\n" 
     << "<body>\n"
     << "Index of " << header.ressourcePath << "<br><br>\n";
