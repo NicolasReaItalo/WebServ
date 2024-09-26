@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.cpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
+/*   By: nrea <nrea@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:50:06 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/09/20 16:25:14 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/09/20 17:15:07 by nrea             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@
 
 
 
-std::vector<unsigned char> Server::load_file(const std::string &filename) 
+std::vector<unsigned char> Server::load_file(const std::string &filename)
 {
     std::ifstream file(filename.c_str(), std::ios::binary);
     if (!file) {
@@ -31,16 +31,16 @@ std::vector<unsigned char> Server::load_file(const std::string &filename)
     return file_data;
 }
 
-std::string Server::get_mime_type(const std::string &uri) 
+std::string Server::get_mime_type(const std::string &uri)
 {
-    
+
     std::string::size_type idx = uri.rfind('.');
     if (idx != std::string::npos) {
         std::string extension = uri.substr(idx);
         if (mimeList.find(extension) != mimeList.end())
             return mimeList[extension];
     }
-    return "application/octet-stream"; // Default for binary data
+    return "text/plain"; // Default for binary data
 }
 
 bool Server::is_fd_in_chunklist(int fd)
@@ -109,13 +109,13 @@ void Server::sendError(int errcode, int fd, header_infos header)
 	(void)fd;
     // body = header... custom error page path
     if (body.empty())
-    {   
+    {
         body = generate_error_page(errcode);
     }
     std::string head = ss.str();
     send(fd, head.c_str(), head.size(), 0);
     send(fd, body.c_str(), body.size(), 0);
-    
+
     if (shutdown(fd, SHUT_WR) == -1) {
         perror("shutdown");
         return;

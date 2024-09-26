@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:49:46 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/09/23 12:35:29 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/09/26 11:04:51 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,7 +84,7 @@ class Server
         std::map<int, header_infos> chunk;
         unsigned long maxBodySize;
 
-        
+
         void set_mimeList();
         void set_errorList();
         /*on an event pollin*/
@@ -99,9 +99,11 @@ class Server
 
         std::string get_mime_type(const std::string &uri);
         header_infos headerParser(std::string rawBuffer, std::pair<std::string, std::string> interface);
-		const ConfigServer * findServer(std::pair<std::string, std::string> interface, std::string host);
+		ConfigServer * findServer(std::pair<std::string, std::string> interface, std::string host);
 		header_infos handle_get(header_infos &response, ConfigServer  & config,int locationIndex,std::map<std::string, std::string> header_attributes);
 		header_infos serve_regular_file(header_infos &response, ConfigServer  & config,int locationIndex,std::map<std::string, std::string> header_attributes);
+		header_infos handle_post(header_infos &response, ConfigServer  & config,int locationIndex,std::map<std::string, std::string> header_attributes);
+		header_infos handle_delete(header_infos &response, ConfigServer  & config,int locationIndex,std::map<std::string, std::string> header_attributes);
 
         void chunked_post(int fd, std::string tmp);
         void send_chunk(int fd, int i, header_infos header);

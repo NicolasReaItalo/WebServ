@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   method_get.cpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
+/*   By: nrea <nrea@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:49:38 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/09/20 16:26:02 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/09/20 17:26:42 by nrea             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,11 +41,10 @@ void Server::method_get(header_infos header, int fd, int i)
         std::time_t clock = std::time(NULL);
         std::string time_str = std::ctime(&clock);
         time_str.erase(time_str.find_last_not_of("\n") + 1);
-        std::string mime = mimeList[get_mime_type(header.ressourcePath)];
 
         std::stringstream ss;
         ss  << "HTTP/1.1 200 OK\r\n"
-        << "Content-Type: " << mime << "\r\n"
+        << "Content-Type: " << header.contentType << "\r\n"
         << "Content-Length: " << header.bodySize << "\r\n"
         << "time: " << time_str << "\r\n" << "\r\n";
 
@@ -54,13 +53,13 @@ void Server::method_get(header_infos header, int fd, int i)
         {
             if (-1 == send(fd, head.c_str(), head.size(), 0))
                 std::cout << "error sending header\n";
-            
+
             if (-1 == send(fd, &(data[0]), header.bodySize, 0))
                 std::cout << "error sending body\n";
         }
         if (header.keepAlive == false)
         {
-            if (epoll_ctl(epoll_fd, EPOLL_CTL_DEL, fd, NULL) == -1) 
+            if (epoll_ctl(epoll_fd, EPOLL_CTL_DEL, fd, NULL) == -1)
             {
                 std::cerr << "Failed to remove fd from epoll: " << strerror(errno) << std::endl;
             }

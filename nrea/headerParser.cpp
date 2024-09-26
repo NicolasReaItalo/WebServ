@@ -6,27 +6,11 @@
 /*   By: nrea <nrea@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/12 16:20:48 by nrea              #+#    #+#             */
-/*   Updated: 2024/09/20 15:31:20 by nrea             ###   ########.fr       */
+/*   Updated: 2024/09/24 15:44:51 by nrea             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "headerParser.hpp"
-
-
-int dummy_getLocation(ConfigServer const *serverconfig, std::string uri)
-{
-	(void) serverconfig;
-	(void) uri;
-	return 0;
-}
-
-bool dummy_isAuthorized(ConfigServer const *serverconfig, int locationIndex, std::string method)
-{
-	(void) serverconfig;
-	(void) method;
-	(void) locationIndex;
-	return true;
-}
 
 
 /*split all the attributes of the raw header buffer and returns a map of all attributes
@@ -35,8 +19,6 @@ std::map<std::string, std::string> split_buffer(std::string rawBuffer)
 {
 	std::map<std::string, std::string> header_attributes;
 	std::vector<std::string> splitted_buffer;
-
-	//webservLogger.log(LVL_DEBUG, "HeaderParser :: split_buffer()");
 
 	splitted_buffer = splitString(rawBuffer, "\r\n");
 	if (splitted_buffer.size() < 2)
@@ -64,8 +46,6 @@ std::map<std::string, std::string> split_buffer(std::string rawBuffer)
 	return header_attributes;
 }
 
-
-
 header_infos Server::headerParser(std::string rawBuffer, std::pair<std::string, std::string> interface)
 {
 	header_infos response;
@@ -75,23 +55,24 @@ header_infos Server::headerParser(std::string rawBuffer, std::pair<std::string, 
 	int locationIndex = 0; // defaultconfig location
 	{
 	std::ostringstream oss;
-	oss <<"[HeaderParser] A new request header has been received "<< interface.first<<":"<< interface.second;
+	oss <<"[HeaderParser] A new request header has been received "<< interface.first<<":"<< interface.second
+	<<std::endl<<rawBuffer;
 	webservLogger.log(LVL_INFO, oss);
 	}
 
-try
-{
-	header_attributes = split_buffer(rawBuffer);
-}
-catch(const std::runtime_error& e)
-{
+	try
 	{
-	std::ostringstream oss;
-	oss <<"[HeaderParser] The request header is not properly formatted";
-	webservLogger.log(LVL_DEBUG, oss);
+		header_attributes = split_buffer(rawBuffer);
 	}
-	return response_error(HTTP_STATUS_BAD_REQUEST, defaultconfig, locationIndex);
-}
+	catch(const std::runtime_error& e)
+	{
+		{
+		std::ostringstream oss;
+		oss <<"[HeaderParser] The request header is not properly formatted";
+		webservLogger.log(LVL_DEBUG, oss);
+		}
+		return response_error(HTTP_STATUS_BAD_REQUEST, defaultconfig, locationIndex);
+	}
 
 // ON VERIFIE QUE HOST EST PRESENT
 	std::map<std::string,std::string>::iterator h_it = header_attributes.find("Host");
@@ -128,21 +109,13 @@ catch(const std::runtime_error& e)
 // bon server de config et on set sa location!
 	// ON RECUPERE LE BON SERVER
 	//webservLogger.log(LVL_DEBUG,"HeaderParser:: looking up for the serverConfig:",interface.first, interface.second, header_attributes["Host"]);
-	const ConfigServer * serverconfig = findServer(interface,header_attributes["Host"]);
+	ConfigServer * serverconfig = findServer(interface,header_attributes["Host"]);
 	{
 	std::ostringstream oss;
 	oss <<"[HeaderParser] findServer() ==> "<<serverconfig;
 	webservLogger.log(LVL_DEBUG, oss);
 	}
-//TODO TODO TODO
-// ON RECUPERE LA LOCATION ( CACHE )
-	// On verra quand ca marchera.                           =====================> TODO !!!!
-	locationIndex = dummy_getLocation(serverconfig,header_attributes["URI"]);
-	{
-	std::ostringstream oss;
-	oss <<"[HeaderParser] get_location() ==> "<<locationIndex;
-	webservLogger.log(LVL_DEBUG, oss);
-	}
+
 ///VERIFICATION DU PROTOCOLE------------------
 	if (header_attributes["Protocol"] != "HTTP/1.1")
 	{
@@ -205,12 +178,28 @@ catch(const std::runtime_error& e)
 		header_attributes["URI"] = tmp[0];
 
 ///------------------------------------------------------------------------------
+// ON RECUPERE LA LOCATION pour la mettre en cache pour les appels suivant a configServer
+	locationIndex = serverconfig->getLocation(header_attributes["URI"]);
+	{
+	std::ostringstream oss;
+	oss <<"[HeaderParser] get_location("<< header_attributes["URI"]<<") ==> "<<locationIndex;
+	webservLogger.log(LVL_DEBUG, oss);
+	}
 
+//TODO TODO TODO
+//	// Si il existe un return dans la location on redirige directement
+	if (serverconfig->inDirectives(locationIndex,"return"))
+	{
+		ConfigBlock::parameters_t  test = serverconfig->getDirectiveParameters(locationIndex, "return");
+		{
+		std::ostringstream oss;
+		oss <<"[HeaderParser] return found  "<<test.front()<< " | "<< test.back() ;
+		webservLogger.log(LVL_DEBUG, oss);
+		}
+	}
 
 // // ON VERIFIE QUE LA METHODE EST AUTORISEE ------------------------------- DESACTIVE en attendant serverconfig
-// 	if (!defaultconfig.inDirectiveParameters(locationIndex, "limit", header_attributes["Method"]))
-// 		return response_error(HTTP_STATUS_METHOD_NOT_ALLOWED, const_cast<ConfigServer&>(*serverconfig), locationIndex);
-	if (!dummy_isAuthorized(serverconfig, locationIndex, header_attributes["Method"]))
+	if (serverconfig->inDirectiveParameters(locationIndex,"limit",header_attributes["Method"]))
 	{
 		{
 		std::ostringstream oss;
@@ -219,7 +208,23 @@ catch(const std::runtime_error& e)
 		}
 		return response_error(HTTP_STATUS_METHOD_NOT_ALLOWED, const_cast<ConfigServer&>(*serverconfig), locationIndex);
 	}
+	{
+	std::ostringstream oss;
+	oss <<"[HeaderParser] The method  "<<header_attributes["Method"] << " is authorized";
+	webservLogger.log(LVL_DEBUG, oss);
+	}
 // //---------------------------------------------------
+
+////////TODO !!!!!
+	//ON RECUPERE LE PATH COMPLET VERS LA RESSOURCE
+	// response.ressourcePath = config.getFullPath(header_attributes["URI"], locationIndex);
+	response.ressourcePath  = dummy_get_fullPath(*serverconfig, locationIndex, header_attributes["URI"]);
+	{
+		std::ostringstream oss;
+		oss <<"[HeaderParser] retrieving full path from "
+		<<"["<<header_attributes["URI"] <<"]-->["<<response.ressourcePath<<"]";
+		webservLogger.log(LVL_DEBUG, oss);
+	}
 
 // ON SWITCHE SELON LA METHODE---------------------------------
 
@@ -232,11 +237,38 @@ catch(const std::runtime_error& e)
 		}
 		response = handle_get(response, defaultconfig, locationIndex, header_attributes);
 	}
-	// else if (header_attributes["Method"] == "POST")
-	// 	response = handle_post(response, defaultconfig, locationIndex, header_attributes);
-	// else if (header_attributes["Method"] == "DELETE")
-	// 	response = handle_delete(response, defaultconfig, locationIndex, header_attributes);
-
+	else if (header_attributes["Method"] == "POST")
+	{
+		{
+		std::ostringstream oss;
+		oss <<"[HeaderParser] POST method detected ==> starting handle_post()";
+		webservLogger.log(LVL_DEBUG, oss);
+		}
+		response = handle_post(response, defaultconfig, locationIndex, header_attributes);
+	}
+	else if (header_attributes["Method"] == "DELETE")
+		response = handle_delete(response, defaultconfig, locationIndex, header_attributes);
+	else
+		return response_error(HTTP_STATUS_METHOD_NOT_ALLOWED, const_cast<ConfigServer&>(*serverconfig), locationIndex);
+	{
+		std::ostringstream oss;
+		oss <<"[HeaderParser] RESPONSE  {"<<response.returnCode <<"} ";
+		oss <<"{"<<str_todo(response.toDo)<<"}"<<"{"<<response.ressourcePath <<"}";
+		if (response.keepAlive)
+			oss<<"{keep-alive}";
+		else
+			oss<<"{close}";
+		oss <<"\n                                              ";
+		if (response.chunked)
+			oss<<"{chunked}";
+		else
+			oss<<"{not chunked}";
+		oss<<"";
+		oss<<"{body-size: " << response.bodySize;
+		oss<<"} ";
+		oss<<"{content-type: " << response.contentType<<"}";
+ 		webservLogger.log(LVL_DEBUG, oss);
+	}
 	return response;
 }
 

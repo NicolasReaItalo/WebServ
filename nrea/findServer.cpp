@@ -15,15 +15,15 @@
 
 /*Finds the appropriate ConfigServer according to Address, Port and Host
 Returns a ConfigServer * pointer  */
-const ConfigServer * Server::findServer(std::pair<std::string, std::string> interface, std::string host)
+ConfigServer * Server::findServer(std::pair<std::string, std::string> interface, std::string host)
 {
 	std::list<ConfigServer>::iterator server_it;
-	std::vector<const ConfigServer*> matching_servers;
+	std::vector<ConfigServer*> matching_servers;
 
 	// On recupere tous les server qui matchent en address:port
 	for (server_it = servers.begin(); server_it != servers.end(); server_it++)
 	{
-		const ConfigServer &server = *server_it;
+		ConfigServer &server = *server_it;
 		if (server.getAddress() == interface.first && server.getPort() == interface.second)
 			matching_servers.push_back(&server);
 
@@ -34,7 +34,7 @@ const ConfigServer * Server::findServer(std::pair<std::string, std::string> inte
 		webservLogger.log(LVL_DEBUG, oss);
 	}
 	// Si il y en a plus d'un on cherche une valeur server_name qui matche
-	std::vector<const ConfigServer*>::iterator matching_it;
+	std::vector<ConfigServer*>::iterator matching_it;
 	for (matching_it = matching_servers.begin(); matching_it != matching_servers.end(); matching_it++)
 	{
 		const ConfigServer::parameters_t names = (*matching_it)->getServerNames();

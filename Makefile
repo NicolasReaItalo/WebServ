@@ -6,7 +6,7 @@
 #    By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/02/06 10:28:10 by jerperez          #+#    #+#              #
-#    Updated: 2024/09/23 12:37:54 by qgiraux          ###   ########.fr        #
+#    Updated: 2024/09/26 11:04:46 by qgiraux          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -15,13 +15,17 @@ NAME = webserv
 CXX = c++
 CPPFLAGS = -Wall -Wextra -Werror -g3 -std=c++98	-I./qgiraux -I./nrea -I./jerperez
 
-SRCS_NREA_FILES	=headerParser.cpp\
-				 findServer.cpp\
-				 handle_get.cpp\
-				 response_error.cpp\
-				 response_autoindex.cpp\
-				 Logger.cpp\
-				 utils.cpp
+SRCS_NREA_FILES	=	headerParser.cpp\
+					findServer.cpp\
+					handle_get.cpp\
+					handle_post.cpp\
+					response_error.cpp\
+					response_autoindex.cpp\
+					Logger.cpp\
+					utils.cpp\
+					dummy.cpp\
+					handle_delete.cpp\
+					FileInfos.cpp
 
 SRCS_NREA	= 	$(addprefix nrea/, $(SRCS_NREA_FILES))
 

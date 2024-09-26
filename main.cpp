@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/03 15:20:58 by jerperez          #+#    #+#             */
-/*   Updated: 2024/09/20 17:30:53 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/09/26 11:04:36 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,7 @@ int	main(int ac, char *av[])
 	if (2 == ac)
 		ret = _parse(av[1], servers);
 	else
-		return 2;
+		return ret;
 	Server server(servers);
 	server.ServerStart();
 	std::cout << "<<<EXIT>>>\n";

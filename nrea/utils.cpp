@@ -6,7 +6,7 @@
 /*   By: nrea <nrea@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/18 14:15:21 by nrea              #+#    #+#             */
-/*   Updated: 2024/09/20 13:23:14 by nrea             ###   ########.fr       */
+/*   Updated: 2024/09/23 12:10:21 by nrea             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -151,12 +151,26 @@ std::string getFileExtension(std::string uri)
 	std::string extension = "";
 	size_t dot = uri.rfind(".");
 	if ( dot != std::string::npos && dot && wrong.find(uri[dot-1]) == std::string::npos &&
-		wrong.find(uri[dot+1]) == std::string::npos ) // a refactoriser pour eviter overflow dans le cas ou uri se finit par '.'
+		wrong.find(uri[dot+1]) == std::string::npos ) // a refactoriser pour eviter out of bounds dans le cas ou uri se finit par '.'
 	{
 		extension = uri.substr(dot + 1, uri.size() - dot - 1 );
 	}
 	return extension;
 }
+
+//return the parent directory in a file path
+std::string getParentDir(std::string uri)
+{
+	std::size_t last_slash = uri.rfind('/');
+	if (last_slash > 0)
+	{
+		return uri.substr(0, last_slash);
+	}
+	return std::string("/forbidden"); // dummy so an error would be catch later;
+}
+
+// ABCDEFGHIJ
+// 0123456789
 
 bool contains_only_numeric(std::string str)
 {
@@ -199,5 +213,9 @@ void displayHeaderInfos(header_infos const &info)
 	std::cout<< BLUE<< "fd ressource: "<<YELLOW<<"["<<RST<< info.fd_ressource<<YELLOW<<"]"<<RST<<std::endl;
 
 }
+
+
+
+
 
 /*##############################################################*/
