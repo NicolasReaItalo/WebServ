@@ -6,7 +6,7 @@
 /*   By: jerperez <jerperez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/03 15:20:58 by jerperez          #+#    #+#             */
-/*   Updated: 2024/09/20 14:35:08 by jerperez         ###   ########.fr       */
+/*   Updated: 2024/09/26 11:09:54 by jerperez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ static int	_parse(char *pathname, std::list<ConfigServer> &servers)
 	}
 	f.close();
 	std::cout << "\e[34m##############################\e[0m" << std::endl;
-	if (pr_parse_config(list, servers))
+	if (pr_parse(list, servers))
 	{
 		std::cerr << "main: Parsing failed" << std::endl;
 		return (1);

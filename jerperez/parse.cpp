@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   server_config.cpp                                  :+:      :+:    :+:   */
+/*   parse.cpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jerperez <jerperez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 16:02:57 by jerperez          #+#    #+#             */
-/*   Updated: 2024/09/20 16:12:35 by jerperez         ###   ########.fr       */
+/*   Updated: 2024/09/26 11:50:49 by jerperez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,6 @@
 #define PR_KNOWN_DIRECTIVES "autoindex alias error_page index limit listen \
 cgi client_body_path client_max_body_size location root server_name"
 
-
 #define	CF_DEBUG 0
 
 // DEBUG
@@ -27,14 +26,13 @@ cgi client_body_path client_max_body_size location root server_name"
 #include <iomanip>
 #include <sstream>
 
+//
 
 static void	_print_dir(DirectiveBlock d)
 {
 
 	int								type = d.getType();
-	//std::cout << "type:" << type << std::endl;
 	Directive						*context = d.getContext();
-	//std::cout << "context:" << context << std::endl;
 	std::deque<std::string>			args = d.getArgs();
 	std::string	context_name("");
 
@@ -44,7 +42,6 @@ static void	_print_dir(DirectiveBlock d)
 		context_name = "main";
 	else
 		context_name = context->getArgs().front();
-	//std::cout << __FILE__ << ":" << __LINE__ << std::endl;//
 	if (PR_DIR_TYPE_BLOCK == type)
 		std::cout << "BLOCK:\t\t[" << std::setw(10) << context << std::setw(10) << context_name << "]\tArgs:\t";
 	else if (PR_DIR_TYPE_SIMPLE == type)
@@ -61,26 +58,6 @@ static void	_print_dir(DirectiveBlock d)
 			_print_dir(*it);
 	}
 }
-//
-
-// static bool	_is_server(Directive* d)
-// {
-// 	Directive::args_t	args = d->getArgs();
-
-// 	//if (args.empty())
-// }
-
-static void	_pushKnownDirectives(ConfigBlock::parameters_t	&knownDirectives)
-{
-	if (false == knownDirectives.empty())
-		return ;
-	std::stringstream	ss(PR_KNOWN_DIRECTIVES);
-	std::string			directive_name; 
-
-	while (std::getline(ss, directive_name, ' ')) 
-		knownDirectives.push_back(directive_name);
-}
-
 
 static void	_debug_test_server(ConfigServer &server)
 {
@@ -100,62 +77,25 @@ static void	_debug_test_server(ConfigServer &server)
 	location = server.getLocation(uri);
 	std::cout	<< " location=" << std::setw(2) << location
 				<< " fullpath=" << std::setw(20) << server.getFullPath(uri, location) << std::endl;
-	uri = "/bin/bash";
-	std::cout << "uri=" << std::setw(20) << uri;
-	location = server.getLocation(uri);
-	std::cout	<< " location=" << std::setw(2) << location
-				<< " fullpath=" << std::setw(20) << server.getFullPath(uri, location) << std::endl;
-	uri = "/bin//bash";
-	std::cout << "uri=" << std::setw(20) << uri;
-	location = server.getLocation(uri);
-	std::cout	<< " location=" << std::setw(2) << location
-				<< " fullpath=" << std::setw(20) << server.getFullPath(uri, location) << std::endl;
-
-	uri = "/bin//prout";
-	std::cout << "uri=" << std::setw(20) << uri;
-	location = server.getLocation(uri);
-	std::cout	<< " location=" << std::setw(2) << location
-				<< " fullpath=" << std::setw(20) << server.getFullPath(uri, location) << std::endl;
-
-	uri = "/bin/../";
-	std::cout << "uri=" << std::setw(20) << uri;
-	location = server.getLocation(uri);
-	std::cout	<< " location=" << std::setw(2) << location
-				<< " fullpath=" << std::setw(20) << server.getFullPath(uri, location) << std::endl;
-
-	uri = "/bin/../../";
-	std::cout << "uri=" << std::setw(20) << uri;
-	location = server.getLocation(uri);
-	std::cout	<< " location=" << std::setw(2) << location
-				<< " fullpath=" << std::setw(20) << server.getFullPath(uri, location) << std::endl;
-
-	uri = "/bin/../../../";
-	std::cout << "uri=" << std::setw(20) << uri;
-	location = server.getLocation(uri);
-	std::cout	<< " location=" << std::setw(2) << location
-				<< " fullpath=" << std::setw(20) << server.getFullPath(uri, location) << std::endl;
-
-	uri = "/bin/../../../";
-	std::cout << "uri=" << std::setw(20) << uri;
-	location = server.getLocation(uri);
-	std::cout << " location=" << std::setw(2) << location;
-	error_code = "404";
-	error_page = server.getDirectiveOutput(location, "error_page", error_code);
-	std::cout 	<<  " error_code=" << std::setw(5) << error_code
-				<<  " error_page=" << error_page << std::endl;
-
-	uri = "/";
-	std::cout << "uri=" << std::setw(20) << uri;
-	location = server.getLocation(uri);
-	std::cout << " location=" << std::setw(2) << location;
-	error_code = "404";
-	error_page = server.getDirectiveOutput(location, "error_page", error_code);
-	std::cout 	<<  " error_code=" << std::setw(5) << error_code
-				<<  " error_page=" << error_page << std::endl;
 }
 
+//
 
-static void	_print_error_code(const int err_code, token_deq_t::iterator	&it_curr, token_deq_t::const_iterator it_end)
+static void	_pushKnownDirectives(ConfigBlock::parameters_t	&knownDirectives)
+{
+	if (false == knownDirectives.empty())
+		return ;
+	std::stringstream	ss(PR_KNOWN_DIRECTIVES);
+	std::string			directive_name; 
+
+	while (std::getline(ss, directive_name, ' ')) 
+		knownDirectives.push_back(directive_name);
+}
+
+static void	_print_error_code(\
+	const int err_code, \
+	token_deq_t::iterator &it_curr, \
+	const token_deq_t::const_iterator it_end)
 {
 	std::cout << "parsing: error:";
 	if (it_curr != it_end)
@@ -169,13 +109,17 @@ static void	_print_error_code(const int err_code, token_deq_t::iterator	&it_curr
 }
 
 //
-int	pr_parse_config(token_deq_t &list, std::list<ConfigServer> &servers)
+/* Parse token list
+ * Fills servers with ConfigServer objects
+ * Returns 0 iff OK
+ */
+int	pr_parse(token_deq_t &list, std::list<ConfigServer> &servers)
 {
-	DirectiveBlock				context;
-	token_deq_t::iterator	it_curr = list.begin();
-	token_deq_t::const_iterator	it_end = list.end();
-	ConfigBlock::parameters_t	knownDirectives;
-	int						err_code;
+	DirectiveBlock						context;
+	token_deq_t::iterator				it_curr = list.begin();
+	const token_deq_t::const_iterator	&it_end = list.end();
+	ConfigBlock::parameters_t			knownDirectives;
+	int									err_code;
 
 	context.setType(0);
 	_pushKnownDirectives(knownDirectives);
@@ -185,17 +129,20 @@ int	pr_parse_config(token_deq_t &list, std::list<ConfigServer> &servers)
 		DirectiveBlock			next_directive;
 		err_code = pr_next_directive(it_curr, it_end, &context, next_directive);
 		if (err_code)
-			return (_print_error_code(err_code, it_curr, it_end), err_code); //
+		{
+			_print_error_code(err_code, it_curr, it_end);
+			return (err_code);
+		}
 		if (CF_DEBUG)
 			_print_dir(next_directive); //
 		ConfigServer	server;
 		server.setKnownDirectives(&knownDirectives);
 		err_code = server.addServer(&next_directive);
 		if (err_code)
-			return (err_code); //_print_error_code
+			return err_code; //_print_error_code
 		if (CF_DEBUG)
 			_debug_test_server(server); //
 		servers.push_back(server);
 	}
-	return (0);
+	return 0;
 }

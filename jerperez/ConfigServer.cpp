@@ -6,7 +6,7 @@
 /*   By: jerperez <jerperez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 13:29:48 by jerperez          #+#    #+#             */
-/*   Updated: 2024/09/20 17:32:09 by jerperez         ###   ########.fr       */
+/*   Updated: 2024/09/26 10:57:08 by jerperez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,14 +17,6 @@
 #include <limits.h>
 #include <stdlib.h>
 #include <algorithm>
-
-# define CF_ERRARGS 2
-# define CF_ERRNOTB 10
-# define CF_ERRNOTS 11
-# define CF_ERRNOTL 12
-# define CF_ERRNOTD 13
-# define CF_ERRLOC 14
-
 
 ConfigServer::ConfigServer(const ConfigServer &other)
 {
@@ -189,6 +181,15 @@ bool	ConfigServer::serverCmp(\
 
 //
 
+/* Returns the full path from decoded_uri at location
+ * location = server.getLocation(decoded_uri)
+ * takes into account the alias ant root directives
+ * with alias taking priority over root 
+ * Does not check file presence / permissions
+ * Ex: `root /var/www/; location /images {alias /var/www/assets/images};' 
+ * 		-> server.getFullPath("/foo/bar", -1) -> "/var/www//foo/bar"
+ * 		-> server.getFullPath("/images/foo.bar", loc) -> "/var/www/assets/images/foo.bar"
+ */
 std::string	ConfigServer::getFullPath(const std::string &decoded_uri, int location)
 {
 
@@ -202,14 +203,7 @@ std::string	ConfigServer::getFullPath(const std::string &decoded_uri, int locati
 	}
 	else
 		uri.replace(0, this->_locations[location].getUri().length(), alias);
-	char	*path = realpath(uri.c_str(), NULL);
-
-	if (NULL == path)
-		return ("");
-	std::string	ret_path(path);
-
-	free(path);
-	return (ret_path);
+	return uri;
 }
 
 //
@@ -221,36 +215,45 @@ std::string	ConfigServer::getFullPath(const std::string &decoded_uri, int locati
  * 		-> server.getLocation("/") -> -1
  * 		-> server.getLocation("/var/www/foo.bar") -> location_id
  */
-int	ConfigServer::getLocation(const std::string &decoded_uri)
+int	ConfigServer::getLocation(const std::string &decoded_uri) const
 {
-	std::vector<ConfigLocation>	&locations = this->_locations;
+	const std::vector<ConfigLocation>	&locations = this->_locations;
 
 	if (locations.empty())
-		return (-1);
+		return -1;
 	std::vector<ConfigLocation>::const_iterator	it_end = locations.end();
 	int i = 0;
 
-	for (std::vector<ConfigLocation>::iterator it = locations.begin(); it_end != it; ++it)
+	for (std::vector<ConfigLocation>::const_iterator it = locations.begin(); it_end != it; ++it)
 	{
 		if (it->inLocation(decoded_uri))
-			return (i);
+			return i;
 		++i;
 	}
-	return (-1);
+	return -1;
 }
 
 //
 
+/* Gets address
+ * from `listen [address]:[port];'
+ */
 const std::string				&ConfigServer::getAddress(void) const
 {
 	return this->_address;
 }
 
+/* Gets port
+ * from `listen [address]:[port];'
+ */
 const std::string				&ConfigServer::getPort(void) const
 {
 	return this->_port;
 }
 
+/* Gets the server names
+ * from `server_name [...];'
+ */
 const ConfigServer::parameters_t	&ConfigServer::getServerNames(void) const
 {
 	return this->_server_names;
@@ -262,7 +265,7 @@ int		ConfigServer::_addLocation(DirectiveBlock* block_directive)
 {
 	DirectiveBlock::args_t							args = block_directive->getArgs();
 	DirectiveBlock::args_t::iterator				it = args.begin();
-	const DirectiveBlock::args_t::const_iterator	it_end = args.end();
+	const DirectiveBlock::args_t::const_iterator	&it_end = args.end();
 
 	if (it == it_end || "location" != *it || ++it == it_end)
 		return 1;
@@ -271,6 +274,7 @@ int		ConfigServer::_addLocation(DirectiveBlock* block_directive)
 	if ("" == uri || ++it != it_end)
 		return 1;
 	ConfigLocation					location(uri);
+
 	location.setKnownDirectives(this->_knownDirectives);
 	DirectiveBlock::instructions_t	instructions = block_directive->getInstructions();
 	const DirectiveBlock::instructions_t::const_iterator	ite_end = instructions.end();
@@ -289,13 +293,13 @@ int		ConfigServer::_addLocation(DirectiveBlock* block_directive)
 int	ConfigServer::addServer(Directive* unknown_directive)
 {
 	if (PR_DIR_TYPE_BLOCK != unknown_directive->getType())
-		return (CF_ERRNOTB);
+		return CF_ERRNOTB;
 	Directive::args_t					args = unknown_directive->getArgs();
 	Directive::args_t::iterator			it = args.begin();
 	Directive::args_t::const_iterator	it_end = args.end();
 
 	if (it == it_end || "server" != *it || ++it != it_end)
-		return (CF_ERRNOTS);
+		return CF_ERRNOTS;
 	DirectiveBlock*	server_directive = reinterpret_cast<DirectiveBlock*>(unknown_directive);
 	DirectiveBlock::instructions_t	instructions = server_directive->getInstructions();
 	DirectiveBlock::instructions_t::const_iterator	ite_end = instructions.end();
@@ -305,16 +309,18 @@ int	ConfigServer::addServer(Directive* unknown_directive)
 		if (PR_DIR_TYPE_BLOCK == ite->getType())
 		{
 			if (this->_addLocation(&*ite))
-				return (CF_ERRNOTL);
+				return CF_ERRNOTL;
 		}
 		else if (this->_addDirective(&*ite))
-			return (CF_ERRNOTD);
+			return CF_ERRNOTD;
 	}
-	return (this->_fillAll());
+	return this->_fillAll();
 }
 
 //
 
+/* Use this to hard code a configuration of your choosing
+ */
 int	ConfigServer::_debugPlaceholder(int debug_input)
 {
 	(void)debug_input;
@@ -360,7 +366,10 @@ void		ConfigServer::_debug_print(void)
 
 //
 
-void	ConfigServer::_pushSplitParameters(std::string name, std::string joined_parameter, char delimiter=' ')
+void	ConfigServer::_pushSplitParameters(\
+	std::string name, \
+	std::string joined_parameter, \
+	char delimiter=' ')
 {
 	std::stringstream				ss(joined_parameter); 
 	std::string						parameter;

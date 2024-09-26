@@ -6,7 +6,7 @@
 #    By: jerperez <jerperez@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/02/06 10:28:10 by jerperez          #+#    #+#              #
-#    Updated: 2024/09/20 14:27:47 by jerperez         ###   ########.fr        #
+#    Updated: 2024/09/26 11:12:52 by jerperez         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -41,11 +41,11 @@ SRCS_QGIRAUX_FILES	= 	chunk_receive.cpp\
 SRCS_QGIRAUX	= 	$(addprefix qgiraux/, $(SRCS_QGIRAUX_FILES))
 
 SRCS_JERPEREZ_FILES	= tokenizer.cpp\
-			parser.cpp\
+			parse.cpp\
+			parse_next_directive.cpp\
 			DirectiveBlock.cpp\
 			Directive.cpp\
 			unquote.cpp\
-			server_config.cpp\
 			ConfigServer.cpp\
 			ConfigBlock.cpp\
 			ConfigLocation.cpp\

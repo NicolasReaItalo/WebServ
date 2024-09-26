@@ -6,7 +6,7 @@
 /*   By: jerperez <jerperez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/03 17:54:04 by jerperez          #+#    #+#             */
-/*   Updated: 2024/09/20 16:10:39 by jerperez         ###   ########.fr       */
+/*   Updated: 2024/09/26 10:59:17 by jerperez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,15 +16,6 @@
 #include "parser.hpp"
 #include <string>
 #include <cstring>
-
-
-
-/* returns true if space
- */
-// static bool	_isspace(char c)
-// {
-// 	return NULL != (char *)(std::strchr(TK_SPACE, c));
-// }
 
 /* skip space
  *
