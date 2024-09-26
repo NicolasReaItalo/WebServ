@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:49:40 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/09/26 13:36:47 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/09/26 13:48:28 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,9 +47,10 @@ void Server::method_post(header_infos header, std::vector<unsigned char> body, i
             sendError(500, fd, header); // Send internal server error if write fails
             return;
         }
-
+        std::string head = "HTTP/1.1 204 No Content\r\n\r\n";
         std::cout << "Transferred " << bytes_read << " bytes to " << header.ressourcePath << std::endl;
-
+        if (-1 == send(fd, head.c_str(), head.size(), 0))
+                std::cout << "error sending header\n";
         // Check if we failed to read or write the full content
         if (bytes_written != bytes_read)
         {
