@@ -1,32 +1,30 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   method_post.cpp                                    :+:      :+:    :+:   */
+/*   method_post_chunked.cpp                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/09/19 12:49:40 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/09/26 16:04:44 by qgiraux          ###   ########.fr       */
+/*   Created: 2024/09/26 13:54:05 by qgiraux           #+#    #+#             */
+/*   Updated: 2024/09/26 16:03:30 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Server.hpp"
-#include <iomanip>
 
-
-void Server::method_post(header_infos header, std::vector<unsigned char> body, int fd, int i)
+void Server::method_post_chunked(header_infos header, std::vector<unsigned char> body, int fd, int i)
 {
     // Open the target file to write the body data
     header.fd_ressource = open(header.ressourcePath.c_str(), O_RDWR | O_CREAT, S_IRUSR | S_IWUSR);
     if (-1 == header.fd_ressource)
     {
-        std::cerr << "Failed to open " << header.ressourcePath << std::endl;
+        std::cout << "Failed to open " << header.ressourcePath << std::endl;
         sendError(500, fd); // Send internal server error if file open fails
         return;
     }
 
     std::cout << "Managed to open " << header.ressourcePath << std::endl;
-    fdsets tmp = {"0","0",time, false, false};
+    fdsets tmp = {"0","0",time, false};
     fd_set[header.fd_ressource] = tmp;
 
     // If the request is not chunked (i.e., receiving the entire body in one go)
@@ -45,7 +43,7 @@ void Server::method_post(header_infos header, std::vector<unsigned char> body, i
         std::string head = "HTTP/1.1 204 No Content\r\n\r\n";
         std::cout << "Transferred " << bytes_read << " bytes to " << header.ressourcePath << std::endl;
         if (-1 == send(fd, head.c_str(), head.size(), 0))
-                std::cerr << "error sending header\n";
+                std::cout << "error sending header\n";
         // Check if we failed to read or write the full content
         if (bytes_written != bytes_read)
         {

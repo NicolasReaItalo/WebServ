@@ -4,9 +4,9 @@
 
 int Server::ServerStart()
 {
+    time = std::time(NULL);
     list_size = servers.size();
     std::list<ConfigServer>::iterator it = servers.begin();
-
     //create the epoll
     epoll_fd = epoll_create1(0);
     if (epoll_fd == -1) {
@@ -14,7 +14,9 @@ int Server::ServerStart()
         close(epoll_fd);
         return 1;
     }
-    fd_set[epoll_fd] = std::make_pair("0", "0");
+    
+    fdsets tmp = {"0", "0", time, true, false};
+    fd_set[epoll_fd] = tmp;
 
     // For each Server initialize the servers sockets
     for (int i = 0; i < list_size; i++)
@@ -47,7 +49,8 @@ int Server::ServerStart()
             return 1;
         }
         std::cout << "Bind successfull on " << server_fd[i] << std::endl;
-        fd_set[server_fd[i]] = std::make_pair(it->getAddress(), it->getPort());
+        fdsets tmp = {it->getAddress(), it->getPort(), time, true, false};
+        fd_set[server_fd[i]] = tmp;
         //making server_fd a passive socket, to accept incoming connexion requests
         if (listen(server_fd[i], 32) < 0) 
         {
@@ -72,6 +75,26 @@ int Server::ServerStart()
     std::cout << "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" << std::endl;
     int ret = 0;
     while (ret == 0 && stopper==0)
+    {
 		ret = ServerRun();
+        time = std::time(NULL);
+
+        std::map<int, fdsets>::iterator it;
+        for (it = fd_set.begin(); it != fd_set.end();)
+        {
+            if (!it->second.listener && time - it->second.timer > 5)
+            {
+                int tmp = it->first;
+                ++it;
+                std::cout << "connexion timeout on fd " << tmp << ", closing ..." << std::endl;
+                if (fd_set[tmp].client)
+                    sendError(408, tmp);
+                close(tmp);
+                fd_set.erase(tmp);
+            }
+            else
+                ++it;
+        }
+    }
 	return (0);
 }

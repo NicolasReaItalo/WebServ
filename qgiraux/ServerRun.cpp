@@ -6,11 +6,12 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:49:52 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/09/20 17:28:43 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/09/26 15:58:07 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Server.hpp"
+#include <ctime>
 
 int set_nonblocking(int sockfd) {
     int flags = fcntl(sockfd, F_GETFL, 0);
@@ -27,7 +28,7 @@ int set_nonblocking(int sockfd) {
 
 int Server::ServerRun()
 {
-    nfds = epoll_wait(epoll_fd, events, MAX_EVENTS, 10);
+    nfds = epoll_wait(epoll_fd, events, MAX_EVENTS, 100);
     if (stopper == 1)
         return 1;
     if (nfds == -1)
@@ -39,6 +40,7 @@ int Server::ServerRun()
     for (int i = 0; i < nfds; ++i)
     {
         int fd = events[i].data.fd;
+        fd_set[fd].timer = time;
 
         // Check if the event is for a listening socket
         bool is_server_socket = std::find(server_fd.begin(), server_fd.end(), fd) != server_fd.end();
@@ -80,6 +82,8 @@ int Server::ServerRun()
                     std::cout << "Accepted new connection, fd: " << new_socket << std::endl;
                     // fd_set.insert(new_socket);
                     fd_set[new_socket] = fd_set[fd];
+                    fd_set[new_socket].listener = false;
+                    fd_set[new_socket].client = true;
                     break;
                 }
             }

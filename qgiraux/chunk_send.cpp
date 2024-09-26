@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:49:25 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/09/20 16:23:58 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/09/26 15:58:45 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,9 +29,8 @@ void Server::send_chunk(int fd, int i, header_infos header)
         chunk[fd] = header;
 
         // chunk[fd].fd_ressource = open(chunk[fd].ressourcePath.c_str(), O_RDONLY);
-
-        //fd_set.insert(chunk[fd].fd_ressource);
         fd_set[chunk[fd].fd_ressource] = fd_set[fd];
+        fd_set[chunk[fd].fd_ressource].listener = false;
         std::string mime = mimeList[get_mime_type(chunk[fd].ressourcePath)];
 
         /*create and send the header*/

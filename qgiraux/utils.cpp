@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.cpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nrea <nrea@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:50:06 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/09/20 17:15:07 by nrea             ###   ########.fr       */
+/*   Updated: 2024/09/26 16:02:19 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,12 +95,10 @@ void Server::set_errorList()
 
 }
 /*prototype for sendError function*/
-void Server::sendError(int errcode, int fd, header_infos header)
+void Server::sendError(int errcode, int fd)
 {
-	(void)header;
     std::stringstream ss;
-    std::time_t clock = std::time(NULL);
-    std::string time_str = std::ctime(&clock);
+    std::string time_str = std::ctime(&time);;
     time_str.erase(time_str.find_last_not_of("\n") + 1);
 
     ss << "HTTP/1.1 " << errcode << " " << errorList[errcode] << "\r\n"

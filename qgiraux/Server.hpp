@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:49:46 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/09/26 13:34:41 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/09/26 16:02:28 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,7 @@
 #include <utility>
 #include <vector>
 #include <csignal>
+#include <ctime>
 
 #define MAX_EVENTS 500
 #define BUFFER_SIZE 1000
@@ -63,6 +64,15 @@ typedef struct s_header_infos
 	class ConfigServer *configServer;
 } header_infos;
 
+typedef struct s_fdsets
+{
+    std::string address;
+    std::string port;
+    time_t         timer;
+    bool        listener;
+    bool        client;
+} fdsets;
+
 extern volatile sig_atomic_t stopper;
 
 class Server
@@ -74,10 +84,11 @@ class Server
         std::vector<int> server_fd;
         int epoll_fd, new_socket;
         int nfds;
-        std::map<int, std::pair<std::string, std::string> > fd_set;
+        std::map<int, fdsets> fd_set;
         std::vector<struct sockaddr_in> address;
         std::vector<struct epoll_event> ev;
         struct epoll_event events[MAX_EVENTS];
+        time_t time;
 
         std::map<std::string, std::string> mimeList;
         std::map<int, std::string> errorList;
@@ -87,6 +98,7 @@ class Server
 
         void set_mimeList();
         void set_errorList();
+        
         /*on an event pollin*/
         void receive_data(int fd, int i);
         void closeAllFd();
@@ -96,6 +108,7 @@ class Server
         void method_delete(header_infos header, int fd);
         void method_error(header_infos header, int fd, int i);
         void method_autoindex(header_infos header, int fd, int i);
+        void method_post_chunked(header_infos header, std::vector<unsigned char> body, int fd, int i);
 
         std::string get_mime_type(const std::string &uri);
         header_infos headerParser(std::string rawBuffer, std::pair<std::string, std::string> interface);
@@ -109,7 +122,7 @@ class Server
         void send_chunk(int fd, int i, header_infos header);
         void send_chunk(int fd, int i);
         void send_index(int fd, header_infos header, std::map<std::string, std::string> index);
-        void sendError(int errcode, int fd, header_infos header);
+        void sendError(int errcode, int fd);
 
         bool is_fd_in_chunklist(int fd);
         std::string generate_error_page(int errcode);

@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:49:35 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/09/19 12:49:36 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/09/26 16:03:04 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,8 +20,7 @@ void Server::method_delete(header_infos header, int fd)
     if (0 == remove(header.ressourcePath.c_str()))
     {
         //struct stat fileInfo;
-        std::time_t clock = std::time(NULL);
-        std::string time_str = std::ctime(&clock);
+        std::string time_str = std::ctime(&time);;
         time_str.erase(time_str.find_last_not_of("\n") + 1);
         std::string mime = mimeList[get_mime_type(header.ressourcePath)];
 
@@ -36,6 +35,6 @@ void Server::method_delete(header_infos header, int fd)
     else
     {
         //send error 500 internal server error
-        sendError(500, fd, header);
+        sendError(500, fd);
     }
 }

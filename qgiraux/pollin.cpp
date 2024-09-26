@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:49:44 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/09/26 13:33:02 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/09/26 15:35:40 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,15 +31,16 @@ void Server::receive_data(int fd, int i)
 
     while (true) {
         bytesRead = recv(fd, buffer, maxBodySize - 1, 0);
-        std::cout << bytesRead << std::endl;
 
         if (bytesRead < 0) 
         {
             switch (header.toDo)
                 {
                     case POST:
-                        method_post(header, body, fd, i);
-                        return;
+                        // if(header.chunked)
+                        //     method_post_chunked(header, body, fd, i);
+                        // else
+                            method_post(header, body, fd, i);
                     case GET:
                         method_get(header, fd, i);
                         return;
@@ -86,7 +87,7 @@ void Server::receive_data(int fd, int i)
                 headerParsed = true; // Mark header as parsed
 
                 // Parse header
-                header = headerParser(headerStr, fd_set[fd]);                
+                header = headerParser(headerStr, std::make_pair(fd_set[fd].address, fd_set[fd].port));                
 
                 // Now call the appropriate method based on the header
                 
