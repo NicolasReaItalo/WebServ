@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ConfigServer.hpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nrea <nrea@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: jerperez <jerperez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 13:29:48 by jerperez          #+#    #+#             */
-/*   Updated: 2024/09/20 16:17:01 by nrea             ###   ########.fr       */
+/*   Updated: 2024/09/26 13:24:08 by jerperez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,13 @@
 #include "Directive.hpp"
 #include "ConfigBlock.hpp"
 #include "ConfigLocation.hpp"
+
+# define CF_ERRARGS 2
+# define CF_ERRNOTB 10
+# define CF_ERRNOTS 11
+# define CF_ERRNOTL 12
+# define CF_ERRNOTD 13
+# define CF_ERRLOC 14
 
 class ConfigServer : public ConfigBlock
 {
@@ -39,7 +46,7 @@ class ConfigServer : public ConfigBlock
 		//
 		int				_addLocation(DirectiveBlock* block_directive);
 		int				_fillAll(void);
-		_map_para_t		&_getDirectiveParametersRef(void); //
+		_map_para_t		&_getDirectiveParametersRef(void);
 		//
 		void			_debug_print(void);
 	protected:
@@ -53,10 +60,11 @@ class ConfigServer : public ConfigBlock
 		int			addServer(Directive* unknown_directive);
 		//
 		std::string			getFullPath(const std::string &decoded_uri, int location);
-		int					getLocation(const std::string &decoded_uri);
+		int					getLocation(const std::string &decoded_uri) const;
 		bool				serverCmp(const std::string &address, const std::string &port) const;
 		bool				serverCmp(const std::string &address, const std::string &port, const std::string &server_name) const;
 	 	bool				inDirectives(int location, std::string directive_name);
+		bool				inIODirectives(int location, std::string directive_name);
 		const std::string 	&getDirectiveParameter(int location, std::string directive_name);
 		bool				inDirectiveParameters(int location, std::string directive_name, std::string parameter);
 		const parameters_t	&getDirectiveParameters(int location, std::string directive_name);
@@ -67,9 +75,6 @@ class ConfigServer : public ConfigBlock
 		const parameters_t	&getServerNames(void) const;
 		//
 		int					_debugPlaceholder(int debug_input=0); //
-		// DEPRECIATED
-		//std::string	getCustomErrorPage(int location, int errorCode);
-
 };
 
 #endif
