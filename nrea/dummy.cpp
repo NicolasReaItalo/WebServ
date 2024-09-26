@@ -6,7 +6,7 @@
 /*   By: nrea <nrea@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/23 12:46:44 by nrea              #+#    #+#             */
-/*   Updated: 2024/09/23 14:00:41 by nrea             ###   ########.fr       */
+/*   Updated: 2024/09/26 13:42:31 by nrea             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,12 +29,12 @@ bool dummy_isReturn(ConfigServer const *serverconfig, int locationIndex, std::st
 }
 
 
-std::string dummy_get_fullPath(ConfigServer &serverconfig, int locationIndex, std::string uri)
-{
-	(void) serverconfig;
-	(void) locationIndex;
-	return "./html-files" + uri;
-}
+// std::string dummy_get_fullPath(ConfigServer &serverconfig, int locationIndex, std::string uri)
+// {
+// 	(void) serverconfig;
+// 	(void) locationIndex;
+// 	return "./html-files" + uri;
+// }
 
 const std::list<std::string> dummy_get_indexes(ConfigServer &serverconfig, int locationIndex)
 {

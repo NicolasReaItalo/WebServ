@@ -6,7 +6,7 @@
 /*   By: nrea <nrea@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/12 16:20:48 by nrea              #+#    #+#             */
-/*   Updated: 2024/09/24 15:44:51 by nrea             ###   ########.fr       */
+/*   Updated: 2024/09/26 13:33:00 by nrea             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -215,10 +215,8 @@ header_infos Server::headerParser(std::string rawBuffer, std::pair<std::string, 
 	}
 // //---------------------------------------------------
 
-////////TODO !!!!!
 	//ON RECUPERE LE PATH COMPLET VERS LA RESSOURCE
-	// response.ressourcePath = config.getFullPath(header_attributes["URI"], locationIndex);
-	response.ressourcePath  = dummy_get_fullPath(*serverconfig, locationIndex, header_attributes["URI"]);
+	response.ressourcePath = serverconfig->getFullPath(header_attributes["URI"], locationIndex);
 	{
 		std::ostringstream oss;
 		oss <<"[HeaderParser] retrieving full path from "
