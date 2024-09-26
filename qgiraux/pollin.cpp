@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:49:44 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/09/20 16:36:58 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/09/23 14:44:57 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,6 +67,9 @@ void Server::receive_data(int fd, int i)
 
                 // Parse header
                 header_infos header = headerParser(headerStr, fd_set[fd]);
+                // header.toDo = AUTOINDEX;
+                // header.ressourcePath = "/home/qgiraux/en_cours/WebServ/html-files/";
+                
 
                 // Now call the appropriate method based on the header
                 switch (header.toDo)
@@ -79,6 +82,9 @@ void Server::receive_data(int fd, int i)
                         return;
                     case DELETE:
                         method_delete(header, fd);
+                        return;
+                    case AUTOINDEX:
+                        method_autoindex(header, fd, i);
                         return;
 					case ERROR:
                         method_error(header, fd, i);

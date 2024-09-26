@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:49:58 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/09/19 12:49:59 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/09/23 14:39:58 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,6 +55,13 @@ body {
     display: block;
 	margin: auto;
 }
+
+.resizable-image2
+{
+	height: 1em;
+	vertical-align: middle;
+}
+
 
 /* Force the third image to appear on a new line */
 .resizable-image:nth-child(3) {

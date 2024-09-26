@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:49:46 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/09/20 17:27:09 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/09/23 12:35:29 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,6 +95,7 @@ class Server
         void method_post(header_infos header, std::vector<unsigned char> body, int fd, int i);
         void method_delete(header_infos header, int fd);
         void method_error(header_infos header, int fd, int i);
+        void method_autoindex(header_infos header, int fd, int i);
 
         std::string get_mime_type(const std::string &uri);
         header_infos headerParser(std::string rawBuffer, std::pair<std::string, std::string> interface);
@@ -105,10 +106,12 @@ class Server
         void chunked_post(int fd, std::string tmp);
         void send_chunk(int fd, int i, header_infos header);
         void send_chunk(int fd, int i);
+        void send_index(int fd, header_infos header, std::map<std::string, std::string> index);
+        void sendError(int errcode, int fd, header_infos header);
 
         bool is_fd_in_chunklist(int fd);
-        void sendError(int errcode, int fd, header_infos header);
         std::string generate_error_page(int errcode);
+        std::string generate_index_page(std::map<std::string, std::string> index, header_infos header);
         std::vector<unsigned char> load_file(const std::string &filename);
         void failed_to_send(int fd);
 
