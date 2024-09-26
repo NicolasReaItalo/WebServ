@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:49:44 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/09/23 14:44:57 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/09/26 13:33:02 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,54 +25,17 @@ void Server::receive_data(int fd, int i)
     ssize_t bytesRead;
     std::vector<unsigned char> body;
     std::string headerStr = ""; // String to hold the header part
+    header_infos header;
 
     bool headerParsed = false; // Flag to track whether the header has been parsed
 
     while (true) {
-        bytesRead = recv(fd, buffer, maxBodySize, 0);
+        bytesRead = recv(fd, buffer, maxBodySize - 1, 0);
+        std::cout << bytesRead << std::endl;
 
-        if (bytesRead < 0) {
-            if (errno == EAGAIN || errno == EWOULDBLOCK) 
-            {
-                // Read error
-                std::cerr << "Read error on fd: " << fd << ", error: " << strerror(errno) << std::endl;
-                close(fd);
-                fd_set.erase(fd);
-                return;
-            }
-        }
-        if (bytesRead == 0) {
-            // End of file, client disconnected
-            std::cout << "Client disconnected, fd: " << fd << std::endl;
-            close(fd);
-            fd_set.erase(fd);
-            return;
-        }
-
-        // If the header is not yet parsed, look for the header/body separation
-        if (!headerParsed) {
-            std::string tmp(reinterpret_cast<char*>(buffer), bytesRead);
-
-            // Find the position where the header ends (marked by \r\n\r\n)
-            size_t headerEndPos = tmp.find("\r\n\r\n");
-            if (headerEndPos != std::string::npos) {
-                // Extract header
-                headerStr = tmp.substr(0, headerEndPos);
-
-                // Convert remaining part to the body (binary-safe)
-                std::vector<unsigned char> bodyPart(buffer + headerEndPos + 4, buffer + bytesRead);
-                body.insert(body.end(), bodyPart.begin(), bodyPart.end());
-
-                headerParsed = true; // Mark header as parsed
-
-                // Parse header
-                header_infos header = headerParser(headerStr, fd_set[fd]);
-                // header.toDo = AUTOINDEX;
-                // header.ressourcePath = "/home/qgiraux/en_cours/WebServ/html-files/";
-                
-
-                // Now call the appropriate method based on the header
-                switch (header.toDo)
+        if (bytesRead < 0) 
+        {
+            switch (header.toDo)
                 {
                     case POST:
                         method_post(header, body, fd, i);
@@ -94,12 +57,49 @@ void Server::receive_data(int fd, int i)
                         std::cerr << "Unknown method" << std::endl;
                         return;
                 }
-            } else {
+        }
+        if (bytesRead == 0)
+        {
+            // End of file, client disconnected
+                std::cerr << "Client disconnected : " << fd << std::endl;
+                close(fd);
+                fd_set.erase(fd);
+                return;                
+        }
+
+        // If the header is not yet parsed, look for the header/body separation
+        if (bytesRead > 0 && !headerParsed) 
+        {
+            std::string tmp(reinterpret_cast<char*>(buffer), bytesRead);
+
+            // Find the position where the header ends (marked by \r\n\r\n)
+            size_t headerEndPos = tmp.find("\r\n\r\n");
+            if (headerEndPos != std::string::npos) 
+            {
+                // Extract header
+                headerStr = tmp.substr(0, headerEndPos);
+
+                // Convert remaining part to the body (binary-safe)
+                std::vector<unsigned char> bodyPart(buffer + headerEndPos + 4, buffer + bytesRead);
+                body.insert(body.end(), bodyPart.begin(), bodyPart.end());
+
+                headerParsed = true; // Mark header as parsed
+
+                // Parse header
+                header = headerParser(headerStr, fd_set[fd]);                
+
+                // Now call the appropriate method based on the header
+                
+            } 
+            else 
+            {
                 // The header is incomplete; append to headerStr and continue reading
                 headerStr += tmp;
                 continue;
             }
-        } else {
+        } 
+        else 
+        {
             // After the header has been parsed, continue receiving the body
             body.insert(body.end(), buffer, buffer + bytesRead);
         }

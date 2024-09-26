@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:49:46 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/09/26 11:04:51 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/09/26 13:34:41 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,8 +33,8 @@
 #include <csignal>
 
 #define MAX_EVENTS 500
-#define BUFFER_SIZE 100000
-#define CHUNK_SIZE 50000
+#define BUFFER_SIZE 1000
+#define CHUNK_SIZE 500000
 
 #define ERROR 1
 #define GET 2

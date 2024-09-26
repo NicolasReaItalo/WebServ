@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:49:40 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/09/19 18:34:08 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/09/26 13:36:47 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,11 +32,11 @@ void Server::method_post(header_infos header, std::vector<unsigned char> body, i
     if (!header.chunked)
     {
         // Check if the body exceeds the maximum allowed size
-        if (body.size() >= maxBodySize)
-        {
-            sendError(413, fd, header); // Return error 413 (Payload Too Large)
-            return;
-        }
+        // if (body.size() >= maxBodySize)
+        // {
+        //     sendError(413, fd, header); // Return error 413 (Payload Too Large)
+        //     return;
+        // }
         ssize_t bytes_read = body.size(); // The number of bytes we received in the body
 
         // Write the received body directly to the file
