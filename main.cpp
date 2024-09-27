@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jerperez <jerperez@student.42.fr>          +#+  +:+       +#+        */
+/*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/03 15:20:58 by jerperez          #+#    #+#             */
-/*   Updated: 2024/09/26 13:24:55 by jerperez         ###   ########.fr       */
+/*   Updated: 2024/09/27 15:33:10 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@
 volatile sig_atomic_t stopper = 0;
 
 void handle_sigint(int sig) {
-    std::cout << "Caught signal " << sig << ", stopping server..." << std::endl;
+	std::cout << "\r\033[1;32mCaught signal " << sig << ", stopping server...\033[0m" << std::endl;
     stopper = 1;
 }
 
@@ -71,6 +71,6 @@ int	main(int ac, char *av[])
 		return ret;
 	Server server(servers);
 	server.ServerStart();
-	std::cout << "<<<EXIT>>>\n";
+	std::cout << "\n\t\t\033[1;31m<<<  EXIT  >>>\033[0m\n\n";
 	return 0;
 }

@@ -25,18 +25,18 @@ int main()
     << "href=\"style.css\"> "
     << "</head>" 
     << "<body>"
-    << "<div class=\"error-wrapper\"> "
-    << "<div class=\"error-title\"> "
+    << "<div class=\"page\"> "
+    << "<div class=\"title\"> "
     << "<h1>" << errcode << "</h1> "
     << "</div> "
-    << "<div class=\"error-title\"><p>"
+    << "<div class=\"title\"><p>"
     << errorList[errcode]
     << "</p></div> "
-    << "<div class=\"error-title\">"
+    << "<div class=\"title\">"
     << " <a href=\"index.html\">" 
     << "Go Back to Home "
     << "</a></div> "
-    << " <div class=\"error-container\">"
+    << " <div class=\"bloc\">"
 	<< "<img src=\"images/404.png\" alt=" << errcode <<" class=\"resizable-image\">"
 	<< "	</div></div></body> </html>";
 

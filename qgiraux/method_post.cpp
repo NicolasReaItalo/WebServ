@@ -6,16 +6,23 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:49:40 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/09/27 12:19:30 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/09/27 15:02:43 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Server.hpp"
 #include <iomanip>
+#include "Logger.hpp"
+#include <ostream>
 
 
 void Server::method_post(header_infos& header, std::vector<unsigned char> body, int fd, int i)
 {
+    {
+        std::ostringstream oss;
+        oss << "[method post] starting for fd " << fd;
+        webservLogger.log(LVL_INFO, oss);
+    }
     // Open the target file to write the body data
     header.fd_ressource = open(header.ressourcePath.c_str(), O_RDWR | O_CREAT, S_IRUSR | S_IWUSR);
     if (-1 == header.fd_ressource)
@@ -24,8 +31,6 @@ void Server::method_post(header_infos& header, std::vector<unsigned char> body, 
         sendError(500, fd); // Send internal server error if file open fails
         return;
     }
-
-    std::cout << "Managed to open " << header.ressourcePath << std::endl;
     fdsets tmp = {"0","0",time, false, false};
     fd_set[header.fd_ressource] = tmp;
 
@@ -61,13 +66,17 @@ void Server::method_post(header_infos& header, std::vector<unsigned char> body, 
         receive_data(fd, i);
         return;
     }
-
     // Handle closing the connection if keep-alive is false
     if (!header.keepAlive)
     {
         if (epoll_ctl(epoll_fd, EPOLL_CTL_DEL, fd, NULL) == -1) 
         {
-            std::cerr << "Failed to remove fd from epoll: " << strerror(errno) << std::endl;
+            {
+                std::ostringstream oss;
+                oss << "Failed to remove fd from epoll: " << strerror(errno) << std::endl;
+                webservLogger.log(LVL_ERROR, oss);
+            }
+            // std::cerr << "Failed to remove fd from epoll: " << strerror(errno) << std::endl;
         }
         close(fd);
         fd_set.erase(fd); // Remove the file descriptor from the fd_set

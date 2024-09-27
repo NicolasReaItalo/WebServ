@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:49:46 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/09/27 12:18:32 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/09/27 14:03:14 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,7 @@
 #include <vector>
 #include <csignal>
 #include <ctime>
+#include "Logger.hpp"
 
 #define MAX_EVENTS 500
 #define BUFFER_SIZE 1000
@@ -75,11 +76,11 @@ typedef struct s_fdsets
 } fdsets;
 
 extern volatile sig_atomic_t stopper;
+extern Logger webservLogger;
 
 class Server
 {
     private :
-
         int list_size;
         std::list<ConfigServer> servers;
         std::vector<int> server_fd;

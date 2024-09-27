@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/12 16:20:48 by nrea              #+#    #+#             */
-/*   Updated: 2024/09/27 13:28:22 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/09/27 14:36:56 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,7 @@ header_infos Server::headerParser(std::string rawBuffer, std::pair<std::string, 
 	{
 	std::ostringstream oss;
 	oss <<"[HeaderParser] A new request header has been received "<< interface.first<<":"<< interface.second
-	<<std::endl<<rawBuffer;
+	<<std::endl;
 	webservLogger.log(LVL_INFO, oss);
 	}
 
@@ -199,7 +199,7 @@ header_infos Server::headerParser(std::string rawBuffer, std::pair<std::string, 
 	}
 
 // // ON VERIFIE QUE LA METHODE EST AUTORISEE ------------------------------- DESACTIVE en attendant serverconfig
-	if (serverconfig->inDirectiveParameters(locationIndex,"limit",header_attributes["Method"]))
+	if (!serverconfig->inDirectiveParameters(locationIndex,"limit",header_attributes["Method"]))
 	{
 		{
 		std::ostringstream oss;
