@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:49:38 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/09/26 16:03:13 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/09/27 12:17:34 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 #include <ctime>
 #include <sstream>
 
-void Server::method_get(header_infos header, int fd, int i)
+void Server::method_get(const header_infos& header, int fd, int i)
 {
     int tr = open(header.ressourcePath.c_str(), O_RDONLY);
     // std::cout << "TR == " << tr << std::endl << "ressource path == " << header.ressourcePath << std::endl;;

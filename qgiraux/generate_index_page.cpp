@@ -6,14 +6,14 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/23 12:07:33 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/09/27 11:59:55 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/09/27 12:17:34 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Server.hpp"
 #include <sstream>
 
-std::string Server::generate_index_page(std::map<std::string, std::string> index, header_infos header)
+std::string Server::generate_index_page(std::map<std::string, std::string> index, const header_infos& header)
 {
     std::stringstream os;
 

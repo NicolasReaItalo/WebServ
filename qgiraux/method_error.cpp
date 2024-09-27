@@ -1,7 +1,7 @@
 #include "Server.hpp"
 
 
-void Server::method_error(header_infos header, int fd, int i)
+void Server::method_error(const header_infos& header, int fd, int i)
 {
 
     std::cout << header.ressourcePath << std::endl;

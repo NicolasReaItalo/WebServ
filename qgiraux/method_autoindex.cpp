@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/23 10:42:10 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/09/27 11:40:59 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/09/27 12:17:34 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 #include <sstream>
 #include <ctime>
 
-void Server::method_autoindex(header_infos header, int fd, int i)
+void Server::method_autoindex(const header_infos& header, int fd, int i)
 {
     std::map<std::string, std::string> index;
     (void)i;
@@ -56,7 +56,7 @@ void Server::method_autoindex(header_infos header, int fd, int i)
     send_index(fd, header, index);
 }  
 
-void Server::send_index(int fd, header_infos header, std::map<std::string, std::string> index)
+void Server::send_index(int fd, const header_infos& header, std::map<std::string, std::string>& index)
 {
     std::stringstream ss;
     std::string time_str = std::ctime(&time);

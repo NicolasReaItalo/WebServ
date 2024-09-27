@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:49:25 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/09/26 15:58:45 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/09/27 12:17:34 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@
 #include <ctime>
 #include <fstream>
 
-void Server::send_chunk(int fd, int i, header_infos header)
+void Server::send_chunk(int fd, int i, const header_infos& header)
 {
     std::cout << "*****GET chunker!!************\n";
     /*if not in chunklist ==> send header, set EPOLLOUT and add fd to chunk*/
