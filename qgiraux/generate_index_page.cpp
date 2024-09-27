@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/23 12:07:33 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/09/27 10:27:58 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/09/27 11:59:55 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,16 +26,15 @@ std::string Server::generate_index_page(std::map<std::string, std::string> index
     << "<title>\n"
     << "Index\n"
     << "</title>\n"
-    << "<link rel=\"stylesheet\"href=\"style.css\"> "
     << "</head>\n" 
     << "<body>\n"
     << "Index of " << header.ressourcePath << "<br><br>\n";
     for (std::map<std::string, std::string>::iterator it = index.begin(); it != index.end(); ++it)
     {
         if (*it->second.rbegin() == '/')
-            os << "<img src=\"/images/folder.png\" alt=\"folder icon\" class=\"resizable-image\">\n";
+            os << "<img src=\"/images/folder.png\" alt=\"folder icon\" style=\"height: 1em; vertical-align: middle;\">\n";
         else
-            os << "<img src=\"/images/file.png\" alt=\"file icon\" class=\"resizable-image\">\n";
+            os << "<img src=\"/images/file.png\" alt=\"file icon\" style=\"height: 1em; vertical-align: middle;\">\n";
             
         os << "<A HREF = \"" << it->second << "\">" << it->first << "</A><br>\n" ;
     }
