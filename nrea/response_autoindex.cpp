@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   response_autoindex.cpp                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jerperez <jerperez@student.42.fr>          +#+  +:+       +#+        */
+/*   By: nrea <nrea@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 15:25:39 by nrea              #+#    #+#             */
-/*   Updated: 2024/09/20 14:33:56 by jerperez         ###   ########.fr       */
+/*   Updated: 2024/09/27 12:42:40 by nrea             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,5 @@ header_infos response_autoindex(ConfigServer &config, int locationIndex, header_
 	response.contentType = "text/html";
 	response.configServer = &config;
 	response.locationIndex = locationIndex;
-
 	return response;
 }

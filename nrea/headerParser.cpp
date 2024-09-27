@@ -6,7 +6,7 @@
 /*   By: nrea <nrea@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/12 16:20:48 by nrea              #+#    #+#             */
-/*   Updated: 2024/09/24 15:44:51 by nrea             ###   ########.fr       */
+/*   Updated: 2024/09/27 12:44:38 by nrea             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -250,6 +250,7 @@ header_infos Server::headerParser(std::string rawBuffer, std::pair<std::string, 
 		response = handle_delete(response, defaultconfig, locationIndex, header_attributes);
 	else
 		return response_error(HTTP_STATUS_METHOD_NOT_ALLOWED, const_cast<ConfigServer&>(*serverconfig), locationIndex);
+	response.keepAlive = header_attributes["Connection"] == "Keep-Alive";
 	{
 		std::ostringstream oss;
 		oss <<"[HeaderParser] RESPONSE  {"<<response.returnCode <<"} ";
@@ -269,6 +270,7 @@ header_infos Server::headerParser(std::string rawBuffer, std::pair<std::string, 
 		oss<<"{content-type: " << response.contentType<<"}";
  		webservLogger.log(LVL_DEBUG, oss);
 	}
+
 	return response;
 }
 
