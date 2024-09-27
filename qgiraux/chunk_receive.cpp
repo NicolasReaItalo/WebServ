@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:49:15 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/09/19 12:49:16 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/09/26 16:02:57 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,11 +25,11 @@ void Server::chunked_post(int fd, std::string data)
     {
         if (data.length() < maxBodySize){
                                             //return error 400 bad request
-            sendError(400, chunk[fd].fd_ressource, chunk[fd]);
+            sendError(400, chunk[fd].fd_ressource);
         }
         else{
                                             //return error 413 content to large
-            sendError(413, chunk[fd].fd_ressource, chunk[fd]);
+            sendError(413, chunk[fd].fd_ressource);
         }
         close(chunk[fd].fd_ressource);
         remove(chunk[fd].ressourcePath.c_str());
@@ -47,11 +47,11 @@ void Server::chunked_post(int fd, std::string data)
     {
         if (data == "0\r\n\r\n"){
                                             //send response 201 created
-            sendError(201, chunk[fd].fd_ressource, chunk[fd]);
+            sendError(201, chunk[fd].fd_ressource);
         }
         else{
                                             //return Error 400 bad request
-            sendError(400, chunk[fd].fd_ressource, chunk[fd]);
+            sendError(400, chunk[fd].fd_ressource);
         }
         close(chunk[fd].fd_ressource);
         fd_set.erase(chunk[fd].fd_ressource);
@@ -73,7 +73,7 @@ void Server::chunked_post(int fd, std::string data)
     if (size != data.length())
     {
                                             //return error 400 bad request
-        sendError(400, chunk[fd].fd_ressource, chunk[fd]);
+        sendError(400, chunk[fd].fd_ressource);
         close(chunk[fd].fd_ressource);
         fd_set.erase(chunk[fd].fd_ressource);
         remove(chunk[fd].ressourcePath.c_str());

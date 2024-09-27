@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:49:55 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/09/20 17:13:12 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/09/26 14:06:22 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 
 void Server::closeAllFd()
 {
-    std::map<int, std::pair<std::string, std::string> >::iterator it;
+    std::map<int, fdsets>::iterator it;
 
     for (it = fd_set.begin(); it != fd_set.end(); it++)
         close(it->first);

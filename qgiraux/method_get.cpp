@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   method_get.cpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nrea <nrea@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:49:38 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/09/20 17:26:42 by nrea             ###   ########.fr       */
+/*   Updated: 2024/09/26 16:03:13 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ void Server::method_get(header_infos header, int fd, int i)
     // std::cout << "TR == " << tr << std::endl << "ressource path == " << header.ressourcePath << std::endl;;
     if (-1 == tr)
     {
-        sendError(404, fd, header);
+        sendError(404, fd);
         return;
     }
     close(tr);
@@ -38,8 +38,7 @@ void Server::method_get(header_infos header, int fd, int i)
         for (unsigned long i = 0; i < maxBodySize; i++)
             buffer[i] = 0;
 
-        std::time_t clock = std::time(NULL);
-        std::string time_str = std::ctime(&clock);
+        std::string time_str = std::ctime(&time);;
         time_str.erase(time_str.find_last_not_of("\n") + 1);
 
         std::stringstream ss;

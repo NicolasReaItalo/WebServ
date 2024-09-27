@@ -6,7 +6,7 @@
 /*   By: nrea <nrea@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 10:17:49 by nrea              #+#    #+#             */
-/*   Updated: 2024/09/27 09:47:30 by nrea             ###   ########.fr       */
+/*   Updated: 2024/09/27 12:29:25 by nrea             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,8 +40,10 @@ Logger::~Logger()
 
 void	Logger::log(int level, std::ostringstream &oss)
 {
+
 	if (level >= _level)
 	{
+		(void)oss;
 		std::cout<< _level_colors[level]<<" ";
 		std::cout<< _level_str[level]<<" ";
 		std::cout<< timestamp() << " ";

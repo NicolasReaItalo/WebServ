@@ -6,7 +6,7 @@
 /*   By: nrea <nrea@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/12 16:20:48 by nrea              #+#    #+#             */
-/*   Updated: 2024/09/27 11:53:43 by nrea             ###   ########.fr       */
+/*   Updated: 2024/09/27 12:38:18 by nrea             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,6 +115,7 @@ header_infos Server::headerParser(std::string rawBuffer, std::pair<std::string, 
 	webservLogger.log(LVL_DEBUG, oss);
 	}
 
+
 ///VERIFICATION DU PROTOCOLE------------------
 	if (header_attributes["Protocol"] != "HTTP/1.1")
 	{
@@ -181,7 +182,7 @@ header_infos Server::headerParser(std::string rawBuffer, std::pair<std::string, 
 	int locationIndex = serverconfig->getLocation(header_attributes["URI"]);
 	{
 	std::ostringstream oss;
-	oss <<"[HeaderParser] get_location("<< header_attributes["URI"]<<") ==> "<<locationIndex;
+	oss <<"[HeaderParser] get_location("<< header_attributes["URI"]<<")["<<locationIndex<<"]";
 	webservLogger.log(LVL_DEBUG, oss);
 	}
 

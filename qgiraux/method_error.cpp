@@ -10,6 +10,6 @@ void Server::method_error(header_infos header, int fd, int i)
         method_get(header, fd, i);
         return;
     }
-    sendError(header.returnCode, fd, header);
+    sendError(header.returnCode, fd);
     return ;
 }

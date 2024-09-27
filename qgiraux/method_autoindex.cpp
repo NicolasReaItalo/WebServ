@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/23 10:42:10 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/09/23 14:44:32 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/09/26 15:52:46 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,8 +68,7 @@ void Server::method_autoindex(header_infos header, int fd, int i)
 void Server::send_index(int fd, header_infos header, std::map<std::string, std::string> index)
 {
     std::stringstream ss;
-    std::time_t clock = std::time(NULL);
-    std::string time_str = std::ctime(&clock);
+    std::string time_str = std::ctime(&time);
     time_str.erase(time_str.find_last_not_of("\n") + 1);
 
     ss << "HTTP/1.1 200 OK\r\n"
