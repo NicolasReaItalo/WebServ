@@ -6,7 +6,7 @@
 /*   By: nrea <nrea@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:49:46 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/09/27 12:27:44 by nrea             ###   ########.fr       */
+/*   Updated: 2024/09/27 13:56:56 by nrea             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,6 +48,7 @@
 typedef struct s_header_infos
 {
 	int toDo;
+    std::string uri;
 	unsigned long bodySize;
 	std::string ressourcePath;
 	std::string contentType;
@@ -103,12 +104,12 @@ class Server
         void receive_data(int fd, int i);
         void closeAllFd();
 
-        void method_get(header_infos header, int fd, int i);
-        void method_post(header_infos header, std::vector<unsigned char> body, int fd, int i);
-        void method_delete(header_infos header, int fd);
-        void method_error(header_infos header, int fd, int i);
-        void method_autoindex(header_infos header, int fd, int i);
-        void method_post_chunked(header_infos header, std::vector<unsigned char> body, int fd, int i);
+        void method_get(const header_infos& header, int fd, int i);
+        void method_post(header_infos& header, std::vector<unsigned char> body, int fd, int i);
+        void method_delete(const header_infos& header, int fd);
+        void method_error(const header_infos& header, int fd, int i);
+        void method_autoindex(const header_infos& header, int fd, int i);
+        void method_post_chunked(const header_infos& header, std::vector<unsigned char> body, int fd, int i);
 
         std::string get_mime_type(const std::string &uri);
         header_infos headerParser(std::string rawBuffer, std::pair<std::string, std::string> interface);
@@ -120,14 +121,14 @@ class Server
 		header_infos handle_dir(header_infos &response,ConfigServer  & config,int locationIndex,std::map<std::string, std::string> &header_attributes);
 
         void chunked_post(int fd, std::string tmp);
-        void send_chunk(int fd, int i, header_infos header);
+        void send_chunk(int fd, int i, const header_infos& header);
         void send_chunk(int fd, int i);
-        void send_index(int fd, header_infos header, std::map<std::string, std::string> index);
+        void send_index(int fd, const header_infos& header, std::map<std::string, std::string>& index);
         void sendError(int errcode, int fd);
 
         bool is_fd_in_chunklist(int fd);
         std::string generate_error_page(int errcode);
-        std::string generate_index_page(std::map<std::string, std::string> index, header_infos header);
+        std::string generate_index_page(std::map<std::string, std::string> index, const header_infos& header);
         std::vector<unsigned char> load_file(const std::string &filename);
         void failed_to_send(int fd);
 

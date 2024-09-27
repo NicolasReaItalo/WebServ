@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:49:15 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/09/26 16:02:57 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/09/26 16:19:06 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,11 +46,11 @@ void Server::chunked_post(int fd, std::string data)
     if (data.substr(0, 3) == "0\r\n")
     {
         if (data == "0\r\n\r\n"){
-                                            //send response 201 created
+            //send response 201 created
             sendError(201, chunk[fd].fd_ressource);
         }
         else{
-                                            //return Error 400 bad request
+            //return Error 400 bad request
             sendError(400, chunk[fd].fd_ressource);
         }
         close(chunk[fd].fd_ressource);
@@ -68,11 +68,10 @@ void Server::chunked_post(int fd, std::string data)
     int start = data.find("/r/n") + 2;
     unsigned long size = std::atoi(data.substr(0, start - 2).c_str());
     data = data.substr(start, data.length() - 2);
+    
     /*if chunk size incorrect*/
-
     if (size != data.length())
     {
-                                            //return error 400 bad request
         sendError(400, chunk[fd].fd_ressource);
         close(chunk[fd].fd_ressource);
         fd_set.erase(chunk[fd].fd_ressource);
@@ -85,6 +84,7 @@ void Server::chunked_post(int fd, std::string data)
         chunk.erase(fd);
         return;
     }
+    
     /*the current chunk ends well*/
     write(chunk[fd].fd_ressource, data.c_str(), size);
     return;

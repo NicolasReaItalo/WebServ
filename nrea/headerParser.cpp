@@ -6,7 +6,7 @@
 /*   By: nrea <nrea@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/12 16:20:48 by nrea              #+#    #+#             */
-/*   Updated: 2024/09/27 13:38:17 by nrea             ###   ########.fr       */
+/*   Updated: 2024/09/27 13:56:08 by nrea             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -268,6 +268,8 @@ header_infos Server::headerParser(std::string rawBuffer, std::pair<std::string, 
 		oss<<"{content-type: " << response.contentType<<"}";
  		webservLogger.log(LVL_DEBUG, oss);
 	}
+	response.uri = header_attributes["URI"];
+
 
 	return response;
 }

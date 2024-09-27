@@ -6,7 +6,7 @@
 /*   By: nrea <nrea@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 13:29:48 by jerperez          #+#    #+#             */
-/*   Updated: 2024/09/27 12:34:16 by nrea             ###   ########.fr       */
+/*   Updated: 2024/09/27 13:55:22 by nrea             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,7 +74,7 @@ class ConfigServer : public ConfigBlock
 		const parameters_t	&getServerNames(void) const;
 		//
 		int					_debugPlaceholder(int debug_input=0); //
-		void				_debug_print(void);
+		void				_debug_print(void); //
 };
 
 #endif

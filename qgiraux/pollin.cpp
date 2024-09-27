@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:49:44 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/09/26 15:35:40 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/09/26 16:31:10 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,15 +31,17 @@ void Server::receive_data(int fd, int i)
 
     while (true) {
         bytesRead = recv(fd, buffer, maxBodySize - 1, 0);
-
+        //if receiving a chunk from a chunked POST
         if (bytesRead < 0) 
         {
+            if (chunk.find(fd) != chunk.end())
+            {
+                chunked_post(fd, (char *)&body[0]);
+                return;
+            }
             switch (header.toDo)
                 {
                     case POST:
-                        // if(header.chunked)
-                        //     method_post_chunked(header, body, fd, i);
-                        // else
                             method_post(header, body, fd, i);
                     case GET:
                         method_get(header, fd, i);
@@ -69,7 +71,7 @@ void Server::receive_data(int fd, int i)
         }
 
         // If the header is not yet parsed, look for the header/body separation
-        if (bytesRead > 0 && !headerParsed) 
+        if (bytesRead > 0 && !headerParsed && chunk.find(fd) == chunk.end()) 
         {
             std::string tmp(reinterpret_cast<char*>(buffer), bytesRead);
 

@@ -6,7 +6,7 @@
 /*   By: nrea <nrea@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/18 13:27:16 by nrea              #+#    #+#             */
-/*   Updated: 2024/09/27 12:24:44 by nrea             ###   ########.fr       */
+/*   Updated: 2024/09/27 13:56:28 by nrea             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -126,7 +126,7 @@ header_infos Server::handle_get(header_infos &response,
 // test access
 	ret = stat(response.ressourcePath.c_str(),  &stat_buf);
 	if (ret != 0)
-	return handleFileErrror(errno,response,config, locationIndex);
+		return handleFileErrror(errno,response,config, locationIndex);
 
 	//Si la ressource est un repertoire
 	if (S_ISDIR(stat_buf.st_mode))
