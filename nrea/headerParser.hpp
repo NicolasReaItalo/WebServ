@@ -6,7 +6,7 @@
 /*   By: nrea <nrea@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/18 13:44:25 by nrea              #+#    #+#             */
-/*   Updated: 2024/09/27 14:04:23 by nrea             ###   ########.fr       */
+/*   Updated: 2024/09/27 17:32:46 by nrea             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,6 @@
 #include "Logger.hpp"
 #include "FileInfos.hpp"
 
-#include "dummy.hpp"
 
 
 #define RST		"\033[0m"
@@ -64,7 +63,8 @@ std::vector<std::string> splitString(const std::string& str, std::string delimit
 
 
 
-bool matchContentTypes(std::string file_content_type, std::string accepted_types);
+bool matchAcceptContentTypes(std::string file_content_type, std::string accepted_types);
+bool matchAcceptServerContentTypes(std::string file_content_type, std::map<std::string,std::string> mime_list);
 
 std::string str_todo(int todo);
 #endif

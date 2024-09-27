@@ -6,6 +6,4 @@ webserv
 html-files/cat.jpeg
 html-files/generic-error.html
 html-files/test.html
-*.conf
-conf.conf
 hurl/*

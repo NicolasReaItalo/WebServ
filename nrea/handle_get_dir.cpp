@@ -17,33 +17,29 @@
 header_infos Server::handle_dir(header_infos &response,
  ConfigServer  * config,int locationIndex,std::map<std::string, std::string> &header_attributes)
  {
-	config->_debug_print();
+	// config->_debug_print();
 	{
 		std::ostringstream oss;
-		oss <<"[handle_get_dir] "<<response.ressourcePath<< "is a directory";
+		oss <<"[handle_get_dir]	"<<response.ressourcePath<< "is a directory";
 		webservLogger.log(LVL_DEBUG, oss);
 	}
-		{
-		std::ostringstream oss;
-		oss <<"[handle_get_dir] config.indirective :"<<config->inDirectives(locationIndex, "index");
-		webservLogger.log(LVL_DEBUG, oss);
-		}
 	if (config->inDirectives(locationIndex, "index") == true)
 	{
 		{
 		std::ostringstream oss;
-		oss <<"[handle_get_dir] matching index authorized in :"<<response.ressourcePath;
+		oss <<"[handle_get_dir]	matching index authorized in :"<<response.ressourcePath;
 		webservLogger.log(LVL_DEBUG, oss);
 		}
 		{
 			std::ostringstream oss;
-			oss <<"[handle_get_dir] "<<" looking for matching indexes with path "<<response.ressourcePath;
+			oss <<"[handle_get_dir]	"<<"looking for matching indexes with path "<<response.ressourcePath;
 			webservLogger.log(LVL_DEBUG, oss);
 		}
-		////// TODO TODO
-		const std::list<std::string> indexes = dummy_get_indexes();
+		ConfigBlock::parameters_t  indexes = config->getDirectiveParameters(locationIndex, "index");
+
+		// const std::list<std::string> indexes = dummy_get_indexes();
 		// d'abord tester les differents index possibles
-		for (std::list<std::string>::const_iterator it = indexes.begin(); it != indexes.end(); it++)
+		for (ConfigBlock::parameters_t ::const_iterator it = indexes.begin(); it != indexes.end(); it++)
 		{
 			std::string full_path =response.ressourcePath;
 			if (response.ressourcePath[response.ressourcePath.size() -1] != '/')
@@ -54,18 +50,23 @@ header_infos Server::handle_dir(header_infos &response,
 				response.ressourcePath = full_path;
 				{
 					std::ostringstream oss;
-					oss <<"[handle_get_dir] "<<" Existing path with index found :" <<full_path;
+					oss <<"[handle_get_dir]	"<<"Existing path with index found :" <<full_path;
 					webservLogger.log(LVL_DEBUG, oss);
 				}
 				return serve_regular_file(response, config, locationIndex, header_attributes);
 			}
 		}
+
+
+
+
+
 	}
 	else
 	{
 		{
 			std::ostringstream oss;
-			oss <<"[handle_get_dir] "<<" no index directive for "<<response.ressourcePath;
+			oss <<"[handle_get_dir]	"<<" no index directive for "<<response.ressourcePath;
 			webservLogger.log(LVL_DEBUG, oss);
 		}
 
@@ -76,17 +77,15 @@ header_infos Server::handle_dir(header_infos &response,
 
 		{
 			std::ostringstream oss;
-			oss <<"[handle_get_dir] "<<
+			oss <<"[handle_get_dir]	"<<
 			" checking if autoindex allowed in " <<response.ressourcePath ;
 			webservLogger.log(LVL_DEBUG, oss);
 		}
-
-		// if (dummy_get_autoindex_status(config, locationIndex))
 		if (config->getDirectiveParameter(locationIndex, "autoindex") == "on")
 		{
 			{
 				std::ostringstream oss;
-				oss <<"[handle_get_dir] "<<" autoindex allowed in "<<response.ressourcePath ;
+				oss <<"[handle_get_dir]	"<<" autoindex allowed in "<<response.ressourcePath ;
 				webservLogger.log(LVL_DEBUG, oss);
 			}
 			return response_autoindex(config, locationIndex, response);
@@ -95,7 +94,7 @@ header_infos Server::handle_dir(header_infos &response,
 		{
 			{
 				std::ostringstream oss;
-				oss <<"[handle_get_dir] "<<" autoindex forbidden in "<<response.ressourcePath ;
+				oss <<"[handle_get_dir]	"<<" autoindex forbidden in "<<response.ressourcePath ;
 				webservLogger.log(LVL_DEBUG, oss);
 			}
 			return response_error(HTTP_STATUS_FORBIDDEN, config, locationIndex);

@@ -6,7 +6,7 @@
 #    By: nrea <nrea@student.42.fr>                  +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/02/06 10:28:10 by jerperez          #+#    #+#              #
-#    Updated: 2024/09/27 11:26:42 by nrea             ###   ########.fr        #
+#    Updated: 2024/09/27 17:29:24 by nrea             ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -25,7 +25,6 @@ SRCS_NREA_FILES	=	headerParser.cpp\
 					response_autoindex.cpp\
 					Logger.cpp\
 					utils.cpp\
-					dummy.cpp\
 					FileInfos.cpp
 
 SRCS_NREA	= 	$(addprefix nrea/, $(SRCS_NREA_FILES))

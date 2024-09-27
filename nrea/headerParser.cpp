@@ -6,7 +6,7 @@
 /*   By: nrea <nrea@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/12 16:20:48 by nrea              #+#    #+#             */
-/*   Updated: 2024/09/27 14:29:12 by nrea             ###   ########.fr       */
+/*   Updated: 2024/09/27 16:41:24 by nrea             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,7 @@ header_infos Server::headerParser(std::string rawBuffer, std::pair<std::string, 
 	int default_location = 0; // defaultconfig location
 	{
 		std::ostringstream oss;
-		oss <<"[HeaderParser] A new request header has been received "<< interface.first<<":"<< interface.second;
+		oss <<"[HeaderParser]	A new request header has been received "<< interface.first<<":"<< interface.second;
 		webservLogger.log(LVL_INFO, oss);
 	}
 
@@ -67,7 +67,7 @@ header_infos Server::headerParser(std::string rawBuffer, std::pair<std::string, 
 	{
 		{
 		std::ostringstream oss;
-		oss <<"[HeaderParser] The request header is not properly formatted";
+		oss <<"[HeaderParser]	The request header is not properly formatted";
 		webservLogger.log(LVL_DEBUG, oss);
 		}
 		return response_error(HTTP_STATUS_BAD_REQUEST, &defaultconfig, default_location);
@@ -79,7 +79,7 @@ header_infos Server::headerParser(std::string rawBuffer, std::pair<std::string, 
 	{
 		{
 		std::ostringstream oss;
-		oss <<"[HeaderParser] The request header is not properly formatted";
+		oss <<"[HeaderParser]	The request header is not properly formatted";
 		webservLogger.log(LVL_DEBUG, oss);
 		}
 		return response_error(HTTP_STATUS_BAD_REQUEST, &defaultconfig, default_location);
@@ -98,7 +98,7 @@ header_infos Server::headerParser(std::string rawBuffer, std::pair<std::string, 
 	{
 		{
 		std::ostringstream oss;
-		oss <<"[HeaderParser] The request header is not properly formatted";
+		oss <<"[HeaderParser]	The request header is not properly formatted";
 		webservLogger.log(LVL_DEBUG, oss);
 		}
 		return response_error(HTTP_STATUS_BAD_REQUEST, &defaultconfig, default_location);
@@ -111,17 +111,17 @@ header_infos Server::headerParser(std::string rawBuffer, std::pair<std::string, 
 	ConfigServer * serverconfig = findServer(interface,header_attributes["Host"]);
 	{
 	std::ostringstream oss;
-	oss <<"[HeaderParser] findServer() ==> "<<serverconfig;
+	oss <<"[HeaderParser]	findServer() ==> "<<serverconfig;
 	webservLogger.log(LVL_DEBUG, oss);
 	}
-	serverconfig->_debug_print();
+	// serverconfig->_debug_print();
 
 ///VERIFICATION DU PROTOCOLE------------------
 	if (header_attributes["Protocol"] != "HTTP/1.1")
 	{
 		{
 		std::ostringstream oss;
-		oss <<"[HeaderParser] The protocol is not supported ==> "<<header_attributes["Protocol"];
+		oss <<"[HeaderParser]	The protocol is not supported ==> "<<header_attributes["Protocol"];
 		webservLogger.log(LVL_DEBUG, oss);
 		}
 		return response_error(HTTP_STATUS_HTTP_VERSION_NOT_SUPPORTED, serverconfig, default_location);
@@ -133,7 +133,7 @@ header_infos Server::headerParser(std::string rawBuffer, std::pair<std::string, 
 	{
 		{
 		std::ostringstream oss;
-		oss <<"[HeaderParser] The uri is empty or dos not start with '/' ==> "<<header_attributes["Raw_URI"];
+		oss <<"[HeaderParser]	The uri is empty or dos not start with '/' ==> "<<header_attributes["Raw_URI"];
 		webservLogger.log(LVL_DEBUG, oss);
 		}
 		return response_error(HTTP_STATUS_BAD_REQUEST, serverconfig, default_location);
@@ -149,7 +149,7 @@ header_infos Server::headerParser(std::string rawBuffer, std::pair<std::string, 
 	{
 		{
 		std::ostringstream oss;
-		oss <<"[HeaderParser] The uri contains forbidden special characters  ==> "<<header_attributes["Raw_URI"];
+		oss <<"[HeaderParser]	The uri contains forbidden special characters  ==> "<<header_attributes["Raw_URI"];
 		webservLogger.log(LVL_DEBUG, oss);
 		}
 
@@ -169,7 +169,7 @@ header_infos Server::headerParser(std::string rawBuffer, std::pair<std::string, 
 	{
 		{
 		std::ostringstream oss;
-		oss <<"[HeaderParser] The URI is not properly formatted ==> "<<header_attributes["Raw_URI"];
+		oss <<"[HeaderParser]	The URI is not properly formatted ==> "<<header_attributes["Raw_URI"];
 		webservLogger.log(LVL_DEBUG, oss);
 		}
 		return response_error(HTTP_STATUS_BAD_REQUEST, serverconfig, default_location);
@@ -179,10 +179,12 @@ header_infos Server::headerParser(std::string rawBuffer, std::pair<std::string, 
 
 ///------------------------------------------------------------------------------
 // ON RECUPERE LA LOCATION pour la mettre en cache pour les appels suivant a configServer
+	// serverconfig->_debug_print();
+
 	int locationIndex = serverconfig->getLocation(header_attributes["URI"]);
 	{
 	std::ostringstream oss;
-	oss <<"[HeaderParser] get_location("<< header_attributes["URI"]<<")["<<locationIndex<<"]";
+	oss <<"[HeaderParser]	get_location("<< header_attributes["URI"]<<") = ["<<locationIndex<<"]";
 	webservLogger.log(LVL_DEBUG, oss);
 	}
 
@@ -193,33 +195,33 @@ header_infos Server::headerParser(std::string rawBuffer, std::pair<std::string, 
 		ConfigBlock::parameters_t  test = serverconfig->getDirectiveParameters(locationIndex, "return");
 		{
 		std::ostringstream oss;
-		oss <<"[HeaderParser] return found  "<<test.front()<< " | "<< test.back() ;
+		oss <<"[HeaderParser]	return found  "<<test.front()<< " | "<< test.back() ;
 		webservLogger.log(LVL_DEBUG, oss);
 		}
 	}
 
-// // ON VERIFIE QUE LA METHODE EST AUTORISEE ------------------------------- DESACTIVE en attendant serverconfig
+// // ON VERIFIE QUE LA METHODE EST AUTORISEE
 	if (serverconfig->inDirectiveParameters(locationIndex,"limit",header_attributes["Method"]) == false)
 	{
 		{
 		std::ostringstream oss;
-		oss <<"[HeaderParser] The method  "<<header_attributes["Method"] << " is forbidden";
+		oss <<"[HeaderParser]	The method  "<<header_attributes["Method"] << " is forbidden";
 		webservLogger.log(LVL_DEBUG, oss);
 		}
 		return response_error(HTTP_STATUS_METHOD_NOT_ALLOWED, serverconfig, locationIndex);
 	}
 	{
 	std::ostringstream oss;
-	oss <<"[HeaderParser] The method  "<<header_attributes["Method"] << " is authorized";
+	oss <<"[HeaderParser]	The method  "<<header_attributes["Method"] << " is authorized";
 	webservLogger.log(LVL_DEBUG, oss);
 	}
 // //---------------------------------------------------
 
 	//ON RECUPERE LE PATH COMPLET VERS LA RESSOURCE
-	response.ressourcePath = serverconfig->getFullPath(header_attributes["URI"], locationIndex);
+	response.ressourcePath = serverconfig->getFullPath(header_attributes["URI"], locationIndex);///////
 	{
 		std::ostringstream oss;
-		oss <<"[HeaderParser] retrieving full path from "
+		oss <<"[HeaderParser]	retrieving full path from "
 		<<"["<<header_attributes["URI"] <<"]-->["<<response.ressourcePath<<"]";
 		webservLogger.log(LVL_DEBUG, oss);
 	}
@@ -230,7 +232,7 @@ header_infos Server::headerParser(std::string rawBuffer, std::pair<std::string, 
 	{
 		{
 		std::ostringstream oss;
-		oss <<"[HeaderParser] GET method detected ==> starting handle_get()";
+		oss <<"[HeaderParser]	GET method detected ==> starting handle_get()";
 		webservLogger.log(LVL_DEBUG, oss);
 		}
 		response = handle_get(response, serverconfig, locationIndex, header_attributes);
@@ -239,7 +241,7 @@ header_infos Server::headerParser(std::string rawBuffer, std::pair<std::string, 
 	{
 		{
 		std::ostringstream oss;
-		oss <<"[HeaderParser] POST method detected ==> starting handle_post()";
+		oss <<"[HeaderParser]	POST method detected ==> starting handle_post()";
 		webservLogger.log(LVL_DEBUG, oss);
 		}
 		response = handle_post(response, serverconfig, locationIndex, header_attributes);
@@ -251,13 +253,12 @@ header_infos Server::headerParser(std::string rawBuffer, std::pair<std::string, 
 	response.keepAlive = header_attributes["Connection"] == "Keep-Alive";
 	{
 		std::ostringstream oss;
-		oss <<"[HeaderParser] RESPONSE  {"<<response.returnCode <<"} ";
+		oss <<"[HeaderParser]	RESPONSE  {"<<response.returnCode <<"} ";
 		oss <<"{"<<str_todo(response.toDo)<<"}"<<"{"<<response.ressourcePath <<"}";
 		if (response.keepAlive)
 			oss<<"{keep-alive}";
 		else
 			oss<<"{close}";
-		oss <<"\n                                              ";
 		if (response.chunked)
 			oss<<"{chunked}";
 		else

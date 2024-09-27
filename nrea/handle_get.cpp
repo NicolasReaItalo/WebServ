@@ -6,7 +6,7 @@
 /*   By: nrea <nrea@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/18 13:27:16 by nrea              #+#    #+#             */
-/*   Updated: 2024/09/27 14:09:11 by nrea             ###   ########.fr       */
+/*   Updated: 2024/09/27 17:12:28 by nrea             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,16 +18,11 @@
 header_infos handleFileErrror
 (int error, header_infos &response, ConfigServer  * config,int locationIndex)
 {
-		{
-			std::ostringstream oss;
-			oss <<"[handleFileErrror]  "<<error ;
-			webservLogger.log(LVL_DEBUG, oss);
-		}
 	if (ENOENT == error)
 	{
 		{
 			std::ostringstream oss;
-			oss <<"[handle_get] The ressource "<<response.ressourcePath <<" does not exist";
+			oss <<"[handle_get]	The ressource "<<response.ressourcePath <<" does not exist";
 			webservLogger.log(LVL_DEBUG, oss);
 		}
 		return response_error(HTTP_STATUS_NOT_FOUND, config, locationIndex);
@@ -36,7 +31,7 @@ header_infos handleFileErrror
 	{
 		{
 			std::ostringstream oss;
-			oss <<"[handle_get] The ressource "<<response.ressourcePath <<" is forbidden";
+			oss <<"[handle_get]	The ressource "<<response.ressourcePath <<" is forbidden";
 			webservLogger.log(LVL_DEBUG, oss);
 		}
 		return  response_error(HTTP_STATUS_FORBIDDEN, config, locationIndex);
@@ -44,7 +39,7 @@ header_infos handleFileErrror
 
 	{
 		std::ostringstream oss;
-		oss <<"[handle_get] An internal error has occured";
+		oss <<"[handle_get]	An internal error has occured";
 		webservLogger.log(LVL_DEBUG, oss);
 	}
 	return  response_error(HTTP_STATUS_INTERNAL_SERVER_ERROR, config, locationIndex);
@@ -67,7 +62,7 @@ ConfigServer  * config,int locationIndex,std::map<std::string, std::string> head
 	{
 		{
 			std::ostringstream oss;
-			oss <<"[serve_regular_file] "<<response.ressourcePath <<" is not a readable regular file";
+			oss <<"[serve_regular_file]	"<<response.ressourcePath <<" is not a readable regular file";
 			webservLogger.log(LVL_DEBUG, oss);
 		}
 		return response_error(HTTP_STATUS_FORBIDDEN, config, locationIndex);
@@ -83,11 +78,11 @@ ConfigServer  * config,int locationIndex,std::map<std::string, std::string> head
 	//ON Ddetermine sa taille
 	response.bodySize = getFileSize(response.ressourcePath);
 
-	///////TODO  DETERMINATION DU CHUNK!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	//Si la taille est trop grande on passe en chunked; //TODO
 	// --------------------------------------
 
-	if (response.bodySize > dummy_get_client_max_body_size())
+	if (response.bodySize >
+	static_cast<unsigned long>(atol(config->getDirectiveParameter(locationIndex, "client_body_path").c_str())))
 		response.chunked = true;
 	else
 		response.chunked = false;
@@ -105,7 +100,7 @@ ConfigServer  * config,int locationIndex,std::map<std::string, std::string> head
 	response.contentType = get_mime_type(response.ressourcePath);
 
 	//On verifie que le content-type est autorise
-	if (!matchContentTypes(response.contentType, header_attributes["Accept"]))
+	if (!matchAcceptContentTypes(response.contentType, header_attributes["Accept"]))
 		return response_error(HTTP_STATUS_NOT_ACCEPTABLE, config, locationIndex);
 	///voir le keep-alive
 	response.keepAlive = header_attributes["Connection"] == "keep-alive";

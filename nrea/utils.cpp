@@ -6,7 +6,7 @@
 /*   By: nrea <nrea@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/18 14:15:21 by nrea              #+#    #+#             */
-/*   Updated: 2024/09/23 12:10:21 by nrea             ###   ########.fr       */
+/*   Updated: 2024/09/27 17:23:44 by nrea             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,14 +41,26 @@ std::string str_todo(int todo)
 	return m[todo];
 }
 
-
-bool matchContentTypes(std::string file_content_type, std::string accepted_types)
+/*Checks if the content-type of a file matches the accepted content-types of the client*/
+bool matchAcceptContentTypes(std::string file_content_type, std::string accepted_types)
 {
 	if (accepted_types.find("*/*") != std::string::npos)
 		return true;
 	if (accepted_types.find(file_content_type) != std::string::npos)
 		return true;
 	//webservLogger.log(LVL_DEBUG, "HeaderParser not matching accepted  :", file_content_type);
+	return false;
+}
+/*Checks if the content-type of the posted file matches the accepted content-types of the server*/
+
+bool matchAcceptServerContentTypes(std::string file_content_type, std::map<std::string,std::string> mime_list)
+{
+	std::map<std::string, std::string>::iterator it;
+	for (it = mime_list.begin(); it != mime_list.end(); it++)
+	{
+		if (it->second == file_content_type)
+			return true;
+	}
 	return false;
 }
 
