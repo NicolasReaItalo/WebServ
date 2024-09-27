@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/23 12:07:33 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/09/26 16:36:06 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/09/27 10:27:58 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,9 +33,9 @@ std::string Server::generate_index_page(std::map<std::string, std::string> index
     for (std::map<std::string, std::string>::iterator it = index.begin(); it != index.end(); ++it)
     {
         if (*it->second.rbegin() == '/')
-            os << "<img src=\"images/folder.png\" alt=\"folder icon\" class=\"resizable-image\">\n";
+            os << "<img src=\"/images/folder.png\" alt=\"folder icon\" class=\"resizable-image\">\n";
         else
-            os << "<img src=\"images/file.png\" alt=\"file icon\" class=\"resizable-image\">\n";
+            os << "<img src=\"/images/file.png\" alt=\"file icon\" class=\"resizable-image\">\n";
             
         os << "<A HREF = \"" << it->second << "\">" << it->first << "</A><br>\n" ;
     }

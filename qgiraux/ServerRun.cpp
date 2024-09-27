@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:49:52 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/09/26 15:58:07 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/09/27 10:01:24 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,7 +79,7 @@ int Server::ServerRun()
                         close(new_socket);
                         continue;
                     }
-                    std::cout << "Accepted new connection, fd: " << new_socket << std::endl;
+                    // std::cout << "Accepted new connection, fd: " << new_socket << std::endl;
                     // fd_set.insert(new_socket);
                     fd_set[new_socket] = fd_set[fd];
                     fd_set[new_socket].listener = false;

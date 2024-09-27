@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/23 10:42:10 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/09/26 15:52:46 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/09/27 11:40:59 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,42 +18,32 @@
 
 void Server::method_autoindex(header_infos header, int fd, int i)
 {
-    std::list<ConfigServer>::iterator it = servers.begin();
     std::map<std::string, std::string> index;
-    
-    for (int n = 0; n < i; n++)
-        it++;
-    std::string root = it->getDirectiveParameter(header.locationIndex, "root");
+    (void)i;
+    std::string root = header.configServer->getFullPath(header.uri, header.locationIndex);
     std::string path = header.ressourcePath;
     
-    if (chdir(path.c_str()) == -1)
-    {
-        std::cout << "can't open directory" << std::endl;
-        return;
-    }
-    if (strncmp(path.c_str(), root.c_str(), root.length()) && path.length() > root.length())
-    {
-        if (path.rfind("/") == path.length())
-            path = path.substr(0, path.length() - 1);
-        path = path.substr(0, path.rfind("/") - 1);
-        index["../"] = path;         
-    }
-    DIR *currentdir = opendir(".");
+
+    DIR *currentdir = opendir(path.c_str());
     if (!currentdir) 
     {
+        
         std::cout << "can't open directory" << std::endl;
         return;
     }
     for (struct dirent *dent; (dent = readdir(currentdir)) != NULL;)
     {
         const char *file = dent->d_name;
+        std::cout << file << std::endl;
         //skip parent and current directory
-        if (strcmp(file, ".") == 0 || strcmp(file, "..") == 0)
+        if (strcmp(file, ".") == 0 && strcmp(file, "..") != 0)
             continue;
             
         struct stat file_stats;
-        if (stat(file, &file_stats) == -1)
+        std::string ptfile = path + "/" + file;
+        if (stat(ptfile.c_str(), &file_stats) == -1)
         {
+            std::cout << "error on stat" << std::endl;
             return;
         }
         std::string filename = file;
@@ -62,6 +52,7 @@ void Server::method_autoindex(header_infos header, int fd, int i)
         else
             index[filename + ""] = filename;   
     }
+    closedir(currentdir);
     send_index(fd, header, index);
 }  
 
@@ -80,10 +71,13 @@ void Server::send_index(int fd, header_infos header, std::map<std::string, std::
     {   
         body = generate_index_page(index, header);
     }
+    std::cout << body;
     std::string head = ss.str();
-    send(fd, head.c_str(), head.size(), 0);
-    send(fd, body.c_str(), body.size(), 0);
-    
+    if (-1 == send(fd, head.c_str(), head.size(), 0))
+        std::cout << "error sending header\n";
+
+    if (-1 == send(fd, body.c_str(), body.size(), 0))
+        std::cout << "error sending body\n";
     if (shutdown(fd, SHUT_WR) == -1) {
         return;
     }

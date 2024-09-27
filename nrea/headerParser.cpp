@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   headerParser.cpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nrea <nrea@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/12 16:20:48 by nrea              #+#    #+#             */
-/*   Updated: 2024/09/24 15:44:51 by nrea             ###   ########.fr       */
+/*   Updated: 2024/09/27 10:22:12 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -269,6 +269,8 @@ header_infos Server::headerParser(std::string rawBuffer, std::pair<std::string, 
 		oss<<"{content-type: " << response.contentType<<"}";
  		webservLogger.log(LVL_DEBUG, oss);
 	}
+	response.uri = header_attributes["URI"];
+		
 	return response;
 }
 
