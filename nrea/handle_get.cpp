@@ -6,7 +6,7 @@
 /*   By: nrea <nrea@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/18 13:27:16 by nrea              #+#    #+#             */
-/*   Updated: 2024/09/24 12:09:11 by nrea             ###   ########.fr       */
+/*   Updated: 2024/09/27 12:24:44 by nrea             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -114,8 +114,9 @@ ConfigServer  & config,int locationIndex,std::map<std::string, std::string> head
 }
 
 
+
 header_infos Server::handle_get(header_infos &response,
- ConfigServer  & config,int locationIndex,std::map<std::string, std::string> header_attributes)
+ ConfigServer  & config,int locationIndex,std::map<std::string, std::string> &header_attributes)
 {
 	struct stat stat_buf;
 	int ret;
@@ -130,64 +131,7 @@ header_infos Server::handle_get(header_infos &response,
 	//Si la ressource est un repertoire
 	if (S_ISDIR(stat_buf.st_mode))
 	{
-			{
-				std::ostringstream oss;
-				oss <<"[handle_get] "<<response.ressourcePath<< "is a directory";
-				webservLogger.log(LVL_DEBUG, oss);
-			}
-			{
-				std::ostringstream oss;
-				oss <<"[handle_get] "<<" looking for matching indexes with path "<<response.ressourcePath;
-				webservLogger.log(LVL_DEBUG, oss);
-			}
-		////// TODO TODO
-		const std::list<std::string> indexes = dummy_get_indexes(config, locationIndex);
-		// d'abord tester les differents index possibles
-		for (std::list<std::string>::const_iterator it = indexes.begin(); it != indexes.end(); it++)
-		{
-			std::string full_path =response.ressourcePath;
-			if (response.ressourcePath[response.ressourcePath.size() -1] != '/')
-				full_path += "/";
-			full_path +=  *it;
-			if (access(full_path.c_str(), F_OK) == 0)
-			{
-				response.ressourcePath = full_path;
-				{
-					std::ostringstream oss;
-					oss <<"[handle_get] "<<" Existing path with index found :" <<full_path;
-					webservLogger.log(LVL_DEBUG, oss);
-				}
-				return serve_regular_file(response, config, locationIndex, header_attributes);
-			}
-		}
-		//Si fichier regulier pas trouve
-		// verifer si autoindex autorise
-
-		{
-			std::ostringstream oss;
-			oss <<"[handle_get] "<<
-			" No matching index found - checking if autoindex allowed in " <<response.ressourcePath ;
-			webservLogger.log(LVL_DEBUG, oss);
-		}
-
-		if (dummy_get_autoindex_status(config, locationIndex))
-		{
-			{
-				std::ostringstream oss;
-				oss <<"[handle_get] "<<" autoindex allowed in "<<response.ressourcePath ;
-				webservLogger.log(LVL_DEBUG, oss);
-			}
-			return response_autoindex(config, locationIndex, response);
-		}
-		else
-		{
-			{
-				std::ostringstream oss;
-				oss <<"[handle_get] "<<" autoindex forbidden in "<<response.ressourcePath ;
-				webservLogger.log(LVL_DEBUG, oss);
-			}
-			return response_error(HTTP_STATUS_FORBIDDEN, config, locationIndex);
-		}
+		return handle_dir(response, config, locationIndex, header_attributes);
 	}
 	return serve_regular_file(response, config, locationIndex, header_attributes);
 }

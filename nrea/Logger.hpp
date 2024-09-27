@@ -6,7 +6,7 @@
 /*   By: nrea <nrea@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 09:30:59 by nrea              #+#    #+#             */
-/*   Updated: 2024/09/20 13:31:07 by nrea             ###   ########.fr       */
+/*   Updated: 2024/09/27 09:39:35 by nrea             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,7 @@
 #define LVL_DEBUG 0
 #define LVL_INFO 1
 #define LVL_ERROR 2
+#define LVL_NO_LOG 3
 
 #define CLR_RST		"\033[0m"
 #define DEBUG_CLR	"\e[0;37m"

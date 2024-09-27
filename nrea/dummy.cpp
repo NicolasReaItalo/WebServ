@@ -6,7 +6,7 @@
 /*   By: nrea <nrea@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/23 12:46:44 by nrea              #+#    #+#             */
-/*   Updated: 2024/09/26 13:42:31 by nrea             ###   ########.fr       */
+/*   Updated: 2024/09/27 09:54:15 by nrea             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,7 @@ bool dummy_get_autoindex_status(ConfigServer &serverconfig, int locationIndex)
 {
 	(void) serverconfig;
 	(void) locationIndex;
-	return false;
+	return true;
 }
 
 unsigned long dummy_get_client_max_body_size(ConfigServer &serverconfig, int locationIndex)

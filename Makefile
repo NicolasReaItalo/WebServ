@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: jerperez <jerperez@student.42.fr>          +#+  +:+       +#+         #
+#    By: nrea <nrea@student.42.fr>                  +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/02/06 10:28:10 by jerperez          #+#    #+#              #
-#    Updated: 2024/09/26 13:24:53 by jerperez         ###   ########.fr        #
+#    Updated: 2024/09/27 11:26:42 by nrea             ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -19,12 +19,13 @@ SRCS_NREA_FILES	=	headerParser.cpp\
 					findServer.cpp\
 					handle_get.cpp\
 					handle_post.cpp\
+					handle_delete.cpp\
+					handle_get_dir.cpp\
 					response_error.cpp\
 					response_autoindex.cpp\
 					Logger.cpp\
 					utils.cpp\
 					dummy.cpp\
-					handle_delete.cpp\
 					FileInfos.cpp
 
 SRCS_NREA	= 	$(addprefix nrea/, $(SRCS_NREA_FILES))
