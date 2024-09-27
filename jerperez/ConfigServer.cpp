@@ -6,7 +6,7 @@
 /*   By: jerperez <jerperez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 13:29:48 by jerperez          #+#    #+#             */
-/*   Updated: 2024/09/26 10:57:08 by jerperez         ###   ########.fr       */
+/*   Updated: 2024/09/27 12:22:00 by jerperez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,11 +27,11 @@ ConfigServer &ConfigServer::operator=(const ConfigServer &other)
 {
 	if (&other != this)
 	{
+		ConfigBlock::operator=(other);
 		this->_address = other._address;
-		this->_directive_parameters = other._directive_parameters;
-		this->_locations = other._locations;
 		this->_port = other._port;
 		this->_server_names = other._server_names;
+		this->_locations = other._locations;
 	}
 	return *this;
 }
@@ -426,8 +426,8 @@ int	ConfigServer::_fillAll(void)
 		this->_directive_parameters["autoindex"].push_back("off");// = this->_strToParameters("off");
 	if (!this->ConfigBlock::inDirectives("root"))
 		this->_directive_parameters["root"].push_back("/");// = this->_strToParameters("/var/www/html/");
-	if (!this->ConfigBlock::inDirectives("index"))
-		this->_pushSplitParameters("index", "GET POST DELETE");
+	if (!this->ConfigBlock::inDirectives("limit"))
+		this->_pushSplitParameters("limit", "GET POST DELETE");
 	if (!this->ConfigBlock::inDirectives("client_body_path"))
 		this->_directive_parameters["client_body_path"].push_back("/var/www/default_upload_path"); //= this->_strToParameters("/var/www/default_upload_path");
 	if (!this->ConfigBlock::inDirectives("client_max_body_size"))
