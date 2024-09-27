@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:49:55 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/09/26 14:06:22 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/09/27 12:33:57 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,8 +31,7 @@ void Server::closeAllFd()
     {
         close(it->second.fd_ressource);
         remove(it->second.ressourcePath.c_str());
-    }  
-    
+    }
     chunk.clear();
  }
 

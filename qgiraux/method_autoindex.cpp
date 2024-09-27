@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/23 10:42:10 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/09/27 12:17:34 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/09/27 12:39:47 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@ void Server::method_autoindex(const header_infos& header, int fd, int i)
 {
     std::map<std::string, std::string> index;
     (void)i;
+    std::cout << header.uri << " " << header.locationIndex << std::endl;
     std::string root = header.configServer->getFullPath(header.uri, header.locationIndex);
     std::string path = header.ressourcePath;
     
@@ -54,6 +55,7 @@ void Server::method_autoindex(const header_infos& header, int fd, int i)
     }
     closedir(currentdir);
     send_index(fd, header, index);
+    index.clear();
 }  
 
 void Server::send_index(int fd, const header_infos& header, std::map<std::string, std::string>& index)
