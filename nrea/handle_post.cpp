@@ -6,14 +6,14 @@
 /*   By: nrea <nrea@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/23 10:46:13 by nrea              #+#    #+#             */
-/*   Updated: 2024/09/24 15:07:41 by nrea             ###   ########.fr       */
+/*   Updated: 2024/09/27 14:10:03 by nrea             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 # include "headerParser.hpp"
 
 header_infos Server::handle_post
-(header_infos &response, ConfigServer  & config,
+(header_infos &response, ConfigServer  * config,
 int locationIndex,std::map<std::string, std::string> header_attributes)
 {
 	//TODO nouvelle branche sur : multipart/form-data;boundary="boundary"
@@ -91,7 +91,7 @@ int locationIndex,std::map<std::string, std::string> header_attributes)
 	}
 
 
-	if (static_cast<unsigned long>(atol(header_attributes["Content-Length"].c_str())) > dummy_get_client_max_body_size(config, locationIndex))
+	if (static_cast<unsigned long>(atol(header_attributes["Content-Length"].c_str())) > dummy_get_client_max_body_size())
 	{
 		{
 			std::ostringstream oss;
@@ -129,6 +129,6 @@ int locationIndex,std::map<std::string, std::string> header_attributes)
 	response.fd_ressource = 0;
 	response.cgi_pid = 0;
 	response.locationIndex = locationIndex;
-	response.configServer = &config;
+	response.configServer = config;
 	return response;
 }

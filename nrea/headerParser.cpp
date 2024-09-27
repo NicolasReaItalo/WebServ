@@ -6,7 +6,7 @@
 /*   By: nrea <nrea@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/12 16:20:48 by nrea              #+#    #+#             */
-/*   Updated: 2024/09/27 13:56:08 by nrea             ###   ########.fr       */
+/*   Updated: 2024/09/27 14:29:12 by nrea             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,7 +70,7 @@ header_infos Server::headerParser(std::string rawBuffer, std::pair<std::string, 
 		oss <<"[HeaderParser] The request header is not properly formatted";
 		webservLogger.log(LVL_DEBUG, oss);
 		}
-		return response_error(HTTP_STATUS_BAD_REQUEST, defaultconfig, default_location);
+		return response_error(HTTP_STATUS_BAD_REQUEST, &defaultconfig, default_location);
 	}
 
 // ON VERIFIE QUE HOST EST PRESENT
@@ -82,7 +82,7 @@ header_infos Server::headerParser(std::string rawBuffer, std::pair<std::string, 
 		oss <<"[HeaderParser] The request header is not properly formatted";
 		webservLogger.log(LVL_DEBUG, oss);
 		}
-		return response_error(HTTP_STATUS_BAD_REQUEST, defaultconfig, default_location);
+		return response_error(HTTP_STATUS_BAD_REQUEST, &defaultconfig, default_location);
 	}
 
 //ON SPLITTE LE HOST POUR RECUPERER LE PORT SI PRECISE
@@ -90,7 +90,7 @@ header_infos Server::headerParser(std::string rawBuffer, std::pair<std::string, 
 	if (tmp.size() == 2)
 	{
 		if (! contains_only_numeric(tmp[1]))
-			return response_error(HTTP_STATUS_BAD_REQUEST, defaultconfig, default_location);
+			return response_error(HTTP_STATUS_BAD_REQUEST, &defaultconfig, default_location);
 		header_attributes["Host"] = tmp[0];
 		header_attributes["Port"] = tmp[1];
 	}
@@ -101,7 +101,7 @@ header_infos Server::headerParser(std::string rawBuffer, std::pair<std::string, 
 		oss <<"[HeaderParser] The request header is not properly formatted";
 		webservLogger.log(LVL_DEBUG, oss);
 		}
-		return response_error(HTTP_STATUS_BAD_REQUEST, defaultconfig, default_location);
+		return response_error(HTTP_STATUS_BAD_REQUEST, &defaultconfig, default_location);
 	}
 
 /// Maintenant qu'on a le host on peut recuperer le
@@ -114,7 +114,7 @@ header_infos Server::headerParser(std::string rawBuffer, std::pair<std::string, 
 	oss <<"[HeaderParser] findServer() ==> "<<serverconfig;
 	webservLogger.log(LVL_DEBUG, oss);
 	}
-
+	serverconfig->_debug_print();
 
 ///VERIFICATION DU PROTOCOLE------------------
 	if (header_attributes["Protocol"] != "HTTP/1.1")
@@ -124,7 +124,7 @@ header_infos Server::headerParser(std::string rawBuffer, std::pair<std::string, 
 		oss <<"[HeaderParser] The protocol is not supported ==> "<<header_attributes["Protocol"];
 		webservLogger.log(LVL_DEBUG, oss);
 		}
-		return response_error(HTTP_STATUS_HTTP_VERSION_NOT_SUPPORTED, const_cast<ConfigServer&>(*serverconfig), default_location);
+		return response_error(HTTP_STATUS_HTTP_VERSION_NOT_SUPPORTED, serverconfig, default_location);
 	}
 ////---------------------------------------
 
@@ -136,7 +136,7 @@ header_infos Server::headerParser(std::string rawBuffer, std::pair<std::string, 
 		oss <<"[HeaderParser] The uri is empty or dos not start with '/' ==> "<<header_attributes["Raw_URI"];
 		webservLogger.log(LVL_DEBUG, oss);
 		}
-		return response_error(HTTP_STATUS_BAD_REQUEST, const_cast<ConfigServer&>(*serverconfig), default_location);
+		return response_error(HTTP_STATUS_BAD_REQUEST, serverconfig, default_location);
 	}
 ///---------------------------------------------------------------------------------------------------
 
@@ -153,7 +153,7 @@ header_infos Server::headerParser(std::string rawBuffer, std::pair<std::string, 
 		webservLogger.log(LVL_DEBUG, oss);
 		}
 
-		return response_error(HTTP_STATUS_BAD_REQUEST, const_cast<ConfigServer&>(*serverconfig), default_location);
+		return response_error(HTTP_STATUS_BAD_REQUEST, serverconfig, default_location);
 	}
 //--------------------------------------------------------------------------------------------
 
@@ -172,7 +172,7 @@ header_infos Server::headerParser(std::string rawBuffer, std::pair<std::string, 
 		oss <<"[HeaderParser] The URI is not properly formatted ==> "<<header_attributes["Raw_URI"];
 		webservLogger.log(LVL_DEBUG, oss);
 		}
-		return response_error(HTTP_STATUS_BAD_REQUEST, const_cast<ConfigServer&>(*serverconfig), default_location);
+		return response_error(HTTP_STATUS_BAD_REQUEST, serverconfig, default_location);
 	}
 	else
 		header_attributes["URI"] = tmp[0];
@@ -206,7 +206,7 @@ header_infos Server::headerParser(std::string rawBuffer, std::pair<std::string, 
 		oss <<"[HeaderParser] The method  "<<header_attributes["Method"] << " is forbidden";
 		webservLogger.log(LVL_DEBUG, oss);
 		}
-		return response_error(HTTP_STATUS_METHOD_NOT_ALLOWED, const_cast<ConfigServer&>(*serverconfig), locationIndex);
+		return response_error(HTTP_STATUS_METHOD_NOT_ALLOWED, serverconfig, locationIndex);
 	}
 	{
 	std::ostringstream oss;
@@ -233,7 +233,7 @@ header_infos Server::headerParser(std::string rawBuffer, std::pair<std::string, 
 		oss <<"[HeaderParser] GET method detected ==> starting handle_get()";
 		webservLogger.log(LVL_DEBUG, oss);
 		}
-		response = handle_get(response, defaultconfig, locationIndex, header_attributes);
+		response = handle_get(response, serverconfig, locationIndex, header_attributes);
 	}
 	else if (header_attributes["Method"] == "POST")
 	{
@@ -242,12 +242,12 @@ header_infos Server::headerParser(std::string rawBuffer, std::pair<std::string, 
 		oss <<"[HeaderParser] POST method detected ==> starting handle_post()";
 		webservLogger.log(LVL_DEBUG, oss);
 		}
-		response = handle_post(response, defaultconfig, locationIndex, header_attributes);
+		response = handle_post(response, serverconfig, locationIndex, header_attributes);
 	}
 	else if (header_attributes["Method"] == "DELETE")
-		response = handle_delete(response, defaultconfig, locationIndex, header_attributes);
+		response = handle_delete(response, serverconfig, locationIndex, header_attributes);
 	else
-		return response_error(HTTP_STATUS_METHOD_NOT_ALLOWED, const_cast<ConfigServer&>(*serverconfig), locationIndex);
+		return response_error(HTTP_STATUS_METHOD_NOT_ALLOWED, serverconfig, locationIndex);
 	response.keepAlive = header_attributes["Connection"] == "Keep-Alive";
 	{
 		std::ostringstream oss;

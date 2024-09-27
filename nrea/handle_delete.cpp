@@ -6,13 +6,13 @@
 /*   By: nrea <nrea@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/24 11:18:45 by nrea              #+#    #+#             */
-/*   Updated: 2024/09/24 14:12:16 by nrea             ###   ########.fr       */
+/*   Updated: 2024/09/27 14:16:23 by nrea             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "headerParser.hpp"
 
-header_infos Server::handle_delete(header_infos &response, ConfigServer  & config,
+header_infos Server::handle_delete(header_infos &response, ConfigServer  * config,
 int locationIndex, std::map<std::string, std::string> header_attributes)
 {
 	(void) header_attributes;
@@ -63,7 +63,7 @@ int locationIndex, std::map<std::string, std::string> header_attributes)
 	response.toDo = DELETE;
 	response.returnCode = 204; //SUCCESS NO CONTENT
 	response.locationIndex = locationIndex;
-	response.configServer = &config;
+	response.configServer = config;
 	response.keepAlive = false;
 
 	// response pour initialiser ces champs vides

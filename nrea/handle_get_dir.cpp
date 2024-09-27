@@ -15,20 +15,20 @@
 
 
 header_infos Server::handle_dir(header_infos &response,
- ConfigServer  & config,int locationIndex,std::map<std::string, std::string> &header_attributes)
+ ConfigServer  * config,int locationIndex,std::map<std::string, std::string> &header_attributes)
  {
-{
+	config->_debug_print();
+	{
 		std::ostringstream oss;
 		oss <<"[handle_get_dir] "<<response.ressourcePath<< "is a directory";
 		webservLogger.log(LVL_DEBUG, oss);
 	}
 		{
 		std::ostringstream oss;
-		oss <<"[handle_get_dir] confi.indirective :"<<config.inDirectives(locationIndex, "index");
+		oss <<"[handle_get_dir] config.indirective :"<<config->inDirectives(locationIndex, "index");
 		webservLogger.log(LVL_DEBUG, oss);
 		}
-
-	if (config.inDirectives(locationIndex, "index") == true)
+	if (config->inDirectives(locationIndex, "index") == true)
 	{
 		{
 		std::ostringstream oss;
@@ -41,7 +41,7 @@ header_infos Server::handle_dir(header_infos &response,
 			webservLogger.log(LVL_DEBUG, oss);
 		}
 		////// TODO TODO
-		const std::list<std::string> indexes = dummy_get_indexes(config, locationIndex);
+		const std::list<std::string> indexes = dummy_get_indexes();
 		// d'abord tester les differents index possibles
 		for (std::list<std::string>::const_iterator it = indexes.begin(); it != indexes.end(); it++)
 		{
@@ -82,7 +82,7 @@ header_infos Server::handle_dir(header_infos &response,
 		}
 
 		// if (dummy_get_autoindex_status(config, locationIndex))
-		if (config.getDirectiveParameter(locationIndex, "autoindex") == "on")
+		if (config->getDirectiveParameter(locationIndex, "autoindex") == "on")
 		{
 			{
 				std::ostringstream oss;

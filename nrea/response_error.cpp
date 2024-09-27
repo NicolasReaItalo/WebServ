@@ -6,7 +6,7 @@
 /*   By: nrea <nrea@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 10:13:31 by nrea              #+#    #+#             */
-/*   Updated: 2024/09/24 12:08:34 by nrea             ###   ########.fr       */
+/*   Updated: 2024/09/27 14:01:41 by nrea             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ std::string dummy_get_customerrorPage(void)
 }
 
 /* returns a header_infos set to the appropriate error*/
-header_infos response_error(std::string error_code, ConfigServer  & config,int locationIndex)
+header_infos response_error(std::string error_code, ConfigServer  * config,int locationIndex)
 {
 	header_infos response;
 	response.toDo = ERROR;
@@ -30,7 +30,7 @@ header_infos response_error(std::string error_code, ConfigServer  & config,int l
 	response.ressourcePath = dummy_get_customerrorPage(); // pour TEST
 	if (response.ressourcePath.size())
 		response.bodySize = getFileSize(response.ressourcePath.c_str());
-	response.configServer = &config;
+	response.configServer = config;
 	response.locationIndex = locationIndex;
 
 	//la caracteristique keep-alive depend de l'erreur:  a ameliorer pour la rendre + generale

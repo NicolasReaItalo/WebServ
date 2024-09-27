@@ -6,7 +6,7 @@
 /*   By: nrea <nrea@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/18 13:44:25 by nrea              #+#    #+#             */
-/*   Updated: 2024/09/23 12:48:10 by nrea             ###   ########.fr       */
+/*   Updated: 2024/09/27 14:04:23 by nrea             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,8 +51,8 @@
 extern Logger webservLogger;
 
 
-header_infos response_error(std::string error_code, ConfigServer  & config,int locationIndex);
-header_infos response_autoindex(ConfigServer &config, int locationIndex, header_infos response);
+header_infos response_error(std::string error_code, ConfigServer  * config,int locationIndex);
+header_infos response_autoindex(ConfigServer *config, int locationIndex, header_infos response);
 bool contains_only_numeric(std::string str);
 long getFileSize(std::string filename);
 std::string getFileExtension(std::string uri);

@@ -6,7 +6,7 @@
 /*   By: nrea <nrea@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/23 12:46:44 by nrea              #+#    #+#             */
-/*   Updated: 2024/09/27 13:55:53 by nrea             ###   ########.fr       */
+/*   Updated: 2024/09/27 14:07:44 by nrea             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,10 +36,8 @@ bool dummy_isReturn(ConfigServer const *serverconfig, int locationIndex, std::st
 // 	return "./html-files" + uri;
 // }
 
-const std::list<std::string> dummy_get_indexes(ConfigServer &serverconfig, int locationIndex)
+const std::list<std::string> dummy_get_indexes(void)
 {
-	(void) serverconfig;
-	(void) locationIndex;
 	std::list<std::string> indexes;
 	indexes.push_back("index.html");
 	indexes.push_back("index.htm");
@@ -54,10 +52,9 @@ bool dummy_get_autoindex_status(ConfigServer &serverconfig, int locationIndex)
 	return true;
 }
 
-unsigned long dummy_get_client_max_body_size(ConfigServer &serverconfig, int locationIndex)
+unsigned long dummy_get_client_max_body_size()
 {
-	(void) serverconfig;
-	(void) locationIndex;
+
 	return 1000000;
 }
 std::string dummy_server_accepted_types(void)

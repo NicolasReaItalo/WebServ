@@ -6,7 +6,7 @@
 /*   By: nrea <nrea@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/18 13:27:16 by nrea              #+#    #+#             */
-/*   Updated: 2024/09/27 13:56:28 by nrea             ###   ########.fr       */
+/*   Updated: 2024/09/27 14:09:11 by nrea             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 /*===================================================================================================*/
 
 header_infos handleFileErrror
-(int error, header_infos &response, ConfigServer  & config,int locationIndex)
+(int error, header_infos &response, ConfigServer  * config,int locationIndex)
 {
 		{
 			std::ostringstream oss;
@@ -53,7 +53,7 @@ header_infos handleFileErrror
 
 
 header_infos Server::serve_regular_file(header_infos &response,
-ConfigServer  & config,int locationIndex,std::map<std::string, std::string> header_attributes)
+ConfigServer  * config,int locationIndex,std::map<std::string, std::string> header_attributes)
 {
 	struct stat stat_buf;
 	int ret;
@@ -87,14 +87,14 @@ ConfigServer  & config,int locationIndex,std::map<std::string, std::string> head
 	//Si la taille est trop grande on passe en chunked; //TODO
 	// --------------------------------------
 
-	if (response.bodySize > dummy_get_client_max_body_size(config, locationIndex))
+	if (response.bodySize > dummy_get_client_max_body_size())
 		response.chunked = true;
 	else
 		response.chunked = false;
 
 	response.returnCode = 200;
 	response.locationIndex = locationIndex;
-	response.configServer = &config;
+	response.configServer = config;
 
 	// response pour initialiser ces champs vides
 	response.interpreterPath = "";
@@ -116,7 +116,7 @@ ConfigServer  & config,int locationIndex,std::map<std::string, std::string> head
 
 
 header_infos Server::handle_get(header_infos &response,
- ConfigServer  & config,int locationIndex,std::map<std::string, std::string> &header_attributes)
+ ConfigServer  * config,int locationIndex,std::map<std::string, std::string> &header_attributes)
 {
 	struct stat stat_buf;
 	int ret;
