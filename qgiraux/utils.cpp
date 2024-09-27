@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:50:06 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/09/26 16:02:19 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/09/27 17:12:12 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,12 +20,19 @@
 
 std::vector<unsigned char> Server::load_file(const std::string &filename)
 {
+    {
+        std::ostringstream oss;
+        oss << "[Load_file] loading file " << filename << "...";
+        webservLogger.log(LVL_DEBUG, oss);
+    }
     std::ifstream file(filename.c_str(), std::ios::binary);
-    if (!file) {
-        std::cerr << "Error opening file: " << filename << std::endl;
+    if (!file) 
+    {
+        std::ostringstream oss;
+        oss << "[Load_file] Error opening file: " << filename;
+        webservLogger.log(LVL_DEBUG, oss);
         return std::vector<unsigned char>(); // Return an empty vector
     }
-    // std::cout << " opening file " << filename.c_str() << std::endl;
     std::vector<unsigned char> file_data((std::istreambuf_iterator<char>(file)),
                                            std::istreambuf_iterator<char>());
     return file_data;

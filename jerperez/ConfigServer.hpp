@@ -6,7 +6,7 @@
 /*   By: jerperez <jerperez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 13:29:48 by jerperez          #+#    #+#             */
-/*   Updated: 2024/09/26 13:24:08 by jerperez         ###   ########.fr       */
+/*   Updated: 2024/09/27 13:49:44 by jerperez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,6 @@ class ConfigServer : public ConfigBlock
 		int				_fillAll(void);
 		_map_para_t		&_getDirectiveParametersRef(void);
 		//
-		void			_debug_print(void);
 	protected:
 		using				ConfigBlock::_addDirective;
 	public:
@@ -75,6 +74,7 @@ class ConfigServer : public ConfigBlock
 		const parameters_t	&getServerNames(void) const;
 		//
 		int					_debugPlaceholder(int debug_input=0); //
+		void				_debug_print(void); //
 };
 
 #endif

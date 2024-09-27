@@ -1,4 +1,5 @@
 #include "Server.hpp"
+#include "Logger.hpp"
 
 
 
@@ -9,8 +10,11 @@ int Server::ServerStart()
     std::list<ConfigServer>::iterator it = servers.begin();
     //create the epoll
     epoll_fd = epoll_create1(0);
-    if (epoll_fd == -1) {
-        std::cerr << "epoll_create1 failed: " << strerror(errno) << std::endl;
+    if (epoll_fd == -1) 
+    {
+        std::ostringstream oss;
+        oss << "[serverStart] epoll_create1 failed: " << strerror(errno);
+        webservLogger.log(LVL_ERROR, oss);
         close(epoll_fd);
         return 1;
     }
@@ -24,15 +28,19 @@ int Server::ServerStart()
         //creating the socket
         if ((server_fd[i] = socket(AF_INET, SOCK_STREAM, 0)) == 0)
         {
-        std::cerr << "Socket failed: " << strerror(errno) << std::endl;
-        return 1;
+            std::ostringstream oss;
+            oss << "[serverStart] Socket failed: " << strerror(errno);
+            webservLogger.log(LVL_ERROR, oss);
+            return 1;
         }
 
         //configure the socket options
         int opt = 1;
         if (setsockopt(server_fd[i], SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT | SO_KEEPALIVE, &opt, sizeof(opt))) 
         {
-            std::cerr << "setsockopt failed: " << strerror(errno) << std::endl;
+            std::ostringstream oss;
+            oss << "[serverStart] setsockopt failed: " << strerror(errno);
+            webservLogger.log(LVL_ERROR, oss);
             closeAllFd();
             return 1;
         }
@@ -44,17 +52,27 @@ int Server::ServerStart()
         //binding the server_fd on the correct address
         if (bind(server_fd[i], (struct sockaddr *)& address[i], sizeof(address[i])) < 0)
         {
-            std::cerr << "Bind failed: " << strerror(errno) << std::endl;
+            std::ostringstream oss;
+            oss << "[serverStart] Bind failed: " << strerror(errno);
+            webservLogger.log(LVL_ERROR, oss);
             closeAllFd();
             return 1;
         }
-        std::cout << "Bind successfull on " << server_fd[i] << std::endl;
+        {
+            std::ostringstream oss;
+            oss << "[serverStart] Bind successfull on " << server_fd[i];
+            webservLogger.log(LVL_INFO, oss);
+        }
         fdsets tmp = {it->getAddress(), it->getPort(), time, true, false};
         fd_set[server_fd[i]] = tmp;
         //making server_fd a passive socket, to accept incoming connexion requests
         if (listen(server_fd[i], 32) < 0) 
         {
-            std::cerr << "Listen failed: " << strerror(errno) << std::endl;
+            {
+                std::ostringstream oss;
+                oss << "[serverStart] Listen failed: " << strerror(errno);
+                webservLogger.log(LVL_ERROR, oss);
+            }
             closeAllFd();
             return 1;
         }
@@ -64,15 +82,21 @@ int Server::ServerStart()
         event.data.fd = server_fd[i];
         if (epoll_ctl(epoll_fd, EPOLL_CTL_ADD, server_fd[i], &event) == -1) 
         {
-            std::cerr << "epoll_ctl failed: " << strerror(errno) << std::endl;
+            std::ostringstream oss;
+            oss << "[serverStart] epoll_ctl failed: " << strerror(errno);
+            webservLogger.log(LVL_ERROR, oss);
             closeAllFd();
             return 1;
         }
-        std::cout << "server online\nhost:port =" << it->getAddress() << ":" << it->getPort() << std::endl; 
-		std::cout << "Server name =" << it->getServerNames().front() << std::endl;
+        {
+            std::ostringstream oss;
+            oss << "[serverStart] server online\n\t\thost:port = " << it->getAddress() << ":" << it->getPort();
+            oss << "\n\t\tServer name =" << it->getServerNames().front();
+            webservLogger.log(LVL_INFO, oss);
+        }
         it++;
     }
-    std::cout << "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" << std::endl;
+    std::cout << "\t~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" << std::endl;
     int ret = 0;
     while (ret == 0 && stopper==0)
     {
@@ -86,9 +110,13 @@ int Server::ServerStart()
             {
                 int tmp = it->first;
                 ++it;
-                // std::cout << "connexion timeout on fd " << tmp << ", closing ..." << std::endl;
                 if (fd_set[tmp].client)
-                    sendError(408, tmp);
+                {
+                    std::ostringstream oss;
+                    oss << "[serverRun] connexion timeout on fd " << tmp ;
+                    webservLogger.log(LVL_INFO, oss);
+                    // sendError(408, tmp);
+                }
                 close(tmp);
                 fd_set.erase(tmp);
             }
