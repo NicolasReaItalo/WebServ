@@ -6,7 +6,7 @@
 /*   By: nrea <nrea@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/12 16:20:48 by nrea              #+#    #+#             */
-/*   Updated: 2024/09/27 13:26:37 by nrea             ###   ########.fr       */
+/*   Updated: 2024/09/27 13:38:17 by nrea             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -199,7 +199,7 @@ header_infos Server::headerParser(std::string rawBuffer, std::pair<std::string, 
 	}
 
 // // ON VERIFIE QUE LA METHODE EST AUTORISEE ------------------------------- DESACTIVE en attendant serverconfig
-	if (serverconfig->inDirectiveParameters(locationIndex,"limit",header_attributes["Method"]))
+	if (serverconfig->inDirectiveParameters(locationIndex,"limit",header_attributes["Method"]) == false)
 	{
 		{
 		std::ostringstream oss;
