@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:49:35 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/09/26 16:03:04 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/09/27 12:17:34 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 #include <ctime>
 #include <sstream>
 
-void Server::method_delete(header_infos header, int fd)
+void Server::method_delete(const header_infos& header, int fd)
 {
     if (0 == remove(header.ressourcePath.c_str()))
     {

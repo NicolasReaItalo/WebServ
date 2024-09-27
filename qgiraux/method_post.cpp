@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:49:40 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/09/26 16:04:44 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/09/27 12:19:30 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 #include <iomanip>
 
 
-void Server::method_post(header_infos header, std::vector<unsigned char> body, int fd, int i)
+void Server::method_post(header_infos& header, std::vector<unsigned char> body, int fd, int i)
 {
     // Open the target file to write the body data
     header.fd_ressource = open(header.ressourcePath.c_str(), O_RDWR | O_CREAT, S_IRUSR | S_IWUSR);
@@ -59,6 +59,7 @@ void Server::method_post(header_infos header, std::vector<unsigned char> body, i
         // If the request is chunked, handle the chunked transfer encoding
         chunk[fd] = header;
         receive_data(fd, i);
+        return;
     }
 
     // Handle closing the connection if keep-alive is false

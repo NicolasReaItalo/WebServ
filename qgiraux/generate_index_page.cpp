@@ -6,14 +6,14 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/23 12:07:33 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/09/23 14:41:24 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/09/27 12:17:34 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Server.hpp"
 #include <sstream>
 
-std::string Server::generate_index_page(std::map<std::string, std::string> index, header_infos header)
+std::string Server::generate_index_page(std::map<std::string, std::string> index, const header_infos& header)
 {
     std::stringstream os;
 
@@ -32,9 +32,9 @@ std::string Server::generate_index_page(std::map<std::string, std::string> index
     for (std::map<std::string, std::string>::iterator it = index.begin(); it != index.end(); ++it)
     {
         if (*it->second.rbegin() == '/')
-            os << "<img src=\"images/folder.png\" alt=\"folder icon\" class=\"resizable-image\">\n";
+            os << "<img src=\"/images/folder.png\" alt=\"folder icon\" style=\"height: 1em; vertical-align: middle;\">\n";
         else
-            os << "<img src=\"images/file.png\" alt=\"file icon\" class=\"resizable-image\">\n";
+            os << "<img src=\"/images/file.png\" alt=\"file icon\" style=\"height: 1em; vertical-align: middle;\">\n";
             
         os << "<A HREF = \"" << it->second << "\">" << it->first << "</A><br>\n" ;
     }

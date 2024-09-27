@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 10:17:49 by nrea              #+#    #+#             */
-/*   Updated: 2024/09/26 15:39:42 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/09/27 10:00:59 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,11 +43,10 @@ void	Logger::log(int level, std::ostringstream &oss)
 	
 	if (level >= _level)
 	{
-		(void)oss;
-		// std::cout<< _level_colors[level]<<" ";
-		// std::cout<< _level_str[level]<<" ";
-		// std::cout<< timestamp() << " ";
-		// std::cout<< oss.str() << " ";
-		// std::cout<<CLR_RST<<std::endl;
+		std::cout<< _level_colors[level]<<" ";
+		std::cout<< _level_str[level]<<" ";
+		std::cout<< timestamp() << " ";
+		std::cout<< oss.str() << " ";
+		std::cout<<CLR_RST<<std::endl;
 	}
 }

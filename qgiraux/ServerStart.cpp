@@ -86,7 +86,7 @@ int Server::ServerStart()
             {
                 int tmp = it->first;
                 ++it;
-                std::cout << "connexion timeout on fd " << tmp << ", closing ..." << std::endl;
+                // std::cout << "connexion timeout on fd " << tmp << ", closing ..." << std::endl;
                 if (fd_set[tmp].client)
                     sendError(408, tmp);
                 close(tmp);
