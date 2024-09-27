@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/12 16:20:48 by nrea              #+#    #+#             */
-/*   Updated: 2024/09/27 10:22:12 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/09/27 13:28:22 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -250,6 +250,7 @@ header_infos Server::headerParser(std::string rawBuffer, std::pair<std::string, 
 		response = handle_delete(response, defaultconfig, locationIndex, header_attributes);
 	else
 		return response_error(HTTP_STATUS_METHOD_NOT_ALLOWED, const_cast<ConfigServer&>(*serverconfig), locationIndex);
+	response.keepAlive = header_attributes["Connection"] == "Keep-Alive";
 	{
 		std::ostringstream oss;
 		oss <<"[HeaderParser] RESPONSE  {"<<response.returnCode <<"} ";
@@ -271,6 +272,7 @@ header_infos Server::headerParser(std::string rawBuffer, std::pair<std::string, 
 	}
 	response.uri = header_attributes["URI"];
 		
+
 	return response;
 }
 
