@@ -6,7 +6,7 @@
 /*   By: nrea <nrea@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/12 16:20:48 by nrea              #+#    #+#             */
-/*   Updated: 2024/09/27 16:41:24 by nrea             ###   ########.fr       */
+/*   Updated: 2024/09/27 17:58:08 by nrea             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,9 +54,9 @@ header_infos Server::headerParser(std::string rawBuffer, std::pair<std::string, 
 	ConfigServer defaultconfig; ///ConfigServer par defaut pour les messages d'erreurs en cas de pb de parsing
 	int default_location = 0; // defaultconfig location
 	{
-		std::ostringstream oss;
-		oss <<"[HeaderParser]	A new request header has been received "<< interface.first<<":"<< interface.second;
-		webservLogger.log(LVL_INFO, oss);
+	std::ostringstream oss;
+	oss << "[HeaderParser] A new request header has been received "<< interface.first<<":"<< interface.second;
+	webservLogger.log(LVL_INFO, oss);
 	}
 
 	try
@@ -250,7 +250,8 @@ header_infos Server::headerParser(std::string rawBuffer, std::pair<std::string, 
 		response = handle_delete(response, serverconfig, locationIndex, header_attributes);
 	else
 		return response_error(HTTP_STATUS_METHOD_NOT_ALLOWED, serverconfig, locationIndex);
-	response.keepAlive = header_attributes["Connection"] == "Keep-Alive";
+
+	response.keepAlive = header_attributes["Connection"] == "keep-alive";
 	{
 		std::ostringstream oss;
 		oss <<"[HeaderParser]	RESPONSE  {"<<response.returnCode <<"} ";

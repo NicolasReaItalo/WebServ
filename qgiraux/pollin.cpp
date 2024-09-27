@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:49:44 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/09/26 16:31:10 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/09/27 15:34:30 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,11 @@ void Server::receive_data(int fd, int i)
     header_infos header;
 
     bool headerParsed = false; // Flag to track whether the header has been parsed
-
+    {
+        std::ostringstream oss;
+        oss << "[POLLIN] Loading data from fd " << fd;
+        webservLogger.log(LVL_DEBUG, oss);
+    }
     while (true) {
         bytesRead = recv(fd, buffer, maxBodySize - 1, 0);
         //if receiving a chunk from a chunked POST
@@ -39,10 +43,15 @@ void Server::receive_data(int fd, int i)
                 chunked_post(fd, (char *)&body[0]);
                 return;
             }
+            {
+                std::ostringstream oss;
+                oss << "[POLLIN] body from fd " << fd << " fully received, selecting method...";
+                webservLogger.log(LVL_DEBUG, oss);
+            }
             switch (header.toDo)
                 {
                     case POST:
-                            method_post(header, body, fd, i);
+                        method_post(header, body, fd, i);
                     case GET:
                         method_get(header, fd, i);
                         return;
@@ -57,17 +66,24 @@ void Server::receive_data(int fd, int i)
 					/*if header.ressourcepath.empty() sendError() else GET*/
 						return;
                     default:
-                        std::cerr << "Unknown method" << std::endl;
+                        std::ostringstream oss;
+                        oss << "[POLLIN] Unknown method on fd " << fd;
+                        webservLogger.log(LVL_ERROR, oss);
                         return;
+                        
                 }
         }
         if (bytesRead == 0)
         {
             // End of file, client disconnected
-                std::cerr << "Client disconnected : " << fd << std::endl;
-                close(fd);
-                fd_set.erase(fd);
-                return;                
+            {
+                std::ostringstream oss;
+                oss << "[POLLIN] Client disconnected : " << fd;
+                webservLogger.log(LVL_DEBUG, oss);
+            }
+            close(fd);
+            fd_set.erase(fd);
+            return;                
         }
 
         // If the header is not yet parsed, look for the header/body separation
@@ -87,12 +103,13 @@ void Server::receive_data(int fd, int i)
                 body.insert(body.end(), bodyPart.begin(), bodyPart.end());
 
                 headerParsed = true; // Mark header as parsed
-
+                {
+                    std::ostringstream oss;
+                    oss << "[POLLIN] header from fd " << fd << " fully received, requesting parsing";
+                    webservLogger.log(LVL_DEBUG, oss);
+                }
                 // Parse header
-                header = headerParser(headerStr, std::make_pair(fd_set[fd].address, fd_set[fd].port));                
-
-                // Now call the appropriate method based on the header
-                
+                header = headerParser(headerStr, std::make_pair(fd_set[fd].address, fd_set[fd].port));                                
             } 
             else 
             {

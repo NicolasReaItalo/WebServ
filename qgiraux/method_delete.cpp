@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:49:35 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/09/27 12:17:34 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/09/27 15:02:49 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,11 @@
 
 void Server::method_delete(const header_infos& header, int fd)
 {
+    {
+        std::ostringstream oss;
+        oss << "[method remove] starting for fd " << fd;
+        webservLogger.log(LVL_INFO, oss);
+    }
     if (0 == remove(header.ressourcePath.c_str()))
     {
         //struct stat fileInfo;
