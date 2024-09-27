@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/12 16:20:48 by nrea              #+#    #+#             */
-/*   Updated: 2024/09/27 14:36:56 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/09/27 17:30:00 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,8 +55,7 @@ header_infos Server::headerParser(std::string rawBuffer, std::pair<std::string, 
 	int locationIndex = 0; // defaultconfig location
 	{
 	std::ostringstream oss;
-	oss <<"[HeaderParser] A new request header has been received "<< interface.first<<":"<< interface.second
-	<<std::endl;
+	oss << "[HeaderParser] A new request header has been received "<< interface.first<<":"<< interface.second;
 	webservLogger.log(LVL_INFO, oss);
 	}
 
@@ -250,7 +249,7 @@ header_infos Server::headerParser(std::string rawBuffer, std::pair<std::string, 
 		response = handle_delete(response, defaultconfig, locationIndex, header_attributes);
 	else
 		return response_error(HTTP_STATUS_METHOD_NOT_ALLOWED, const_cast<ConfigServer&>(*serverconfig), locationIndex);
-	response.keepAlive = header_attributes["Connection"] == "Keep-Alive";
+	response.keepAlive = header_attributes["Connection"] == "keep-alive";
 	{
 		std::ostringstream oss;
 		oss <<"[HeaderParser] RESPONSE  {"<<response.returnCode <<"} ";

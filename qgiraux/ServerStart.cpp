@@ -63,7 +63,6 @@ int Server::ServerStart()
             oss << "[serverStart] Bind successfull on " << server_fd[i];
             webservLogger.log(LVL_INFO, oss);
         }
-        // std::cout << "Bind successfull on " << server_fd[i] << std::endl;
         fdsets tmp = {it->getAddress(), it->getPort(), time, true, false};
         fd_set[server_fd[i]] = tmp;
         //making server_fd a passive socket, to accept incoming connexion requests
@@ -116,7 +115,7 @@ int Server::ServerStart()
                     std::ostringstream oss;
                     oss << "[serverRun] connexion timeout on fd " << tmp ;
                     webservLogger.log(LVL_INFO, oss);
-                    sendError(408, tmp);
+                    // sendError(408, tmp);
                 }
                 close(tmp);
                 fd_set.erase(tmp);

@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:49:40 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/09/27 15:02:43 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/09/27 17:11:30 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,11 @@ void Server::method_post(header_infos& header, std::vector<unsigned char> body, 
             return;
         }
         std::string head = "HTTP/1.1 204 No Content\r\n\r\n";
-        std::cout << "Transferred " << bytes_read << " bytes to " << header.ressourcePath << std::endl;
+        {
+            std::ostringstream oss;
+            oss << "[method post] Transferred " << bytes_read << " bytes to " << header.ressourcePath;
+            webservLogger.log(LVL_DEBUG, oss);
+        }
         if (-1 == send(fd, head.c_str(), head.size(), 0))
                 std::cerr << "error sending header\n";
         // Check if we failed to read or write the full content
@@ -71,12 +75,9 @@ void Server::method_post(header_infos& header, std::vector<unsigned char> body, 
     {
         if (epoll_ctl(epoll_fd, EPOLL_CTL_DEL, fd, NULL) == -1) 
         {
-            {
-                std::ostringstream oss;
-                oss << "Failed to remove fd from epoll: " << strerror(errno) << std::endl;
-                webservLogger.log(LVL_ERROR, oss);
-            }
-            // std::cerr << "Failed to remove fd from epoll: " << strerror(errno) << std::endl;
+            std::ostringstream oss;
+            oss << "Failed to remove fd from epoll: " << strerror(errno);
+            webservLogger.log(LVL_ERROR, oss);
         }
         close(fd);
         fd_set.erase(fd); // Remove the file descriptor from the fd_set

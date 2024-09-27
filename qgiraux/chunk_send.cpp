@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:49:25 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/09/27 12:17:34 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/09/27 17:20:05 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,21 +22,29 @@
 
 void Server::send_chunk(int fd, int i, const header_infos& header)
 {
-    std::cout << "*****GET chunker!!************\n";
+    {
+        std::ostringstream oss;
+        oss << "[send chunk] sending body by chunks to " << fd << "...";
+        webservLogger.log(LVL_DEBUG, oss);
+    }
     /*if not in chunklist ==> send header, set EPOLLOUT and add fd to chunk*/
     if (chunk.find(fd) == chunk.end())
     {
         chunk[fd] = header;
 
-        // chunk[fd].fd_ressource = open(chunk[fd].ressourcePath.c_str(), O_RDONLY);
+
         fd_set[chunk[fd].fd_ressource] = fd_set[fd];
         fd_set[chunk[fd].fd_ressource].listener = false;
         std::string mime = mimeList[get_mime_type(chunk[fd].ressourcePath)];
 
         /*create and send the header*/
         std::string head = "HTTP/1.1 200 OK\r\nContent-Type: " + mime + "\r\nTransfer-Encoding: chunked\r\n\r\n";
+        {
+            std::ostringstream oss;
+            oss << "[send chunk] sending header to: " << fd;
+            webservLogger.log(LVL_DEBUG, oss);
+        }
         send(fd, head.c_str(), head.size(), 0);
-        // std::cout << head.c_str();
         events[i].events = EPOLLOUT | EPOLLET;
         if (epoll_ctl(epoll_fd, EPOLL_CTL_MOD, fd, &events[i]) == -1)
         {
@@ -49,11 +57,13 @@ void Server::send_chunk(int fd, int i, const header_infos& header)
 }
 void Server::send_chunk(int fd, int i)
 {
-    // std::cout << "chunk from data " << chunk[fd].readIndex << std::endl; 
     //if already in chunk list ==>send next chunk
     std::ifstream file(chunk[fd].ressourcePath.c_str(), std::ios::binary);
-    if (!file) {
-        std::cerr << "Error opening file: " << chunk[fd].ressourcePath << std::endl;
+    if (!file) 
+    {
+        std::ostringstream oss;
+        oss << "[send chunk] Error opening file: " << chunk[fd].ressourcePath;
+        webservLogger.log(LVL_ERROR, oss);
         return ; // Return an empty vector
     }
 
@@ -68,11 +78,20 @@ void Server::send_chunk(int fd, int i)
         oss.write(reinterpret_cast<const char*>(&tmp[0]), bytesRead);
         oss << "\r\n";
         data = oss.str();
-                        
+        {
+            std::ostringstream oss;
+            oss << "[send chunk] sending next chunk to " << fd;
+            webservLogger.log(LVL_DEBUG, oss);
+        }                
         ssize_t bytesSent = send(fd, data.c_str(), data.size(), 0);
         if (bytesSent == -1){
 
             return failed_to_send(fd);
+        }
+        {
+            std::ostringstream oss;
+            oss << "[send chunk] sending last chunk to " << fd;
+            webservLogger.log(LVL_DEBUG, oss);
         }
         bytesSent = send(fd, "0\r\n\r\n", 5, 0);
         if (bytesSent == -1){
@@ -82,7 +101,9 @@ void Server::send_chunk(int fd, int i)
         events[i].events = EPOLLIN | EPOLLET;
         if (epoll_ctl(epoll_fd, EPOLL_CTL_MOD, fd, &events[i]) == -1)
         {
-            std::cerr << "epoll_ctl failed: " << strerror(errno) << std::endl;
+            std::ostringstream oss;
+            oss << "[send chunk] epoll_ctl failed: " << strerror(errno);
+            webservLogger.log(LVL_ERROR, oss);
             close(fd);
             fd_set.erase(fd);
         }
@@ -105,7 +126,9 @@ void Server::send_chunk(int fd, int i)
         events[i].events = EPOLLOUT | EPOLLET;
         if (epoll_ctl(epoll_fd, EPOLL_CTL_MOD, fd, &events[i]) == -1)
         {
-            std::cerr << "epoll_ctl failed: " << strerror(errno) << std::endl;
+            std::ostringstream oss;
+            oss << "[send chunk] epoll_ctl failed: " << strerror(errno);
+            webservLogger.log(LVL_ERROR, oss);
             close(fd);
             fd_set.erase(fd);
             chunk.erase(fd);
