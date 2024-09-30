@@ -6,7 +6,7 @@
 /*   By: nrea <nrea@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 10:13:31 by nrea              #+#    #+#             */
-/*   Updated: 2024/09/27 14:01:41 by nrea             ###   ########.fr       */
+/*   Updated: 2024/09/30 14:01:18 by nrea             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,24 @@ header_infos response_error(std::string error_code, ConfigServer  * config,int l
 
 	//la caracteristique keep-alive depend de l'erreur:  a ameliorer pour la rendre + generale
 	response.keepAlive = error_code != HTTP_STATUS_BAD_REQUEST && error_code != HTTP_STATUS_INTERNAL_SERVER_ERROR;
+	{
+		std::ostringstream oss;
+		oss <<"[HeaderParser]	RESPONSE  {"<<response.returnCode <<"} ";
+		oss <<"{"<<str_todo(response.toDo)<<"}"<<"{"<<response.ressourcePath <<"}";
+		if (response.keepAlive)
+			oss<<"{keep-alive}";
+		else
+			oss<<"{close}";
+		if (response.chunked)
+			oss<<"{chunked}";
+		else
+			oss<<"{not chunked}";
+		oss<<"";
+		oss<<"{body-size: " << response.bodySize;
+		oss<<"} ";
+		oss<<"{content-type: " << response.contentType<<"}";
+ 		webservLogger.log(LVL_DEBUG, oss);
+	}
 
 	return response;
 }
