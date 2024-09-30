@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:49:44 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/09/30 12:31:02 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/09/30 14:53:22 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,9 +38,11 @@ void Server::receive_data(int fd, int i)
         //if receiving a chunk from a chunked POST
         if (bytesRead < 0) 
         {
-            if (chunk.find(fd) != chunk.end())
+            if (chunk.find(fd) != chunk.end() && body.size() > 0)
             {
-                chunked_post(fd, (char *)&body[0], i, header);
+                std::cout << "nex chunk is" << buffer << std::endl;
+                if (buffer[0] == '0' && buffer[1] == '/')
+                    chunk.erase(fd);
                 return;
             }
             {
@@ -52,6 +54,7 @@ void Server::receive_data(int fd, int i)
                 {
                     case POST:
                         method_post(header, body, fd, i);
+                        return;
                     case GET:
                         method_get(header, fd, i);
                         return;
@@ -63,7 +66,6 @@ void Server::receive_data(int fd, int i)
                         return;
 					case ERROR:
                         method_error(header, fd, i);
-					/*if header.ressourcepath.empty() sendError() else GET*/
 						return;
                     default:
                         std::ostringstream oss;

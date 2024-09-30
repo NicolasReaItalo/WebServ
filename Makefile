@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: nrea <nrea@student.42.fr>                  +#+  +:+       +#+         #
+#    By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/02/06 10:28:10 by jerperez          #+#    #+#              #
-#    Updated: 2024/09/27 17:29:24 by nrea             ###   ########.fr        #
+#    Updated: 2024/09/30 14:49:37 by qgiraux          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -29,21 +29,20 @@ SRCS_NREA_FILES	=	headerParser.cpp\
 
 SRCS_NREA	= 	$(addprefix nrea/, $(SRCS_NREA_FILES))
 
-SRCS_QGIRAUX_FILES	= 	chunk_receive.cpp\
-				method_delete.cpp\
-				pollin.cpp\
-				ServerStart.cpp\
-				chunk_send.cpp\
-				method_get.cpp\
-				ServerStop.cpp\
-				method_post.cpp\
-				method_error.cpp\
-				ServerRun.cpp\
-				utils.cpp\
-				constructor.cpp\
-				generate_error_page.cpp\
-				generate_index_page.cpp\
-				method_autoindex.cpp\
+SRCS_QGIRAUX_FILES	= 	method_delete.cpp\
+						pollin.cpp\
+						ServerStart.cpp\
+						chunk_send.cpp\
+						method_get.cpp\
+						ServerStop.cpp\
+						method_post.cpp\
+						method_error.cpp\
+						ServerRun.cpp\
+						utils.cpp\
+						constructor.cpp\
+						generate_error_page.cpp\
+						generate_index_page.cpp\
+						method_autoindex.cpp\
 
 SRCS_QGIRAUX	= 	$(addprefix qgiraux/, $(SRCS_QGIRAUX_FILES))
 

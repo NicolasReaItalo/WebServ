@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:50:06 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/09/30 13:36:45 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/09/30 13:57:31 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,6 +90,7 @@ void Server::set_errorList()
     errorList[405]  = "Method Not Allowed";
     errorList[406]  = "Not Acceptable";
     errorList[408]  = "Request Timeout";
+    errorList[409]  = "Conflict";
     errorList[413]  = "Payload Too Large";
     errorList[414]  = "URI Too Long";
     errorList[415]  = "Unsupported Media Type";
@@ -106,7 +107,7 @@ void Server::sendCustomError(header_infos header, int errcode, int fd, int i)
 {
     {
         std::ostringstream oss;
-        oss << "[method get] starting for fd " << fd;
+        oss << "[custom error] starting for fd " << fd;
         webservLogger.log(LVL_INFO, oss);
     }
     {
@@ -115,7 +116,7 @@ void Server::sendCustomError(header_infos header, int errcode, int fd, int i)
         {
             {
             std::ostringstream oss;
-            oss << "[method get] failed to open " << header.ressourcePath << ", sending 404 to "<<fd;
+            oss << "[custom error] failed to open " << header.ressourcePath << ", sending 404 to "<<fd;
             webservLogger.log(LVL_ERROR, oss);
             }
             sendError(header, 404, fd, i);
@@ -126,7 +127,7 @@ void Server::sendCustomError(header_infos header, int errcode, int fd, int i)
     if (header.bodySize > CHUNK_SIZE)
     {
         std::ostringstream oss;
-        oss << "[method get] file bigger than max authorized size, sending by CHUNKS";
+        oss << "[custom error] file bigger than max authorized size, sending by CHUNKS";
         webservLogger.log(LVL_INFO, oss);
         send_chunk(fd, i, header);
         return ;
@@ -152,24 +153,24 @@ void Server::sendCustomError(header_infos header, int errcode, int fd, int i)
         {
             {
                 std::ostringstream oss;
-                oss << "[method get] Sending header " << errcode << errorList[errcode] << " to " << fd << "...";
+                oss << "[custom error] Sending header " << errcode << errorList[errcode] << " to " << fd << "...";
                 webservLogger.log(LVL_INFO, oss);   
             }
             if (-1 == send(fd, head.c_str(), head.size(), 0))
             {
                 std::ostringstream oss;
-                oss << "[method get] Failed to send header to " << fd;
+                oss << "[custom error] Failed to send header to " << fd;
                 webservLogger.log(LVL_INFO, oss);
             }
             {
                 std::ostringstream oss;
-                oss << "[method get] Sending file to " << fd << "...";
+                oss << "[custom error] Sending file to " << fd << "...";
                 webservLogger.log(LVL_INFO, oss);   
             }
             if (-1 == send(fd, &(data[0]), header.bodySize, 0))
             {
                 std::ostringstream oss;
-                oss << "[method get] Failed to send body to " << fd;
+                oss << "[custom error] Failed to send body to " << fd;
                 webservLogger.log(LVL_INFO, oss);
             }
         }
@@ -203,7 +204,6 @@ void Server::sendError(header_infos header, int errcode, int fd, int i)
             if (tr > 0)
             {
                 close(tr);
-                std::cout << "SENDING CUSTOM ERROR PAGE...\n";
                 std::stringstream oss;             
                 header.ressourcePath = errorpage;
                 sendCustomError(header, errcode, fd, i);
@@ -214,9 +214,7 @@ void Server::sendError(header_infos header, int errcode, int fd, int i)
             
         }
     }
-    std::cout << "SENDING STANDARD ERROR PAGE...\n";
     std::stringstream ss;
-    
     time_str.erase(time_str.find_last_not_of("\n") + 1);
 
     ss << "HTTP/1.1 " << errcode << " " << errorList[errcode] << "\r\n"

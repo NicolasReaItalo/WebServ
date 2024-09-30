@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:49:40 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/09/30 12:30:22 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/09/30 14:58:50 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,7 +67,9 @@ void Server::method_post(header_infos& header, std::vector<unsigned char> body, 
     {
         // If the request is chunked, handle the chunked transfer encoding
         chunk[fd] = header;
-        receive_data(fd, i);
+        std::cout << "chunked post request. first chunk is of size " << body.size() << std::endl;
+        //chunked_post(fd, body, i, header);
+        // receive_data(fd, i);
         return;
     }
     // Handle closing the connection if keep-alive is false

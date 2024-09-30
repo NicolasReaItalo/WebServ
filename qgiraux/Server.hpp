@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:49:46 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/09/30 12:42:23 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/09/30 14:30:51 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@
 #include "Logger.hpp"
 
 #define MAX_EVENTS 500
-#define BUFFER_SIZE 1000
+#define BUFFER_SIZE 100000
 #define CHUNK_SIZE 500000
 
 #define ERROR 1
@@ -121,7 +121,7 @@ class Server
 		header_infos handle_delete(header_infos &response, ConfigServer  * config,int locationIndex,std::map<std::string, std::string> header_attributes);
 		header_infos handle_dir(header_infos &response,ConfigServer  * config,int locationIndex,std::map<std::string, std::string> &header_attributes);
 
-        void chunked_post(int fd, std::string tmp, int i, header_infos& header);
+        void chunked_post(int fd, std::vector<unsigned char> body, int i, header_infos& header);
         void send_chunk(int fd, int i, const header_infos& header);
         void send_chunk(int fd, int i);
         void send_index(int fd, const header_infos& header, std::map<std::string, std::string>& index);

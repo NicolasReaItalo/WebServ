@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   handle_post.cpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nrea <nrea@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/23 10:46:13 by nrea              #+#    #+#             */
-/*   Updated: 2024/09/27 17:34:52 by nrea             ###   ########.fr       */
+/*   Updated: 2024/09/30 14:16:59 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,10 +92,11 @@ int locationIndex,std::map<std::string, std::string> header_attributes)
 
 
 	if (static_cast<unsigned long>(atol(header_attributes["Content-Length"].c_str())) >
-	 static_cast<unsigned long>(atol(config->getDirectiveParameter(locationIndex, "client_body_path").c_str())))
+	 static_cast<unsigned long>(atol(config->getDirectiveParameter(locationIndex, "client_max_body_size").c_str())))
 	{
 		{
 			std::ostringstream oss;
+			std::cout << static_cast<unsigned long>(atol(header_attributes["Content-Length"].c_str())) << std::endl << static_cast<unsigned long>(atol(config->getDirectiveParameter(locationIndex, "client_body_path").c_str())) << std::endl;;
 			oss <<"[handle_post]	the Content-length exceed the max body size accepted for a non-chunked request";
 			webservLogger.log(LVL_DEBUG, oss);
 		}
