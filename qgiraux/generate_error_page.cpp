@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:49:30 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/09/27 15:36:29 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/09/30 15:54:01 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ std::string Server::generate_error_page(int errcode)
     << errcode <<  errorList[errcode]
     << "\n</title> \n"
     << "<link rel=\"stylesheet\" \n"
-    << "href=\"style.css\"> \n"
+    << "href=\"/style.css\"> \n"
     << "</head>\n"
     << "<body>\n"
     << "<div class=\"page\"> \n"
@@ -39,11 +39,11 @@ std::string Server::generate_error_page(int errcode)
     << errorList[errcode]
     << "\n</p></div> \n"
     << "<div class=\"title\">\n"
-    << " <a href=\"index.html\">\n"
+    << " <a href=\"/index.html\">\n"
     << "Go Back to Home \n"
     << "</a></div> \n"
     << " <div class=\"bloc\">\n"
-	<< "<img src=\"images/404.png\" alt=" << errcode <<" class=\"resizable-image\">\n"
+	<< "<img src=\"/images/404.png\" alt=" << errcode <<" class=\"resizable-image\">\n"
 	<< "	</div></div></body> </html>\n";
     return os.str();
 }

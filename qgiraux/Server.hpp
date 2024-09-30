@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:49:46 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/09/30 15:40:14 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/09/30 15:43:33 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,7 @@
 #include <csignal>
 #include <ctime>
 #include "Logger.hpp"
+#include "http_errors.hpp"
 
 #define MAX_EVENTS 500
 #define BUFFER_SIZE 100000

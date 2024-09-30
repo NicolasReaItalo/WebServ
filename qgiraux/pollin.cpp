@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:49:44 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/09/30 14:53:22 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/09/30 15:52:14 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,52 +28,48 @@ void Server::receive_data(int fd, int i)
     header_infos header;
 
     bool headerParsed = false; // Flag to track whether the header has been parsed
+    
     {
         std::ostringstream oss;
         oss << "[POLLIN] Loading data from fd " << fd;
         webservLogger.log(LVL_DEBUG, oss);
     }
+    
     while (true) {
         bytesRead = recv(fd, buffer, maxBodySize - 1, 0);
+        
         //if receiving a chunk from a chunked POST
         if (bytesRead < 0) 
         {
-            if (chunk.find(fd) != chunk.end() && body.size() > 0)
-            {
-                std::cout << "nex chunk is" << buffer << std::endl;
-                if (buffer[0] == '0' && buffer[1] == '/')
-                    chunk.erase(fd);
-                return;
-            }
             {
                 std::ostringstream oss;
                 oss << "[POLLIN] body from fd " << fd << " fully received, selecting method...";
                 webservLogger.log(LVL_DEBUG, oss);
             }
             switch (header.toDo)
-                {
-                    case POST:
-                        method_post(header, body, fd, i);
-                        return;
-                    case GET:
-                        method_get(header, fd, i);
-                        return;
-                    case DELETE:
-                        method_delete(header, fd, i);
-                        return;
-                    case AUTOINDEX:
-                        method_autoindex(header, fd, i);
-                        return;
-					case ERROR:
-                        method_error(header, fd, i);
-						return;
-                    default:
-                        std::ostringstream oss;
-                        oss << "[POLLIN] Unknown method on fd " << fd;
-                        webservLogger.log(LVL_ERROR, oss);
-                        return;
-                        
-                }
+            {
+                case POST:
+                    method_post(header, body, fd, i);
+                    return;
+                case GET:
+                    method_get(header, fd, i);
+                    return;
+                case DELETE:
+                    method_delete(header, fd, i);
+                    return;
+                case AUTOINDEX:
+                    method_autoindex(header, fd, i);
+                    return;
+                case ERROR:
+                    method_error(header, fd, i);
+                    return;
+                default:
+                    std::ostringstream oss;
+                    oss << "[POLLIN] Unknown method on fd " << fd;
+                    webservLogger.log(LVL_ERROR, oss);
+                    sendError(header, 405, fd, i); //method not allowed
+                    return;  
+            }
         }
         if (bytesRead == 0)
         {
