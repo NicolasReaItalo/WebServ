@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:49:38 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/09/27 17:30:30 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/09/30 12:34:30 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,18 +22,20 @@ void Server::method_get(const header_infos& header, int fd, int i)
         oss << "[method get] starting for fd " << fd;
         webservLogger.log(LVL_INFO, oss);
     }
-    int tr = open(header.ressourcePath.c_str(), O_RDONLY);
-    if (-1 == tr)
     {
+        int tr = open(header.ressourcePath.c_str(), O_RDONLY);
+        if (-1 == tr)
         {
-        std::ostringstream oss;
-        oss << "[method get] failed to open " << header.ressourcePath << ", sending 404 to "<<fd;
-        webservLogger.log(LVL_ERROR, oss);
+            {
+            std::ostringstream oss;
+            oss << "[method get] failed to open " << header.ressourcePath << ", sending 404 to "<<fd;
+            webservLogger.log(LVL_ERROR, oss);
+            }
+            sendError(header, 404, fd, i);
+            return;
         }
-        sendError(404, fd);
-        return;
+        close(tr);
     }
-    close(tr);
     if (header.bodySize > CHUNK_SIZE)
     {
         std::ostringstream oss;

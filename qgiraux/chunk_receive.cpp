@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:49:15 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/09/26 16:19:06 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/09/30 12:28:49 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,18 +18,18 @@
 int fd  :           fd on which the data was received
 int i   :           index of the server to which the data was sent
 std::string data :   data containing the chunk*/
-void Server::chunked_post(int fd, std::string data)
+void Server::chunked_post(int fd, std::string data, int i, header_infos& header)
 {
     /*if the current chunk does not end correctly*/
     if (data.substr(data.length() - 2) != "\r\n")
     {
         if (data.length() < maxBodySize){
                                             //return error 400 bad request
-            sendError(400, chunk[fd].fd_ressource);
+            sendError(header, 400, chunk[fd].fd_ressource, i);
         }
         else{
                                             //return error 413 content to large
-            sendError(413, chunk[fd].fd_ressource);
+            sendError(header, 413, chunk[fd].fd_ressource, i);
         }
         close(chunk[fd].fd_ressource);
         remove(chunk[fd].ressourcePath.c_str());
@@ -47,11 +47,11 @@ void Server::chunked_post(int fd, std::string data)
     {
         if (data == "0\r\n\r\n"){
             //send response 201 created
-            sendError(201, chunk[fd].fd_ressource);
+            sendError(header, 201, chunk[fd].fd_ressource, i);
         }
         else{
             //return Error 400 bad request
-            sendError(400, chunk[fd].fd_ressource);
+            sendError(header, 400, chunk[fd].fd_ressource, i);
         }
         close(chunk[fd].fd_ressource);
         fd_set.erase(chunk[fd].fd_ressource);
@@ -72,7 +72,7 @@ void Server::chunked_post(int fd, std::string data)
     /*if chunk size incorrect*/
     if (size != data.length())
     {
-        sendError(400, chunk[fd].fd_ressource);
+        sendError(header, 400, chunk[fd].fd_ressource, i);
         close(chunk[fd].fd_ressource);
         fd_set.erase(chunk[fd].fd_ressource);
         remove(chunk[fd].ressourcePath.c_str());

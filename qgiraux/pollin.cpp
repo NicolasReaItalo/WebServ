@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:49:44 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/09/27 15:34:30 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/09/30 12:31:02 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ void Server::receive_data(int fd, int i)
         {
             if (chunk.find(fd) != chunk.end())
             {
-                chunked_post(fd, (char *)&body[0]);
+                chunked_post(fd, (char *)&body[0], i, header);
                 return;
             }
             {
@@ -56,7 +56,7 @@ void Server::receive_data(int fd, int i)
                         method_get(header, fd, i);
                         return;
                     case DELETE:
-                        method_delete(header, fd);
+                        method_delete(header, fd, i);
                         return;
                     case AUTOINDEX:
                         method_autoindex(header, fd, i);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nrea <nrea@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:49:46 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/09/27 17:56:02 by nrea             ###   ########.fr       */
+/*   Updated: 2024/09/30 12:42:23 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,7 +107,7 @@ class Server
 
         void method_get(const header_infos& header, int fd, int i);
         void method_post(header_infos& header, std::vector<unsigned char> body, int fd, int i);
-        void method_delete(const header_infos& header, int fd);
+        void method_delete(const header_infos& header, int fd, int i);
         void method_error(const header_infos& header, int fd, int i);
         void method_autoindex(const header_infos& header, int fd, int i);
         void method_post_chunked(const header_infos& header, std::vector<unsigned char> body, int fd, int i);
@@ -121,11 +121,12 @@ class Server
 		header_infos handle_delete(header_infos &response, ConfigServer  * config,int locationIndex,std::map<std::string, std::string> header_attributes);
 		header_infos handle_dir(header_infos &response,ConfigServer  * config,int locationIndex,std::map<std::string, std::string> &header_attributes);
 
-        void chunked_post(int fd, std::string tmp);
+        void chunked_post(int fd, std::string tmp, int i, header_infos& header);
         void send_chunk(int fd, int i, const header_infos& header);
         void send_chunk(int fd, int i);
         void send_index(int fd, const header_infos& header, std::map<std::string, std::string>& index);
-        void sendError(int errcode, int fd);
+        void sendError(header_infos header, int errcode, int fd, int i);
+        void sendCustomError(header_infos header, int errcode, int fd, int i);
 
         bool is_fd_in_chunklist(int fd);
         std::string generate_error_page(int errcode);
