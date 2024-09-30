@@ -6,7 +6,7 @@
 /*   By: nrea <nrea@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/30 11:53:45 by nrea              #+#    #+#             */
-/*   Updated: 2024/09/30 14:01:33 by nrea             ###   ########.fr       */
+/*   Updated: 2024/09/30 15:10:44 by nrea             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ std::map<std::string, std::string> &header_attributes)
 	response.ressourcePath = redir_url; // la location est stockee dans le ressource_path
 	response.bodySize = 0; // content-length;
 	response.chunked = false;
-	response.keepAlive =(header_attributes["Connection"] == "keep-alive");
+	response.keepAlive = (header_attributes["Connection"] == "keep-alive");
 	response.configServer = NULL;
 	response.locationIndex = -1;
 

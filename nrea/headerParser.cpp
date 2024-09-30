@@ -6,7 +6,7 @@
 /*   By: nrea <nrea@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/12 16:20:48 by nrea              #+#    #+#             */
-/*   Updated: 2024/09/30 14:50:06 by nrea             ###   ########.fr       */
+/*   Updated: 2024/09/30 15:10:31 by nrea             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -262,7 +262,7 @@ header_infos Server::headerParser
 	else
 		return response_error(HTTP_STATUS_METHOD_NOT_ALLOWED, serverconfig, locationIndex);
 
-	response.keepAlive = header_attributes["Connection"] == "keep-alive";
+	response.keepAlive = (header_attributes["Connection"] == "keep-alive");
 	{
 		std::ostringstream oss;
 		oss <<"[HeaderParser]	RESPONSE  {"<<response.returnCode <<"} ";
