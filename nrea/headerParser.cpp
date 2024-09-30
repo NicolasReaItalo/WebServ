@@ -6,15 +6,16 @@
 /*   By: nrea <nrea@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/12 16:20:48 by nrea              #+#    #+#             */
-/*   Updated: 2024/09/30 14:00:25 by nrea             ###   ########.fr       */
+/*   Updated: 2024/09/30 14:50:06 by nrea             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "headerParser.hpp"
 
 
-/*split all the attributes of the raw header buffer and returns a map of all attributes
-this function can throw a RuntimeError("bad request") exception*/
+/*split all the attributes of the raw header buffer and returns a map of
+ all attributes
+ this function can throw a RuntimeError("bad request") exception*/
 std::map<std::string, std::string> split_buffer(std::string rawBuffer)
 {
 	std::map<std::string, std::string> header_attributes;
@@ -46,16 +47,23 @@ std::map<std::string, std::string> split_buffer(std::string rawBuffer)
 	return header_attributes;
 }
 
-header_infos Server::headerParser(std::string rawBuffer, std::pair<std::string, std::string> interface)
+header_infos Server::headerParser
+(std::string rawBuffer, std::pair<std::string, std::string> interface)
 {
 	header_infos response;
 	std::map<std::string, std::string> header_attributes;
-	std::vector<std::string> tmp;
-	ConfigServer defaultconfig; ///ConfigServer par defaut pour les messages d'erreurs en cas de pb de parsing
-	int default_location = 0; // defaultconfig location
+	// std::vector<std::string> tmp;
+
+	//On set un serveur par defaut pour les retours d'erreurs
+	//avant que l'URI soit parsee.
+	ConfigServer *defaultconfig = findServer(interface, "");
+	int default_location = -1;
+
+
 	{
 	std::ostringstream oss;
-	oss << "[HeaderParser] A new request header has been received "<< interface.first<<":"<< interface.second;
+	oss << "[HeaderParser] A new request header has been received "<<
+	 interface.first<<":"<< interface.second;
 	webservLogger.log(LVL_DEBUG, oss);
 	}
 
@@ -70,7 +78,7 @@ header_infos Server::headerParser(std::string rawBuffer, std::pair<std::string, 
 		oss <<"[HeaderParser]	The request header is not properly formatted";
 		webservLogger.log(LVL_DEBUG, oss);
 		}
-		return response_error(HTTP_STATUS_BAD_REQUEST, &defaultconfig, default_location);
+		return response_error(HTTP_STATUS_BAD_REQUEST, defaultconfig, default_location);
 	}
 
 // ON VERIFIE QUE HOST EST PRESENT
@@ -82,15 +90,17 @@ header_infos Server::headerParser(std::string rawBuffer, std::pair<std::string, 
 		oss <<"[HeaderParser]	The request header is not properly formatted";
 		webservLogger.log(LVL_DEBUG, oss);
 		}
-		return response_error(HTTP_STATUS_BAD_REQUEST, &defaultconfig, default_location);
+		return response_error(HTTP_STATUS_BAD_REQUEST, defaultconfig, default_location);
 	}
 
 //ON SPLITTE LE HOST POUR RECUPERER LE PORT SI PRECISE
+	{
+	std::vector<std::string> tmp;
 	tmp = splitString(header_attributes["Host"], ":");
 	if (tmp.size() == 2)
 	{
 		if (! contains_only_numeric(tmp[1]))
-			return response_error(HTTP_STATUS_BAD_REQUEST, &defaultconfig, default_location);
+			return response_error(HTTP_STATUS_BAD_REQUEST, defaultconfig, default_location);
 		header_attributes["Host"] = tmp[0];
 		header_attributes["Port"] = tmp[1];
 	}
@@ -101,13 +111,12 @@ header_infos Server::headerParser(std::string rawBuffer, std::pair<std::string, 
 		oss <<"[HeaderParser]	The request header is not properly formatted";
 		webservLogger.log(LVL_DEBUG, oss);
 		}
-		return response_error(HTTP_STATUS_BAD_REQUEST, &defaultconfig, default_location);
+		return response_error(HTTP_STATUS_BAD_REQUEST, defaultconfig, default_location);
 	}
-
+	}
 /// Maintenant qu'on a le host on peut recuperer le
 // bon server de config et on set sa location!
 	// ON RECUPERE LE BON SERVER
-	//webservLogger.log(LVL_DEBUG,"HeaderParser:: looking up for the serverConfig:",interface.first, interface.second, header_attributes["Host"]);
 	ConfigServer * serverconfig = findServer(interface,header_attributes["Host"]);
 	{
 	std::ostringstream oss;
@@ -159,6 +168,8 @@ header_infos Server::headerParser(std::string rawBuffer, std::pair<std::string, 
 
 ///ON RECUPERE UNE EVENTUELLE QUERY--------------------------------------------
 	// on reutilise tmp pour split l'uri
+	{
+	std::vector<std::string> tmp;
 	tmp = splitString(header_attributes["Converted_URI"], "?");
 	if (tmp.size() == 2 )
 	{
@@ -176,7 +187,7 @@ header_infos Server::headerParser(std::string rawBuffer, std::pair<std::string, 
 	}
 	else
 		header_attributes["URI"] = tmp[0];
-
+	}
 ///------------------------------------------------------------------------------
 // ON RECUPERE LA LOCATION pour la mettre en cache pour les appels suivant a configServer
 	// serverconfig->_debug_print();
