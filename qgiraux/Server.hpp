@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:49:46 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/09/30 16:27:50 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/09/30 16:44:31 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@
 #include "http_errors.hpp"
 
 #define MAX_EVENTS 500
-#define BUFFER_SIZE 50
+#define BUFFER_SIZE 10000
 #define CHUNK_SIZE 1000
 
 #define ERROR 1
@@ -112,7 +112,7 @@ class Server
         void method_delete(const header_infos& header, int fd, int i);
         void method_error(const header_infos& header, int fd, int i);
         void method_autoindex(const header_infos& header, int fd, int i);
-        void method_post_chunked(const header_infos& header, std::vector<unsigned char> body, int fd, int i);
+        void method_return(const header_infos& header, int fd);
 
         std::string get_mime_type(const std::string &uri);
         header_infos headerParser(std::string rawBuffer, std::pair<std::string, std::string> interface);

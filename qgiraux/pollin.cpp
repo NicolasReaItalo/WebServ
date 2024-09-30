@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:49:44 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/09/30 16:28:32 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/09/30 16:43:21 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,11 +63,13 @@ void Server::receive_data(int fd, int i)
                 case ERROR:
                     method_error(header, fd, i);
                     return;
+                case RETURN:
+                    method_return(header, fd);
+                    return;
                 default:
                     std::ostringstream oss;
                     oss << "[POLLIN] Unknown method on fd " << fd;
                     webservLogger.log(LVL_ERROR, oss);
-                    sendError(header, 405, fd, i); //method not allowed
                     return;  
             }
         }

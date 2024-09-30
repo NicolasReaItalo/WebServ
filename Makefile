@@ -6,7 +6,7 @@
 #    By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/02/06 10:28:10 by jerperez          #+#    #+#              #
-#    Updated: 2024/09/30 15:40:06 by qgiraux          ###   ########.fr        #
+#    Updated: 2024/09/30 16:42:14 by qgiraux          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -30,20 +30,23 @@ SRCS_NREA_FILES	=	headerParser.cpp\
 
 SRCS_NREA	= 	$(addprefix nrea/, $(SRCS_NREA_FILES))
 
-SRCS_QGIRAUX_FILES	= 	method_delete.cpp\
-						pollin.cpp\
-						ServerStart.cpp\
-						chunk_send.cpp\
-						method_get.cpp\
-						ServerStop.cpp\
-						method_post.cpp\
-						method_error.cpp\
-						ServerRun.cpp\
-						utils.cpp\
+SRCS_QGIRAUX_FILES	= 	chunk_send.cpp\
 						constructor.cpp\
 						generate_error_page.cpp\
 						generate_index_page.cpp\
 						method_autoindex.cpp\
+						method_delete.cpp\
+						method_error.cpp\
+						method_get.cpp\
+						method_post.cpp\
+						method_return.cpp\
+						pollin.cpp\
+						ServerRun.cpp\
+						ServerStart.cpp\
+						ServerStop.cpp\
+						utils.cpp\
+						
+						
 
 SRCS_QGIRAUX	= 	$(addprefix qgiraux/, $(SRCS_QGIRAUX_FILES))
 
