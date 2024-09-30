@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:49:44 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/09/30 15:52:14 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/09/30 16:28:32 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,9 +71,9 @@ void Server::receive_data(int fd, int i)
                     return;  
             }
         }
+        // End of file, client disconnected
         if (bytesRead == 0)
         {
-            // End of file, client disconnected
             {
                 std::ostringstream oss;
                 oss << "[POLLIN] Client disconnected : " << fd;
@@ -91,10 +91,13 @@ void Server::receive_data(int fd, int i)
 
             // Find the position where the header ends (marked by \r\n\r\n)
             size_t headerEndPos = tmp.find("\r\n\r\n");
+            
             if (headerEndPos != std::string::npos) 
             {
                 // Extract header
-                headerStr = tmp.substr(0, headerEndPos);
+                size_t l = headerStr.size();
+                headerStr += tmp;
+                headerStr= headerStr.substr(0, l+ headerEndPos);
 
                 // Convert remaining part to the body (binary-safe)
                 std::vector<unsigned char> bodyPart(buffer + headerEndPos + 4, buffer + bytesRead);
