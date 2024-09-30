@@ -6,7 +6,7 @@
 #    By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/02/06 10:28:10 by jerperez          #+#    #+#              #
-#    Updated: 2024/09/30 14:49:37 by qgiraux          ###   ########.fr        #
+#    Updated: 2024/09/30 15:40:06 by qgiraux          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -23,6 +23,7 @@ SRCS_NREA_FILES	=	headerParser.cpp\
 					handle_get_dir.cpp\
 					response_error.cpp\
 					response_autoindex.cpp\
+					response_redirect.cpp\
 					Logger.cpp\
 					utils.cpp\
 					FileInfos.cpp

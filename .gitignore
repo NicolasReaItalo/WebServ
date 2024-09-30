@@ -7,3 +7,8 @@ html-files/cat.jpeg
 html-files/generic-error.html
 html-files/test.html
 hurl/*
+server-redir.conf
+server-simple.conf
+test.hurl
+conf.conf
+todo
