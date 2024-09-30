@@ -6,7 +6,7 @@
 /*   By: nrea <nrea@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/18 13:44:25 by nrea              #+#    #+#             */
-/*   Updated: 2024/09/30 12:25:42 by nrea             ###   ########.fr       */
+/*   Updated: 2024/09/30 18:29:42 by nrea             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@
 #include <unistd.h>
 #include "Logger.hpp"
 #include "FileInfos.hpp"
-
+#include "cgi_utils.hpp"
 
 #define RST		"\033[0m"
 #define RED		"\033[1;31m"
@@ -52,6 +52,8 @@ extern Logger webservLogger;
 header_infos response_error(std::string error_code, ConfigServer  * config,int locationIndex);
 header_infos response_autoindex(ConfigServer *config, int locationIndex, header_infos response);
 header_infos response_redirect(std::string  &return_code, std::string  &redir_url, std::map<std::string, std::string> &header_attributes);
+
+header_infos handle_cgi(header_infos & response, std::string cgi, ConfigServer *config, int locationIndex, std::map<std::string,std::string> &header_attributes);
 bool contains_only_numeric(std::string str);
 long getFileSize(std::string filename);
 std::string getFileExtension(std::string uri);
