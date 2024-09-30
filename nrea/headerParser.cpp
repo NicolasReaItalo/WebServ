@@ -6,7 +6,7 @@
 /*   By: nrea <nrea@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/12 16:20:48 by nrea              #+#    #+#             */
-/*   Updated: 2024/09/27 17:58:08 by nrea             ###   ########.fr       */
+/*   Updated: 2024/09/30 14:00:25 by nrea             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,7 @@ header_infos Server::headerParser(std::string rawBuffer, std::pair<std::string, 
 	{
 	std::ostringstream oss;
 	oss << "[HeaderParser] A new request header has been received "<< interface.first<<":"<< interface.second;
-	webservLogger.log(LVL_INFO, oss);
+	webservLogger.log(LVL_DEBUG, oss);
 	}
 
 	try
@@ -188,16 +188,16 @@ header_infos Server::headerParser(std::string rawBuffer, std::pair<std::string, 
 	webservLogger.log(LVL_DEBUG, oss);
 	}
 
-//TODO TODO TODO
 //	// Si il existe un return dans la location on redirige directement
 	if (serverconfig->inDirectives(locationIndex,"return"))
 	{
-		ConfigBlock::parameters_t  test = serverconfig->getDirectiveParameters(locationIndex, "return");
+		ConfigBlock::parameters_t  ret = serverconfig->getDirectiveParameters(locationIndex, "return");
 		{
 		std::ostringstream oss;
-		oss <<"[HeaderParser]	return found  "<<test.front()<< " | "<< test.back() ;
+		oss <<"[HeaderParser]	return found  "<<ret.front()<< " | "<< ret.back() ;
 		webservLogger.log(LVL_DEBUG, oss);
 		}
+		return response_redirect(ret.front(), ret.back(), header_attributes);
 	}
 
 // // ON VERIFIE QUE LA METHODE EST AUTORISEE
@@ -270,9 +270,9 @@ header_infos Server::headerParser(std::string rawBuffer, std::pair<std::string, 
 		oss<<"{content-type: " << response.contentType<<"}";
  		webservLogger.log(LVL_DEBUG, oss);
 	}
+
+
 	response.uri = header_attributes["URI"];
-
-
 	return response;
 }
 

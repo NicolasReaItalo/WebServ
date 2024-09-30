@@ -6,7 +6,7 @@
 /*   By: nrea <nrea@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:49:46 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/09/27 17:56:02 by nrea             ###   ########.fr       */
+/*   Updated: 2024/09/30 12:00:44 by nrea             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,7 @@
 #define GET 2
 #define POST 3
 #define AUTOINDEX 4
+#define RETURN 5
 #define DELETE 6
 #define GET_CGI 7
 #define POST_CGI 8
