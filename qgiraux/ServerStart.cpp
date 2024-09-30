@@ -115,7 +115,6 @@ int Server::ServerStart()
                     std::ostringstream oss;
                     oss << "[serverRun] connexion timeout on fd " << tmp ;
                     webservLogger.log(LVL_INFO, oss);
-                    // sendError(408, tmp);
                 }
                 close(tmp);
                 fd_set.erase(tmp);

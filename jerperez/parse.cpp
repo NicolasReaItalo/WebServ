@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parse.cpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jerperez <jerperez@student.42.fr>          +#+  +:+       +#+        */
+/*   By: nrea <nrea@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 16:02:57 by jerperez          #+#    #+#             */
-/*   Updated: 2024/09/26 11:50:49 by jerperez         ###   ########.fr       */
+/*   Updated: 2024/09/30 13:42:49 by nrea             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@
 #include "parser.hpp"
 
 #define PR_KNOWN_DIRECTIVES "autoindex alias error_page index limit listen \
-cgi client_body_path client_max_body_size location root server_name"
+cgi client_body_path client_max_body_size location root return server_name"
 
 #define	CF_DEBUG 0
 
@@ -86,9 +86,9 @@ static void	_pushKnownDirectives(ConfigBlock::parameters_t	&knownDirectives)
 	if (false == knownDirectives.empty())
 		return ;
 	std::stringstream	ss(PR_KNOWN_DIRECTIVES);
-	std::string			directive_name; 
+	std::string			directive_name;
 
-	while (std::getline(ss, directive_name, ' ')) 
+	while (std::getline(ss, directive_name, ' '))
 		knownDirectives.push_back(directive_name);
 }
 

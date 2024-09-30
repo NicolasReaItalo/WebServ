@@ -3,17 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   handle_post.cpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nrea <nrea@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/23 10:46:13 by nrea              #+#    #+#             */
-/*   Updated: 2024/09/24 15:07:41 by nrea             ###   ########.fr       */
+/*   Updated: 2024/09/30 14:16:59 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 # include "headerParser.hpp"
 
 header_infos Server::handle_post
-(header_infos &response, ConfigServer  & config,
+(header_infos &response, ConfigServer  * config,
 int locationIndex,std::map<std::string, std::string> header_attributes)
 {
 	//TODO nouvelle branche sur : multipart/form-data;boundary="boundary"
@@ -25,7 +25,7 @@ int locationIndex,std::map<std::string, std::string> header_attributes)
 	{
 		{
 			std::ostringstream oss;
-			oss <<"[handle_post] The ressource "<<response.ressourcePath <<" is forbidden";
+			oss <<"[handle_post]	The ressource "<<response.ressourcePath <<" is forbidden";
 			webservLogger.log(LVL_DEBUG, oss);
 		}
 		return  response_error(HTTP_STATUS_FORBIDDEN, config, locationIndex);
@@ -37,7 +37,7 @@ int locationIndex,std::map<std::string, std::string> header_attributes)
 	{
 		{
 			std::ostringstream oss;
-			oss <<"[handle_post] The ressource "<<response.ressourcePath <<" already exist";
+			oss <<"[handle_post]	The ressource "<<response.ressourcePath <<" already exist";
 			webservLogger.log(LVL_DEBUG, oss);
 		}
 		return  response_error(HTTP_STATUS_CONFLICT, config, locationIndex);
@@ -50,14 +50,14 @@ int locationIndex,std::map<std::string, std::string> header_attributes)
 	{
 		{
 		std::ostringstream oss;
-		oss <<"[handle_post]  :" <<parent;
+		oss <<"[handle_post]	:" <<parent;
 		webservLogger.log(LVL_DEBUG, oss);
 		}
 		return response_error(HTTP_STATUS_INTERNAL_SERVER_ERROR, config, locationIndex);
 	}
 	{
 		std::ostringstream oss;
-		oss <<"[handle_post] The parent directory of the ressource is :"<<parent;
+		oss <<"[handle_post]	The parent directory of the ressource is :"<<parent;
 		webservLogger.log(LVL_DEBUG, oss);
 	}
 	// On check les droits en ecriture/execution
@@ -65,7 +65,7 @@ int locationIndex,std::map<std::string, std::string> header_attributes)
 	{
 		{
 			std::ostringstream oss;
-			oss <<"[handle_post] write and exec denied on :"<<parent;
+			oss <<"[handle_post]	write and exec denied on :"<<parent;
 			webservLogger.log(LVL_DEBUG, oss);
 		}
 		return response_error(HTTP_STATUS_FORBIDDEN, config, locationIndex);
@@ -77,7 +77,7 @@ int locationIndex,std::map<std::string, std::string> header_attributes)
 	{
 		{
 			std::ostringstream oss;
-			oss <<"[handle_post] the Transfer-Encoding is set to chunked";
+			oss <<"[handle_post]	the Transfer-Encoding is set to chunked";
 			webservLogger.log(LVL_DEBUG, oss);
 		}
 	}
@@ -85,17 +85,19 @@ int locationIndex,std::map<std::string, std::string> header_attributes)
 	{
 		{
 			std::ostringstream oss;
-			oss <<"[handle_post] the Transfer-Encoding is not set to chunked : comparing Content-Length to  body_size_max";
+			oss <<"[handle_post]	the Transfer-Encoding is not set to chunked : comparing Content-Length to  body_size_max";
 			webservLogger.log(LVL_DEBUG, oss);
 		}
 	}
 
 
-	if (static_cast<unsigned long>(atol(header_attributes["Content-Length"].c_str())) > dummy_get_client_max_body_size(config, locationIndex))
+	if (static_cast<unsigned long>(atol(header_attributes["Content-Length"].c_str())) >
+	 static_cast<unsigned long>(atol(config->getDirectiveParameter(locationIndex, "client_max_body_size").c_str())))
 	{
 		{
 			std::ostringstream oss;
-			oss <<"[handle_post] the Content-length exceed the max body size accepted for a non-chunked request";
+			std::cout << static_cast<unsigned long>(atol(header_attributes["Content-Length"].c_str())) << std::endl << static_cast<unsigned long>(atol(config->getDirectiveParameter(locationIndex, "client_body_path").c_str())) << std::endl;;
+			oss <<"[handle_post]	the Content-length exceed the max body size accepted for a non-chunked request";
 			webservLogger.log(LVL_DEBUG, oss);
 		}
 		return response_error(HTTP_STATUS_PAYLOAD_TOO_LARGE, config, locationIndex);
@@ -104,31 +106,21 @@ int locationIndex,std::map<std::string, std::string> header_attributes)
 
 
 // On verifie que le type du fichier recu est accepte par le server
-	// if (header_attributes["Content-Type"] != "")
-	// {
-	// 	if (!matchContentTypes(header_attributes["Content-Type"],dummy_server_accepted_types() ))
-	// 	{
-	// 		return response_error(HTTP_STATUS_CONFLICT, config, locationIndex); // A verifier
-	// 	}
-	// 	response.contentType = header_attributes["Content-Type"];
-	// }
-	// else
-	// {
-	// 	response.contentType = get_mime_type(response.ressourcePath);
-	// 	if (!matchContentTypes(response.contentType,dummy_server_accepted_types()))
-	// 		return response_error(HTTP_STATUS_CONFLICT, config, locationIndex); // A verifier
-	// }
+	if (header_attributes["Content-Type"] != "")
+		response.contentType = header_attributes["Content-Type"];
+	else
+		response.contentType = get_mime_type(response.ressourcePath);
+	if (!matchAcceptServerContentTypes(header_attributes["Content-Type"],mimeList))
+			return response_error(HTTP_STATUS_CONFLICT, config, locationIndex);
 
 	response.toDo = POST;
 	response.keepAlive = header_attributes["Connection"] == "keep-alive";
-
-
 	response.returnCode = 201;
 	// response pour initialiser ces champs vides
 	response.interpreterPath = "";
 	response.fd_ressource = 0;
 	response.cgi_pid = 0;
 	response.locationIndex = locationIndex;
-	response.configServer = &config;
+	response.configServer = config;
 	return response;
 }

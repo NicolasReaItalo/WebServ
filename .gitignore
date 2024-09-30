@@ -6,5 +6,9 @@ webserv
 html-files/cat.jpeg
 html-files/generic-error.html
 html-files/test.html
-*.conf
+hurl/*
+server-redir.conf
+server-simple.conf
+test.hurl
 conf.conf
+todo

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   handle_get.cpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
+/*   By: nrea <nrea@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/18 13:27:16 by nrea              #+#    #+#             */
-/*   Updated: 2024/09/27 10:53:21 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/09/30 15:09:03 by nrea             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,18 +16,13 @@
 /*===================================================================================================*/
 
 header_infos handleFileErrror
-(int error, header_infos &response, ConfigServer  & config,int locationIndex)
+(int error, header_infos &response, ConfigServer  * config,int locationIndex)
 {
-		{
-			std::ostringstream oss;
-			oss <<"[handleFileErrror]  "<<error ;
-			webservLogger.log(LVL_DEBUG, oss);
-		}
 	if (ENOENT == error)
 	{
 		{
 			std::ostringstream oss;
-			oss <<"[handle_get] The ressource "<<response.ressourcePath <<" does not exist";
+			oss <<"[handle_get]	The ressource "<<response.ressourcePath <<" does not exist";
 			webservLogger.log(LVL_DEBUG, oss);
 		}
 		return response_error(HTTP_STATUS_NOT_FOUND, config, locationIndex);
@@ -36,7 +31,7 @@ header_infos handleFileErrror
 	{
 		{
 			std::ostringstream oss;
-			oss <<"[handle_get] The ressource "<<response.ressourcePath <<" is forbidden";
+			oss <<"[handle_get]	The ressource "<<response.ressourcePath <<" is forbidden";
 			webservLogger.log(LVL_DEBUG, oss);
 		}
 		return  response_error(HTTP_STATUS_FORBIDDEN, config, locationIndex);
@@ -44,7 +39,7 @@ header_infos handleFileErrror
 
 	{
 		std::ostringstream oss;
-		oss <<"[handle_get] An internal error has occured";
+		oss <<"[handle_get]	An internal error has occured";
 		webservLogger.log(LVL_DEBUG, oss);
 	}
 	return  response_error(HTTP_STATUS_INTERNAL_SERVER_ERROR, config, locationIndex);
@@ -53,7 +48,7 @@ header_infos handleFileErrror
 
 
 header_infos Server::serve_regular_file(header_infos &response,
-ConfigServer  & config,int locationIndex,std::map<std::string, std::string> header_attributes)
+ConfigServer  * config,int locationIndex,std::map<std::string, std::string> header_attributes)
 {
 	struct stat stat_buf;
 	int ret;
@@ -67,7 +62,7 @@ ConfigServer  & config,int locationIndex,std::map<std::string, std::string> head
 	{
 		{
 			std::ostringstream oss;
-			oss <<"[serve_regular_file] "<<response.ressourcePath <<" is not a readable regular file";
+			oss <<"[serve_regular_file]	"<<response.ressourcePath <<" is not a readable regular file";
 			webservLogger.log(LVL_DEBUG, oss);
 		}
 		return response_error(HTTP_STATUS_FORBIDDEN, config, locationIndex);
@@ -83,18 +78,18 @@ ConfigServer  & config,int locationIndex,std::map<std::string, std::string> head
 	//ON Ddetermine sa taille
 	response.bodySize = getFileSize(response.ressourcePath);
 
-	///////TODO  DETERMINATION DU CHUNK!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	//Si la taille est trop grande on passe en chunked; //TODO
 	// --------------------------------------
 
-	if (response.bodySize > dummy_get_client_max_body_size(config, locationIndex))
+	if (response.bodySize >
+	static_cast<unsigned long>(atol(config->getDirectiveParameter(locationIndex, "client_body_path").c_str())))
 		response.chunked = true;
 	else
 		response.chunked = false;
 
 	response.returnCode = 200;
 	response.locationIndex = locationIndex;
-	response.configServer = &config;
+	response.configServer = config;
 
 	// response pour initialiser ces champs vides
 	response.interpreterPath = "";
@@ -105,17 +100,17 @@ ConfigServer  & config,int locationIndex,std::map<std::string, std::string> head
 	response.contentType = get_mime_type(response.ressourcePath);
 
 	//On verifie que le content-type est autorise
-	if (!matchContentTypes(response.contentType, header_attributes["Accept"]))
+	if (!matchAcceptContentTypes(response.contentType, header_attributes["Accept"]))
 		return response_error(HTTP_STATUS_NOT_ACCEPTABLE, config, locationIndex);
-	///voir le keep-alive
 	response.keepAlive = header_attributes["Connection"] == "keep-alive";
 
 	return response;
 }
 
 
+
 header_infos Server::handle_get(header_infos &response,
- ConfigServer  & config,int locationIndex,std::map<std::string, std::string> header_attributes)
+ ConfigServer  * config,int locationIndex,std::map<std::string, std::string> &header_attributes)
 {
 	struct stat stat_buf;
 	int ret;
@@ -126,69 +121,9 @@ header_infos Server::handle_get(header_infos &response,
 	ret = stat(response.ressourcePath.c_str(),  &stat_buf);
 	if (ret != 0)
 		return handleFileErrror(errno,response,config, locationIndex);
-
-	//Si la ressource est un repertoire
+//Si la ressource est un repertoire
 	if (S_ISDIR(stat_buf.st_mode))
-	{
-			{
-				std::ostringstream oss;
-				oss <<"[handle_get] "<<response.ressourcePath<< "is a directory";
-				webservLogger.log(LVL_DEBUG, oss);
-			}
-			{
-				std::ostringstream oss;
-				oss <<"[handle_get] "<<" looking for matching indexes with path "<<response.ressourcePath;
-				webservLogger.log(LVL_DEBUG, oss);
-			}
-		////// TODO TODO
-		const std::list<std::string> indexes = dummy_get_indexes(config, locationIndex);
-		// d'abord tester les differents index possibles
-		for (std::list<std::string>::const_iterator it = indexes.begin(); it != indexes.end(); it++)
-		{
-			std::string full_path =response.ressourcePath;
-			if (response.ressourcePath[response.ressourcePath.size() -1] != '/')
-				full_path += "/";
-			full_path +=  *it;
-			if (access(full_path.c_str(), F_OK) == 0)
-			{
-				response.ressourcePath = full_path;
-				{
-					std::ostringstream oss;
-					oss <<"[handle_get] "<<" Existing path with index found :" <<full_path;
-					webservLogger.log(LVL_DEBUG, oss);
-				}
-				return serve_regular_file(response, config, locationIndex, header_attributes);
-			}
-		}
-		//Si fichier regulier pas trouve
-		// verifer si autoindex autorise
-
-		{
-			std::ostringstream oss;
-			oss <<"[handle_get] "<<
-			" No matching index found - checking if autoindex allowed in " <<response.ressourcePath ;
-			webservLogger.log(LVL_DEBUG, oss);
-		}
-
-		if (dummy_get_autoindex_status(config, locationIndex))
-		{
-			{
-				std::ostringstream oss;
-				oss <<"[handle_get] "<<" autoindex allowed in "<<response.ressourcePath ;
-				webservLogger.log(LVL_DEBUG, oss);
-			}
-			return response_autoindex(config, locationIndex, response);
-		}
-		else
-		{
-			{
-				std::ostringstream oss;
-				oss <<"[handle_get] "<<" autoindex forbidden in "<<response.ressourcePath ;
-				webservLogger.log(LVL_DEBUG, oss);
-			}
-			return response_error(HTTP_STATUS_FORBIDDEN, config, locationIndex);
-		}
-	}
+		return handle_dir(response, config, locationIndex, header_attributes);
 	return serve_regular_file(response, config, locationIndex, header_attributes);
 }
 

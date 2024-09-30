@@ -8,6 +8,6 @@ void Server::method_error(const header_infos& header, int fd, int i)
         method_get(header, fd, i);
         return;
     }
-    sendError(header.returnCode, fd);
+    sendError(header, header.returnCode, fd, i);
     return ;
 }

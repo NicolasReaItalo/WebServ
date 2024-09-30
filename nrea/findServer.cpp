@@ -30,7 +30,7 @@ ConfigServer * Server::findServer(std::pair<std::string, std::string> interface,
 	}
 	{
 		std::ostringstream oss;
-		oss <<"[findServer] more than one match for "<< interface.first<<":"<< interface.second << " checking server_names";
+		oss <<"[findServer]	more than one match for "<< interface.first<<":"<< interface.second << " checking server_names";
 		webservLogger.log(LVL_DEBUG, oss);
 	}
 	// Si il y en a plus d'un on cherche une valeur server_name qui matche
@@ -45,7 +45,7 @@ ConfigServer * Server::findServer(std::pair<std::string, std::string> interface,
 			{
 				{
 					std::ostringstream oss;
-					oss <<"[findServer] The Host match with servername "<<host ;
+					oss <<"[findServer]	The Host match with servername "<<host ;
 					webservLogger.log(LVL_DEBUG, oss);
 				}
 				return *matching_it;
@@ -55,7 +55,7 @@ ConfigServer * Server::findServer(std::pair<std::string, std::string> interface,
 	// Si aucun server_name ne matche on renvoie le premier de la liste par defaut
 	{
 		std::ostringstream oss;
-		oss <<"[findServer] no match found for Host <"<<host <<"> returning default server";
+		oss <<"[findServer]	no match found for Host <"<<host <<"> returning default server";
 		webservLogger.log(LVL_DEBUG, oss);
 	}
 

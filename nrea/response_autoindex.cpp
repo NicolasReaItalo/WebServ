@@ -6,18 +6,18 @@
 /*   By: nrea <nrea@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 15:25:39 by nrea              #+#    #+#             */
-/*   Updated: 2024/09/27 12:42:40 by nrea             ###   ########.fr       */
+/*   Updated: 2024/09/27 14:04:00 by nrea             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "headerParser.hpp"
 
-header_infos response_autoindex(ConfigServer &config, int locationIndex, header_infos response)
+header_infos response_autoindex(ConfigServer *config, int locationIndex, header_infos response)
 {
 	response.toDo = AUTOINDEX;
 	response.returnCode = 200;
 	response.contentType = "text/html";
-	response.configServer = &config;
+	response.configServer = config;
 	response.locationIndex = locationIndex;
 	return response;
 }

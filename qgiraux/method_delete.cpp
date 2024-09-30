@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:49:35 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/09/27 15:02:49 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/09/30 12:29:20 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 #include <ctime>
 #include <sstream>
 
-void Server::method_delete(const header_infos& header, int fd)
+void Server::method_delete(const header_infos& header, int fd, int i)
 {
     {
         std::ostringstream oss;
@@ -40,6 +40,6 @@ void Server::method_delete(const header_infos& header, int fd)
     else
     {
         //send error 500 internal server error
-        sendError(500, fd);
+        sendError(header, 500, fd, i);
     }
 }

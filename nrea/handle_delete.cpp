@@ -6,19 +6,19 @@
 /*   By: nrea <nrea@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/24 11:18:45 by nrea              #+#    #+#             */
-/*   Updated: 2024/09/24 14:12:16 by nrea             ###   ########.fr       */
+/*   Updated: 2024/09/27 15:34:51 by nrea             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "headerParser.hpp"
 
-header_infos Server::handle_delete(header_infos &response, ConfigServer  & config,
+header_infos Server::handle_delete(header_infos &response, ConfigServer  * config,
 int locationIndex, std::map<std::string, std::string> header_attributes)
 {
 	(void) header_attributes;
 		{
 			std::ostringstream oss;
-			oss <<"[handle_delete] checking the file"
+			oss <<"[handle_delete]	checking the file"
 			<<"["<<response.ressourcePath<<"]";
 			webservLogger.log(LVL_DEBUG, oss);
 		}
@@ -27,7 +27,7 @@ int locationIndex, std::map<std::string, std::string> header_attributes)
 	{
 		{
 			std::ostringstream oss;
-			oss <<"[handle_delete] the path to "
+			oss <<"[handle_delete]	the path to "
 			<<"["<<response.ressourcePath<<"]  iss forbidden";
 			webservLogger.log(LVL_DEBUG, oss);
 		}
@@ -37,7 +37,7 @@ int locationIndex, std::map<std::string, std::string> header_attributes)
 	{
 		{
 			std::ostringstream oss;
-			oss <<"[handle_delete] the ressource"
+			oss <<"[handle_delete]	the ressource"
 			<<"["<<response.ressourcePath<<"]  does'nt exist";
 			webservLogger.log(LVL_DEBUG, oss);
 		}
@@ -45,7 +45,7 @@ int locationIndex, std::map<std::string, std::string> header_attributes)
 	}
 		{
 			std::ostringstream oss;
-			oss <<"[handle_delete] path is valid and file exist...Checking parent dir";
+			oss <<"[handle_delete]	path is valid and file exist...Checking parent dir";
 			webservLogger.log(LVL_DEBUG, oss);
 		}
 	FileInfos parent_dir(getParentDir(response.ressourcePath));
@@ -54,7 +54,7 @@ int locationIndex, std::map<std::string, std::string> header_attributes)
 		{
 			{
 				std::ostringstream oss;
-				oss <<"[handle_delete] We don't have enough rights on directory "
+				oss <<"[handle_delete]	We don't have enough rights on directory "
 				<<"["<<getParentDir(response.ressourcePath)<<"]";
 				webservLogger.log(LVL_DEBUG, oss);
 			}
@@ -63,7 +63,7 @@ int locationIndex, std::map<std::string, std::string> header_attributes)
 	response.toDo = DELETE;
 	response.returnCode = 204; //SUCCESS NO CONTENT
 	response.locationIndex = locationIndex;
-	response.configServer = &config;
+	response.configServer = config;
 	response.keepAlive = false;
 
 	// response pour initialiser ces champs vides

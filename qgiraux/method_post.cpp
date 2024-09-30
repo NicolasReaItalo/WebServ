@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:49:40 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/09/27 17:11:30 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/09/30 14:58:50 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ void Server::method_post(header_infos& header, std::vector<unsigned char> body, 
     if (-1 == header.fd_ressource)
     {
         std::cerr << "Failed to open " << header.ressourcePath << std::endl;
-        sendError(500, fd); // Send internal server error if file open fails
+        sendError(header, 500, fd, i); // Send internal server error if file open fails
         return;
     }
     fdsets tmp = {"0","0",time, false, false};
@@ -44,7 +44,7 @@ void Server::method_post(header_infos& header, std::vector<unsigned char> body, 
         if (bytes_written == -1)
         {
             std::cerr << "Error writing to file: " << strerror(errno) << std::endl;
-            sendError(500, fd); // Send internal server error if write fails
+            sendError(header, 500, fd, i); // Send internal server error if write fails
             return;
         }
         std::string head = "HTTP/1.1 204 No Content\r\n\r\n";
@@ -59,7 +59,7 @@ void Server::method_post(header_infos& header, std::vector<unsigned char> body, 
         if (bytes_written != bytes_read)
         {
             std::cerr << "Error: Mismatch in bytes written." << std::endl;
-            sendError(500, fd); // Send internal server error if there's a mismatch
+            sendError(header, 500, fd, i); // Send internal server error if there's a mismatch
             return;
         }
     }
@@ -67,7 +67,9 @@ void Server::method_post(header_infos& header, std::vector<unsigned char> body, 
     {
         // If the request is chunked, handle the chunked transfer encoding
         chunk[fd] = header;
-        receive_data(fd, i);
+        std::cout << "chunked post request. first chunk is of size " << body.size() << std::endl;
+        //chunked_post(fd, body, i, header);
+        // receive_data(fd, i);
         return;
     }
     // Handle closing the connection if keep-alive is false
