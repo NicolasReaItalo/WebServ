@@ -6,7 +6,7 @@
 /*   By: jerperez <jerperez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/03 15:21:14 by jerperez          #+#    #+#             */
-/*   Updated: 2024/09/19 16:44:01 by jerperez         ###   ########.fr       */
+/*   Updated: 2024/10/01 14:27:04 by jerperez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -121,7 +121,7 @@ int	tk_tokenize(std::fstream &input_file, token_deq_t &list)
 		errcode = _add_token_quote(line, list, word, &quote_char);
 	if (errcode)
 		return errcode;
-	else if (quote_char)
+	else if (quote_char && '#' != quote_char)
 		return TK_ERRQUOTE + quote_char;
 	return 0;
 }
