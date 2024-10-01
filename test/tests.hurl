@@ -1,3 +1,8 @@
-POST http://localhost:8080/test-noise.jpg
-Content-Type: image/jpg
-file,noise.jpg;
+
+
+
+POST {{domain}}/test/test2/test.txt
+`Hello world!`
+
+
+
