@@ -53,6 +53,21 @@ header_infos Server::handle_dir(header_infos &response,
 					oss <<"[handle_get_dir]	"<<"Existing path with index found :" <<full_path;
 					webservLogger.log(LVL_DEBUG, oss);
 				}
+				std::vector<std::string> cgi_ext;
+				cgi_ext.push_back(".php");
+				cgi_ext.push_back(".py");
+				std::string cgi = detect_cgi(response.ressourcePath, cgi_ext);
+				if (cgi != "") // une extension cgi a ete detecte das l'uri
+				{
+					{
+						std::ostringstream oss;
+						oss <<"[handle_get_dir]	cgi file detected";
+						webservLogger.log(LVL_DEBUG, oss);
+					}
+					return handle_cgi(response,cgi,config, locationIndex, header_attributes);
+				}
+
+
 				return serve_regular_file(response, config, locationIndex, header_attributes);
 			}
 		}
