@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
+/*   By: nrea <nrea@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:49:46 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/09/30 16:44:31 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/10/01 14:43:50 by nrea             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,7 @@ typedef struct s_header_infos
 	int returnCode;
 	bool keepAlive;
 	bool chunked;
-	std::string queryParams;
+	std::map<std::string,std::string> envMap;
 	int timestamp;
 	int fd_ressource;
 	int cgi_pid;

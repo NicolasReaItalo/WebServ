@@ -6,7 +6,7 @@
 /*   By: nrea <nrea@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/18 13:27:16 by nrea              #+#    #+#             */
-/*   Updated: 2024/09/30 15:09:03 by nrea             ###   ########.fr       */
+/*   Updated: 2024/10/01 14:43:36 by nrea             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,13 +68,6 @@ ConfigServer  * config,int locationIndex,std::map<std::string, std::string> head
 		return response_error(HTTP_STATUS_FORBIDDEN, config, locationIndex);
 	}
 
-	//==========TODO TODO TODO TODO==========================================================
-	// On checke si le fichier est un CGI SI OUI// TODO =======> nouvelle branche
-	std::string extension = getFileExtension(response.ressourcePath);
-	//webservLogger.log(LVL_DEBUG, "HeaderParser:: extension found [", extension,"]");
-
-	// LA RESSOURCE N'EST PAS UN CGI
-	//=======================================================================================
 	//ON Ddetermine sa taille
 	response.bodySize = getFileSize(response.ressourcePath);
 
@@ -82,7 +75,7 @@ ConfigServer  * config,int locationIndex,std::map<std::string, std::string> head
 	// --------------------------------------
 
 	if (response.bodySize >
-	static_cast<unsigned long>(atol(config->getDirectiveParameter(locationIndex, "client_body_path").c_str())))
+	static_cast<unsigned long>(atol(config->getDirectiveParameter(locationIndex, "client_max_body_size").c_str())))
 		response.chunked = true;
 	else
 		response.chunked = false;
@@ -114,9 +107,22 @@ header_infos Server::handle_get(header_infos &response,
 {
 	struct stat stat_buf;
 	int ret;
+	std::vector<std::string> cgi_ext;
+	cgi_ext.push_back(".php");
+	cgi_ext.push_back(".py");
+// On cherche a detecter un eventuel cgi
+	std::string cgi = detect_cgi(header_attributes["URI"], cgi_ext);
+	if (cgi != "") // une extension cgi a ete detecte das l'uri
+	{
+		{
+			std::ostringstream oss;
+			oss <<"[handle_get]	cgi file detected";
+			webservLogger.log(LVL_DEBUG, oss);
+		}
+		return handle_cgi(response,cgi,config, locationIndex, header_attributes);
+	}
 
 	response.toDo = GET;
-
 // test access
 	ret = stat(response.ressourcePath.c_str(),  &stat_buf);
 	if (ret != 0)

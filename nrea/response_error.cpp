@@ -6,7 +6,7 @@
 /*   By: nrea <nrea@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 10:13:31 by nrea              #+#    #+#             */
-/*   Updated: 2024/09/30 14:01:18 by nrea             ###   ########.fr       */
+/*   Updated: 2024/09/30 18:43:07 by nrea             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,7 @@ header_infos response_error(std::string error_code, ConfigServer  * config,int l
 		response.bodySize = getFileSize(response.ressourcePath.c_str());
 	response.configServer = config;
 	response.locationIndex = locationIndex;
+	response.chunked = false;
 
 	//la caracteristique keep-alive depend de l'erreur:  a ameliorer pour la rendre + generale
 	response.keepAlive = error_code != HTTP_STATUS_BAD_REQUEST && error_code != HTTP_STATUS_INTERNAL_SERVER_ERROR;
