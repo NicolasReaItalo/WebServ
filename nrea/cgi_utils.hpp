@@ -6,7 +6,7 @@
 /*   By: nrea <nrea@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/30 17:17:29 by nrea              #+#    #+#             */
-/*   Updated: 2024/09/30 17:28:44 by nrea             ###   ########.fr       */
+/*   Updated: 2024/10/01 14:09:32 by nrea             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,5 +21,6 @@
 
 char **MapToEnv(std::map<std::string,std::string> const & map);
 std::string	detect_cgi(std::string const &uri, std::vector<std::string> const &cgi_ext);
-void stripPathInfo(std::map<std::string,std::string> &headerAttributes, std::string cgi);
+void stripPathInfo(std::string &uri, std::string &path_info, std::string cgi);
+std::string cgi_convert(std::string header_attribute);
 #endif

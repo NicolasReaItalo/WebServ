@@ -6,7 +6,7 @@
 /*   By: nrea <nrea@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/12 16:20:48 by nrea              #+#    #+#             */
-/*   Updated: 2024/09/30 15:10:31 by nrea             ###   ########.fr       */
+/*   Updated: 2024/10/01 14:17:31 by nrea             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -174,7 +174,7 @@ header_infos Server::headerParser
 	if (tmp.size() == 2 )
 	{
 		header_attributes["URI"] = tmp[0];
-		header_attributes["Query"] = tmp[1];
+		header_attributes["QUERY_STRING"] = tmp[1];
 	}
 	else if (tmp.size() != 1)
 	{

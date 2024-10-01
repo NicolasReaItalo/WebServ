@@ -6,7 +6,7 @@
 /*   By: nrea <nrea@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/23 10:46:13 by nrea              #+#    #+#             */
-/*   Updated: 2024/09/27 17:34:52 by nrea             ###   ########.fr       */
+/*   Updated: 2024/10/01 13:07:45 by nrea             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,7 +92,7 @@ int locationIndex,std::map<std::string, std::string> header_attributes)
 
 
 	if (static_cast<unsigned long>(atol(header_attributes["Content-Length"].c_str())) >
-	 static_cast<unsigned long>(atol(config->getDirectiveParameter(locationIndex, "client_body_path").c_str())))
+	 static_cast<unsigned long>(atol(config->getDirectiveParameter(locationIndex, "client_body_size").c_str())))
 	{
 		{
 			std::ostringstream oss;

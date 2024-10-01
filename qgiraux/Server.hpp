@@ -6,7 +6,7 @@
 /*   By: nrea <nrea@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:49:46 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/09/30 14:12:08 by nrea             ###   ########.fr       */
+/*   Updated: 2024/10/01 14:00:27 by nrea             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,7 @@ typedef struct s_header_infos
 	int returnCode;
 	bool keepAlive;
 	bool chunked;
-	std::string queryParams;
+	std::map<std::string,std::string> envMap;
 	int timestamp;
 	int fd_ressource;
 	int cgi_pid;

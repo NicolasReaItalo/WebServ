@@ -6,7 +6,7 @@
 /*   By: nrea <nrea@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/30 15:42:22 by nrea              #+#    #+#             */
-/*   Updated: 2024/09/30 17:18:46 by nrea             ###   ########.fr       */
+/*   Updated: 2024/10/01 14:12:35 by nrea             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,10 +89,8 @@ std::string	detect_cgi
 }
 
 //strip the PATH_INFO from the uri
-void stripPathInfo
-(std::map<std::string,std::string> &headerAttributes, std::string cgi)
+void stripPathInfo(std::string &uri, std::string &path_info, std::string cgi)
 {
-	std::string uri = headerAttributes["URI"];
 	std::size_t extension = uri.rfind(cgi);
 
 	if (extension == std::string::npos)
@@ -100,11 +98,32 @@ void stripPathInfo
 	extension += cgi.size();
 	if (extension <= uri.size())
 	{
-		std::string path_info = uri.substr(extension, uri.size());
-		headerAttributes["URI"] = uri.substr(0,extension);
-		headerAttributes["PATH_INFO"] = path_info;
+		path_info = uri.substr(extension, uri.size());
+		uri = uri.substr(0,extension);
 	}
 }
+
+/*Convert a header attribute to a suitable environement variable for a cgi script following the rules below
+refix: Each HTTP header is prefixed with HTTP_.
+Uppercase: The name of the header is converted to uppercase.
+Hyphens (-): Hyphens in the header names are replaced with underscores (_).
+Environment Variable Format: After following these transformations,
+the resulting string becomes an environment variable that is accessible to the CGI script.
+ */
+std::string cgi_convert(std::string header_attribute)
+{
+	std::string converted = "HTTP_";
+	std::string::iterator it;
+	for (it = header_attribute.begin(); it != header_attribute.end(); it++)
+	{
+		if (*it == '-')
+			converted += '_';
+		else
+			converted += std::toupper(*it);
+	}
+	return converted;
+}
+
 
 // int main()
 // {
@@ -120,6 +139,15 @@ void stripPathInfo
 // 	std::cout<< attr["URI"]<<std::endl;
 // 	std::cout<< attr["PATH_INFO"]<<std::endl;
 
+
+// 	return 0;
+// }
+
+// int main()
+// {
+// 	std::cout<< cgi_convert("Host")<<std::endl;
+// 	std::cout<< cgi_convert("User-Agent")<<std::endl;
+// 	std::cout<< cgi_convert("Accept-Language")<<std::endl;
 
 // 	return 0;
 // }
