@@ -10,24 +10,22 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#include <algorithm>
 #include "ConfigBlock.hpp"
 
-ConfigBlock::ConfigBlock(void) : _knownDirectives(0) {}
-
-ConfigBlock::ConfigBlock(const ConfigBlock &other)
+bool	ConfigBlock::_knownDirective(const std::string &directive_name) const
 {
-	*this = other;
+	if (0 == this->_knownDirectives)
+		return false;
+	const parameters_t					&knownDirectives = \
+		*this->_knownDirectives;
+	const parameters_t::const_iterator	it_end = \
+		knownDirectives.end();
+
+	return it_end != std::find(knownDirectives.begin(), it_end, directive_name);
 }
 
-ConfigBlock	&ConfigBlock::operator=(const ConfigBlock &other)
+void	ConfigBlock::setKnownDirectives(parameters_t *knownDirectives)
 {
-	if (&other != this)
-	{
-		this->_knownDirectives = other._knownDirectives;
-		this->_io_directive_parameters =  other._io_directive_parameters;
-		this->_directive_parameters =  other._directive_parameters;
-	}
-	return *this;
+	this->_knownDirectives = knownDirectives;
 }
-
-ConfigBlock::~ConfigBlock(void) {}

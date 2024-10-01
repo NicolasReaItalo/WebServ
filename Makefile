@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+         #
+#    By: jerperez <jerperez@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/02/06 10:28:10 by jerperez          #+#    #+#              #
-#    Updated: 2024/09/30 16:42:14 by qgiraux          ###   ########.fr        #
+#    Updated: 2024/10/01 14:11:18 by jerperez         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -57,6 +57,19 @@ SRCS_JERPEREZ_FILES	= tokenizer.cpp\
 			Directive.cpp\
 			unquote.cpp\
 			ConfigServer.cpp\
+			ConfigServer_add.cpp\
+			ConfigServer_in.cpp\
+			ConfigServer_serverCmp.cpp\
+			ConfigServer_get.cpp\
+			ConfigServer_getD.cpp\
+			ConfigServer_getters.cpp\
+			ConfigServer_debug.cpp\
+			ConfigServer_eval.cpp\
+			ConfigBlock_knownDirective.cpp\
+			ConfigBlock_in.cpp\
+			ConfigBlock_getD.cpp\
+			ConfigBlock_addDirective.cpp\
+			ConfigBlock_debug.cpp\
 			ConfigBlock.cpp\
 			ConfigLocation.cpp\
 

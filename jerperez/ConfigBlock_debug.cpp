@@ -11,23 +11,23 @@
 /* ************************************************************************** */
 
 #include "ConfigBlock.hpp"
+#include <iostream>
 
-ConfigBlock::ConfigBlock(void) : _knownDirectives(0) {}
-
-ConfigBlock::ConfigBlock(const ConfigBlock &other)
+void	ConfigBlock::_debug_print(void)
 {
-	*this = other;
-}
+	const _map_para_t	&map = this->_directive_parameters;
+	const _map_para_t::const_iterator directive_end = map.end();
 
-ConfigBlock	&ConfigBlock::operator=(const ConfigBlock &other)
-{
-	if (&other != this)
+	for (_map_para_t::const_iterator it = map.begin(); it != directive_end; ++it)
 	{
-		this->_knownDirectives = other._knownDirectives;
-		this->_io_directive_parameters =  other._io_directive_parameters;
-		this->_directive_parameters =  other._directive_parameters;
-	}
-	return *this;
-}
+		std::cout << "Directive:" << it->first << " ";
+		const parameters_t					&parameters = it->second;
+		const parameters_t::const_iterator	&parameters_end = parameters.end();
 
-ConfigBlock::~ConfigBlock(void) {}
+		for (parameters_t::const_iterator p_it = parameters.begin(); \
+				p_it != parameters_end; \
+				++p_it)
+			std::cout << *p_it << " ";
+		std::cout << std::endl;
+	}
+}

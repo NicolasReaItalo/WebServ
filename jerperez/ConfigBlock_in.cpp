@@ -10,24 +10,34 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#include <string>
+#include <algorithm>
 #include "ConfigBlock.hpp"
 
-ConfigBlock::ConfigBlock(void) : _knownDirectives(0) {}
-
-ConfigBlock::ConfigBlock(const ConfigBlock &other)
+bool	ConfigBlock::inDirectives(const std::string &directive_name) const
 {
-	*this = other;
+	return (this->_directive_parameters.end() != \
+		this->_directive_parameters.find(directive_name));
 }
 
-ConfigBlock	&ConfigBlock::operator=(const ConfigBlock &other)
+bool	ConfigBlock::inIODirectives(const std::string &directive_name) const
 {
-	if (&other != this)
-	{
-		this->_knownDirectives = other._knownDirectives;
-		this->_io_directive_parameters =  other._io_directive_parameters;
-		this->_directive_parameters =  other._directive_parameters;
-	}
-	return *this;
+	return (this->_io_directive_parameters.end() != \
+		this->_io_directive_parameters.find(directive_name));
 }
 
-ConfigBlock::~ConfigBlock(void) {}
+bool	ConfigBlock::inDirectiveParameters(\
+	const std::string &directive_name, \
+	const std::string &parameter) const
+{
+	const _map_para_t::const_iterator	it_end = \
+		this->_directive_parameters.end();
+	const _map_para_t::const_iterator	it = \
+		this->_directive_parameters.find(directive_name);
+
+	if (it == it_end)
+		return false;
+	const parameters_t::const_iterator	p_end = it->second.end();
+
+	return (p_end != std::find(it->second.begin(), p_end, parameter));
+}

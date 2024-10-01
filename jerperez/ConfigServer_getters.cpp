@@ -1,33 +1,38 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ConfigBlock.cpp                              :+:      :+:    :+:   */
+/*   ConfigServer_getters.cpp                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jerperez <jerperez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 13:29:48 by jerperez          #+#    #+#             */
-/*   Updated: 2024/09/19 16:05:55 by jerperez         ###   ########.fr       */
+/*   Updated: 2024/10/01 12:56:19 by jerperez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "ConfigBlock.hpp"
+#include "ConfigServer.hpp"
+#include <string>
 
-ConfigBlock::ConfigBlock(void) : _knownDirectives(0) {}
-
-ConfigBlock::ConfigBlock(const ConfigBlock &other)
+/* Gets address
+ * from `listen [address]:[port];'
+ */
+const std::string				&ConfigServer::getAddress(void) const
 {
-	*this = other;
+	return this->_address;
 }
 
-ConfigBlock	&ConfigBlock::operator=(const ConfigBlock &other)
+/* Gets port
+ * from `listen [address]:[port];'
+ */
+const std::string				&ConfigServer::getPort(void) const
 {
-	if (&other != this)
-	{
-		this->_knownDirectives = other._knownDirectives;
-		this->_io_directive_parameters =  other._io_directive_parameters;
-		this->_directive_parameters =  other._directive_parameters;
-	}
-	return *this;
+	return this->_port;
 }
 
-ConfigBlock::~ConfigBlock(void) {}
+/* Gets the server names
+ * from `server_name [...];'
+ */
+const ConfigServer::parameters_t	&ConfigServer::getServerNames(void) const
+{
+	return this->_server_names;
+}

@@ -25,12 +25,16 @@ class ConfigBlock
 	protected:
 		typedef std::map<std::string, parameters_t> \
 									_map_para_t;
-		typedef std::map<std::string, std::map<std::string, std::string> > \
+		typedef std::map<std::string, std::string> \
+									_io_t;
+		typedef std::map<std::string, _io_t > \
 									_io_parameters_t;
 		//
 		parameters_t				*_knownDirectives;
 		_io_parameters_t			_io_directive_parameters;
 		_map_para_t					_directive_parameters;
+		const std::string			_no_parameter;
+		const parameters_t			_no_parameters;
 		//
 		int						_addDirective_unique(\
 									const std::string &name,\
@@ -39,9 +43,10 @@ class ConfigBlock
 									const std::string &name,\
 									Directive::args_t parameters);
 		bool					_knownDirective(\
-									const std::string &directive_name);
-	public:
+									const std::string &directive_name) const;
+	protected:
 		ConfigBlock(void);
+	public:
 		ConfigBlock(const ConfigBlock &other);
 		ConfigBlock &operator=(const ConfigBlock &other);
 		~ConfigBlock(void);
@@ -55,15 +60,15 @@ class ConfigBlock
 		bool				inIODirectives(\
 								const std::string &directive_name) const;
 		const std::string 	&getDirectiveParameter(\
-								const std::string &directive_name);
+								const std::string &directive_name) const;
 		const parameters_t	&getDirectiveParameters(\
-								const std::string &directive_name);
+								const std::string &directive_name) const;
 		const std::string 	&getDirectiveOutput(\
 								const std::string &directive_name,\
-								const std::string &input);
+								const std::string &input) const;
 		bool				inDirectiveParameters(\
 								const std::string &directive_name,\
-								const std::string &parameter);
+								const std::string &parameter) const;
 		//
 		void				setKnownDirectives(\
 								parameters_t *knownDirectives);
