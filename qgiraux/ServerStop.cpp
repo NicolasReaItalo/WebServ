@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:49:55 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/09/27 12:33:57 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/10/02 14:01:35 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,9 +22,26 @@ void Server::closeAllFd()
     fd_set.clear();
 }
 
+void Server::killAllChildren()
+{
+    std::map<int, header_infos>::iterator it;
+    for(it = cgiList.begin(); it != cgiList.end(); it++)
+    {
+        if (kill(it->second.cgi_pid, SIGINT) == 0)
+        {
+            std::ostringstream oss;
+            oss << "[serverRun] Killed CGI process with PID " << it->second.cgi_pid << " due to timeout";
+            webservLogger.log(LVL_INFO, oss);
+        }
+    }
+    
+    
+}
+
  void Server::ServerClose()
  {
     closeAllFd();
+    killAllChildren();
     std::map<int, header_infos>::iterator it;
     
     for (it = chunk.begin(); it != chunk.end(); ++it)

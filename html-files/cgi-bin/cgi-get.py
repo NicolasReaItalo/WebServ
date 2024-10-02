@@ -9,10 +9,15 @@ last_name = form.getvalue('last_name')
 
 header=""
 body=""
-body += "<html><head><title>Hello - GET CGI Program</title></head>"
+body += "<html><head><title>Hello - GET CGI Program</title><link rel=\"stylesheet\" href=\"style.css\"></head>"
 body += f"""<body>
+<div class="page">
+<div class="title">
 <h1>This an exemple of a GET CGI</h1>
+</div>
+<div class="bloc">
 <h2>Hello {first_name} {last_name}</h2>
+</div></div>
 </body>
 </html>
 """

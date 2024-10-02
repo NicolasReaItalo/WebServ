@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:49:44 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/09/30 16:43:21 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/10/02 10:42:00 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,6 +53,9 @@ void Server::receive_data(int fd, int i)
                     return;
                 case GET:
                     method_get(header, fd, i);
+                    return;
+                case GET_CGI:
+                    method_get_cgi(header, fd, i);
                     return;
                 case DELETE:
                     method_delete(header, fd, i);

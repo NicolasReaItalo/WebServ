@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: nrea <nrea@student.42.fr>                  +#+  +:+       +#+         #
+#    By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/02/06 10:28:10 by jerperez          #+#    #+#              #
-#    Updated: 2024/10/01 14:42:08 by nrea             ###   ########.fr        #
+#    Updated: 2024/10/02 12:40:12 by qgiraux          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -37,6 +37,7 @@ SRCS_QGIRAUX_FILES	= 	chunk_send.cpp\
 						generate_error_page.cpp\
 						generate_index_page.cpp\
 						method_autoindex.cpp\
+						method_cgi_get.cpp\
 						method_delete.cpp\
 						method_error.cpp\
 						method_get.cpp\

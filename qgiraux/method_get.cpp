@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:49:38 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/09/30 12:34:30 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/10/02 15:50:55 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,9 +56,10 @@ void Server::method_get(const header_infos& header, int fd, int i)
         time_str.erase(time_str.find_last_not_of("\n") + 1);
         std::stringstream ss;
         ss  << "HTTP/1.1 200 OK\r\n"
-        << "Content-Type: " << header.contentType << "\r\n"
-        << "Content-Length: " << header.bodySize << "\r\n"
-        << "time: " << time_str << "\r\n" << "\r\n";
+        << "Content-Type: " << header.contentType << "\r\n";
+        if (header.bodySize != 0)
+            ss << "Content-Length: " << header.bodySize << "\r\n"
+            << "time: " << time_str << "\r\n" << "\r\n";
 
         std::string head = ss.str();
         if (fcntl(fd, F_GETFD) != -1)
@@ -79,6 +80,7 @@ void Server::method_get(const header_infos& header, int fd, int i)
                 oss << "[method get] Sending file to " << fd << "...";
                 webservLogger.log(LVL_INFO, oss);   
             }
+            std::cout << &(data[0]);
             if (-1 == send(fd, &(data[0]), header.bodySize, 0))
             {
                 std::ostringstream oss;
@@ -98,4 +100,9 @@ void Server::method_get(const header_infos& header, int fd, int i)
             fd_set.erase(fd);
         }
     }
+    {
+                std::ostringstream oss;
+                oss << "[method get] file sent to " << fd << "...";
+                webservLogger.log(LVL_INFO, oss);   
+            }
 }

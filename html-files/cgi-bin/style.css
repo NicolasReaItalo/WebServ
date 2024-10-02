@@ -1,0 +1,105 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   style.css                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/09/19 12:49:58 by qgiraux           #+#    #+#             */
+/*   Updated: 2024/09/27 15:26:24 by qgiraux          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+* { 
+	margin: 0; 
+	padding: 0; 
+	box-sizing: border-box; 
+} 
+
+body { 
+	font-family: Arial, sans-serif; 
+	background-color: #131212; 
+	display: flex; 
+	justify-content: center; 
+	align-items: center; 
+	/* height: 80vh;  */
+} 
+
+.page {
+    display: flex;
+    flex-direction: column;
+    gap: 3px; /* Adjusts space between the two error sections */
+}
+
+.title { 
+	text-align: center; 
+	background-color: #5a5b8a; 
+	padding: 10px; 
+	border-radius: 5px; 
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); 
+} 
+
+.bloc { 
+	display: flex;
+	gap: 10px;
+	text-align: center; 
+	background-color: #7071a1; 
+	padding: 10px; 
+	border-radius: 5px; 
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); 
+} 
+
+.resizable-image {
+    max-width: 500px; /* Adjust the size to fit within the container */
+    max-height: 400px;
+    display: block;
+	margin: auto;
+}
+
+
+
+
+/* Force the third image to appear on a new line */
+.resizable-image:nth-child(3) {
+    flex-basis: 100%; /* Takes up full width, moving it to the next line */
+}
+
+h1 { 
+	font-size: 5rem; 
+	color: #aaaaad; 
+} 
+
+p { 
+	font-size: 1.5rem; 
+	color: #333; 
+	margin-bottom: 20px; 
+} 
+
+a { 
+	text-decoration: none; 
+	background-color: #aaaaad; 
+	color: #000000; 
+	padding: 10px 20px; 
+	border-radius: 3px; 
+	font-weight: bold; 
+	transition: background-color 0.3s ease; 
+} 
+
+A { 
+	text-decoration: none; 
+	background-color: #aaaaad; 
+	color: #000000; 
+	padding: 1px 2px; 
+	border-radius: 2px; 
+	font-weight: bold; 
+	transition: background-color 0.3s ease; 
+} 
+
+a:hover { 
+	background-color: #c7c7c7; 
+	color: #3f3f3f; 
+}
+
+a:hover { 
+	background-color: #aaaaad; 
+}

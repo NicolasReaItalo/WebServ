@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:50:06 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/09/30 13:57:31 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/10/02 15:45:12 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -243,4 +243,104 @@ void Server::failed_to_send(int fd)
     fd_set.erase(fd);
     chunk.erase(fd);
     return;
+}
+
+
+void removeFirstThreeLines(const std::string& filename) {
+    std::ifstream inFile(filename.c_str());
+    
+    if (!inFile) {
+        std::cerr << "Could not open the file for reading: " << filename << std::endl;
+        return;
+    }
+
+    // Temporary file to store the content after removing the first 3 lines
+    std::string tempFilename = filename + ".tmp";
+    std::ofstream outFile(tempFilename.c_str());
+
+    if (!outFile) {
+        std::cerr << "Could not open the file for writing: " << tempFilename << std::endl;
+        inFile.close();
+        return;
+    }
+
+    std::string line;
+    int lineCount = 0;
+
+    // Skip the first two lines
+    while (lineCount < 2 && std::getline(inFile, line)) {
+        ++lineCount;
+    }
+
+    // Write the remaining lines to the temporary file
+    while (std::getline(inFile, line)) {
+        outFile << line << std::endl;
+    }
+
+    inFile.close();
+    outFile.close();
+
+    // Now, replace the original file with the temporary file
+    if (remove(filename.c_str()) != 0) {
+        std::cerr << "Error deleting the original file: " << filename << std::endl;
+    } else if (rename(tempFilename.c_str(), filename.c_str()) != 0) {
+        std::cerr << "Error renaming the temporary file: " << tempFilename << std::endl;
+    }
+}
+
+int Server::parse_cgi_tmp_file(header_infos& header)
+{
+    int tr = open(header.uri.c_str(), O_RDWR);
+    if (tr == -1)
+    {
+        std::ostringstream oss;
+        oss << "[cgi file parser] failed to open cgi tmp file";
+        webservLogger.log(LVL_ERROR, oss);
+        return 1;
+    }
+    std::stringstream headerLine;
+    char buffer[2];
+    size_t pos = headerLine.str().find("\r\n\r\n");
+    off_t bytesRead = 0;
+    
+    while( pos == std::string::npos)
+    {
+        
+        int t = read(tr, buffer, 2);
+        if (t == 0)
+        {
+            std::ostringstream oss;
+            oss << "[cgi file parser] cgi tmp file format is incorrect";
+            webservLogger.log(LVL_ERROR, oss);
+            close(tr);
+            return 1;
+        }
+        if (t == -1)
+        {
+            std::ostringstream oss;
+            oss << "[cgi file parser] read error on cgi tmp file";
+            webservLogger.log(LVL_ERROR, oss);
+            close(tr);
+            return 1;
+        }
+        buffer[t] = '\0';
+        headerLine << buffer;
+        pos = headerLine.str().find("\r\n\r\n");
+        bytesRead += t;
+    }
+    std::string headers = headerLine.str();
+    std::istringstream headerStream(headers);
+    std::string line;
+    while (std::getline(headerStream, line) && line != "\r")
+    {
+        if (line.find("Content-Type:") != std::string::npos)
+        {
+            header.contentType = line.substr(line.find(":") + 2); // Extract content type value
+            break;
+        }
+    }
+    close(tr);
+
+    removeFirstThreeLines(header.uri);
+    return 0;
 }
