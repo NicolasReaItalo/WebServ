@@ -6,7 +6,7 @@
 /*   By: nrea <nrea@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/18 13:27:16 by nrea              #+#    #+#             */
-/*   Updated: 2024/10/02 11:23:33 by nrea             ###   ########.fr       */
+/*   Updated: 2024/10/02 14:21:05 by nrea             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,10 +71,9 @@ ConfigServer  * config,int locationIndex,std::map<std::string, std::string> head
 	//ON Ddetermine sa taille
 	response.bodySize = getFileSize(response.ressourcePath);
 
-	//Si la taille est trop grande on passe en chunked; //TODO
+	//Si la taille est trop grande on passe en chunked
 	// --------------------------------------
-
-	if (response.bodySize >
+	if ( header_attributes["Content-Type"] == "chunked"|| response.bodySize >
 	static_cast<unsigned long>(atol(config->getDirectiveParameter(locationIndex, "client_max_body_size").c_str())))
 		response.chunked = true;
 	else
