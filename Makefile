@@ -6,7 +6,7 @@
 #    By: nrea <nrea@student.42.fr>                  +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/02/06 10:28:10 by jerperez          #+#    #+#              #
-#    Updated: 2024/10/01 14:42:08 by nrea             ###   ########.fr        #
+#    Updated: 2024/10/02 11:22:43 by nrea             ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -21,7 +21,8 @@ SRCS_NREA_FILES	=	headerParser.cpp\
 					handle_post.cpp\
 					handle_delete.cpp\
 					handle_get_dir.cpp\
-					handle_cgi.cpp\
+					handle_get_cgi.cpp\
+					handle_post_cgi.cpp\
 					response_error.cpp\
 					response_autoindex.cpp\
 					response_redirect.cpp\

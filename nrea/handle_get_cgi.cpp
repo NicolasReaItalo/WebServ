@@ -1,23 +1,23 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   handle_cgi.cpp                                     :+:      :+:    :+:   */
+/*   handle_get_cgi.cpp                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: nrea <nrea@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/30 17:35:59 by nrea              #+#    #+#             */
-/*   Updated: 2024/10/01 14:21:44 by nrea             ###   ########.fr       */
+/*   Updated: 2024/10/02 11:18:29 by nrea             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "headerParser.hpp"
 
-header_infos handle_cgi(header_infos & response, std::string cgi, ConfigServer *config,
+header_infos handle_get_cgi(header_infos & response, std::string cgi, ConfigServer *config,
 int locationIndex, std::map<std::string,std::string> &header_attributes)
 {
 	{
 		std::ostringstream oss;
-		oss <<"[handle_cgi]	entering handle_cgi()";
+		oss <<"[handle_cgi]	entering handle_get_cgi()";
 		webservLogger.log(LVL_DEBUG, oss);
 	}
 
@@ -109,6 +109,7 @@ int locationIndex, std::map<std::string,std::string> &header_attributes)
 	response.returnCode = 200;
 	response.bodySize = 0;
 	response.interpreterPath = interpreter;
+	response.chunked = false;
 	return response;
 }
 

@@ -6,7 +6,7 @@
 /*   By: nrea <nrea@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/18 13:27:16 by nrea              #+#    #+#             */
-/*   Updated: 2024/10/01 14:43:36 by nrea             ###   ########.fr       */
+/*   Updated: 2024/10/02 11:23:33 by nrea             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -119,7 +119,7 @@ header_infos Server::handle_get(header_infos &response,
 			oss <<"[handle_get]	cgi file detected";
 			webservLogger.log(LVL_DEBUG, oss);
 		}
-		return handle_cgi(response,cgi,config, locationIndex, header_attributes);
+		return handle_get_cgi(response,cgi,config, locationIndex, header_attributes);
 	}
 
 	response.toDo = GET;
