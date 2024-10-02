@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/02 10:40:07 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/10/02 15:45:39 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/10/02 16:52:29 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,16 +32,12 @@ int execute_cgi
 		perror("dup2");
 		close(p);
 		freeEnv(env);
-		delete [] cmd[0];
-		delete [] cmd[1];
 		delete [] cmd;
 		exit(EXIT_FAILURE);
 	}
 	execve(cmd[0], cmd, env);
 	close(p);
 	freeEnv(env);
-	delete [] cmd[0];
-	delete [] cmd[1];
 	delete [] cmd;
  	return 1;
 }

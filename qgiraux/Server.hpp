@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:49:46 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/10/02 15:46:16 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/10/02 16:48:15 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -146,6 +146,7 @@ class Server
         Server(std::list<ConfigServer> servers);
         int ServerStart();
         int ServerRun();
+        void ServerLoop();
         void ServerClose();
         ~Server();
 

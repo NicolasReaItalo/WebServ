@@ -6,7 +6,7 @@
 #    By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/02/06 10:28:10 by jerperez          #+#    #+#              #
-#    Updated: 2024/10/02 12:40:12 by qgiraux          ###   ########.fr        #
+#    Updated: 2024/10/02 16:49:49 by qgiraux          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -44,6 +44,7 @@ SRCS_QGIRAUX_FILES	= 	chunk_send.cpp\
 						method_post.cpp\
 						method_return.cpp\
 						pollin.cpp\
+						ServerLoop.cpp\
 						ServerRun.cpp\
 						ServerStart.cpp\
 						ServerStop.cpp\
