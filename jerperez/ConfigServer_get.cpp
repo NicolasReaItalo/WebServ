@@ -6,7 +6,7 @@
 /*   By: jerperez <jerperez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 13:29:48 by jerperez          #+#    #+#             */
-/*   Updated: 2024/10/01 13:17:01 by jerperez         ###   ########.fr       */
+/*   Updated: 2024/10/03 11:15:48 by jerperez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,11 @@ std::string	ConfigServer::getFullPath(\
 		}
 	}
 	else
+	{
+		if (0 > location || this->_locations.size() <= (unsigned int)location)
+			return "";
 		uri.replace(0, this->_locations[location].getUri().length(), alias);
+	}
 	return uri;
 }
 
