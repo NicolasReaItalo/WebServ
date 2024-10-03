@@ -6,7 +6,7 @@
 /*   By: nrea <nrea@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/30 17:35:59 by nrea              #+#    #+#             */
-/*   Updated: 2024/10/02 11:18:29 by nrea             ###   ########.fr       */
+/*   Updated: 2024/10/03 11:07:42 by nrea             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,6 +110,8 @@ int locationIndex, std::map<std::string,std::string> &header_attributes)
 	response.bodySize = 0;
 	response.interpreterPath = interpreter;
 	response.chunked = false;
+	response.locationIndex = locationIndex;
+	response.configServer = config;
 	return response;
 }
 
