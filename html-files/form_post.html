@@ -1,14 +1,12 @@
 <!DOCTYPE html>
 <html>
+	<head><meta charset="utf-8"></head>
 <body>
 
 <h2>Formulaire de test CGI</h2>
-<form action="/cgi-bin/script.py" method="POST">
-  <label for="name">Nom:</label><br>
-  <input type="text" id="name" name="name"><br>
-  <label for="age">Âge:</label><br>
-  <input type="text" id="age" name="age"><br><br>
+<form action="/cgi-bin/cgi-post.py" method="POST" enctype="multipart/form-data">
   <input type="submit" value="Envoyer">
+  <input type="file" name="fichier" accept="*/*" />
 </form>
 
 </body>

@@ -6,7 +6,7 @@
 /*   By: nrea <nrea@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/25 11:58:15 by nrea              #+#    #+#             */
-/*   Updated: 2024/09/25 17:10:09 by nrea             ###   ########.fr       */
+/*   Updated: 2024/09/30 16:17:17 by nrea             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -144,7 +144,7 @@ int main(int argc, char const **argv, char **env)
 	header.interpreterPath = "/usr/bin/python3";
 
 	header.envMap["SERVER_SOFTWARE"]= "webserv";
-	header.envMap["SERVER_NAME"]= "webser";
+	header.envMap["SERVER_NAME"]= "webserv";
 	header.envMap["REQUEST_METHOD"]= "GET";
 	header.envMap["PATH_INFO"]= "";
 	/*PATH_INFO
