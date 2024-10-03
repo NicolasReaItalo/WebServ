@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/02 10:40:07 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/10/03 11:09:15 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/10/02 15:45:39 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,8 @@
 #include "cgi_utils.hpp"
 
 char** MapToEnv(std::map<std::string,std::string> const & map);
+size_t	ft_strlen(const char *s);
+char	*ft_strdup(const char *s);
 
 int execute_cgi
 (std::string interpreter_path, std::string script_path, std::map<std::string,std::string> envMap, int p)
@@ -30,12 +32,16 @@ int execute_cgi
 		perror("dup2");
 		close(p);
 		freeEnv(env);
+		delete [] cmd[0];
+		delete [] cmd[1];
 		delete [] cmd;
 		exit(EXIT_FAILURE);
 	}
 	execve(cmd[0], cmd, env);
 	close(p);
 	freeEnv(env);
+	delete [] cmd[0];
+	delete [] cmd[1];
 	delete [] cmd;
  	return 1;
 }
@@ -77,4 +83,38 @@ void Server::method_get_cgi(header_infos& header, int fd, int i)
 		close(tr);
 	}
 		
+}
+
+
+
+
+
+
+size_t	ft_strlen(const char *s)
+{
+	unsigned int long	i;
+
+	i = 0;
+	while (s[i])
+		i++;
+	return (i);
+}
+
+
+char	*ft_strdup(const char *s)
+{
+	size_t	s_size;
+	char	*dup;
+	int		i;
+
+	i = 0;
+	s_size = ft_strlen(s);
+	dup = new char [ s_size +1];
+	while (s[i])
+	{
+		dup[i] = s[i];
+		i++;
+	}
+	dup[i] = '\0';
+	return (dup);
 }

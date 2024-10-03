@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:50:06 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/10/03 11:08:29 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/10/03 12:05:21 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -197,6 +197,7 @@ void Server::sendError(header_infos header, int errcode, int fd, int i)
     {
         std::stringstream ss;
         ss << errcode;
+        std::cout << header.locationIndex << ss.str() << std::endl;
         std::string errorpage = header.configServer->getDirectiveOutput(header.locationIndex, "error_page", ss.str());
         if (errorpage != "")
         {
@@ -208,7 +209,10 @@ void Server::sendError(header_infos header, int errcode, int fd, int i)
                 header.ressourcePath = errorpage;
                 sendCustomError(header, errcode, fd, i);
                 return ;
-            }            
+                
+            }
+            perror("SendError: Error opening error page");
+            
         }
     }
     std::stringstream ss;
@@ -224,8 +228,8 @@ void Server::sendError(header_infos header, int errcode, int fd, int i)
         body = generate_error_page(errcode);
     }
     std::string head = ss.str();
-    send(fd, head.c_str(), head.size(), 0);
-    send(fd, body.c_str(), body.size(), 0);
+    send(fd, head.c_str(), head.size(), header.i_ev);
+    send(fd, body.c_str(), body.size(), header.i_ev);
 
     if (shutdown(fd, SHUT_WR) == -1) {
         perror("shutdown");

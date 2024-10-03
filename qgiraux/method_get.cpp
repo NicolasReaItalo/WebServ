@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:49:38 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/10/02 15:50:55 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/10/03 12:00:11 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,6 +61,10 @@ void Server::method_get(const header_infos& header, int fd, int i)
             ss << "Content-Length: " << header.bodySize << "\r\n"
             << "time: " << time_str << "\r\n" << "\r\n";
 
+            
+    std::cout << "\n\nFD " << fd << " I " << i << std::endl << std::endl;
+
+    
         std::string head = ss.str();
         if (fcntl(fd, F_GETFD) != -1)
         {
@@ -80,7 +84,6 @@ void Server::method_get(const header_infos& header, int fd, int i)
                 oss << "[method get] Sending file to " << fd << "...";
                 webservLogger.log(LVL_INFO, oss);   
             }
-            std::cout << &(data[0]);
             if (-1 == send(fd, &(data[0]), header.bodySize, 0))
             {
                 std::ostringstream oss;
