@@ -6,7 +6,7 @@
 /*   By: nrea <nrea@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/02 11:05:47 by nrea              #+#    #+#             */
-/*   Updated: 2024/10/02 11:38:05 by nrea             ###   ########.fr       */
+/*   Updated: 2024/10/03 11:15:00 by nrea             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -142,5 +142,7 @@ ConfigServer *config,int locationIndex, std::map<std::string,std::string> &heade
 	response.bodySize = static_cast<unsigned long>(atol(header_attributes["Content-Length"].c_str()));
 	response.contentType = header_attributes["Content-Type"];
 	response.interpreterPath = interpreter;
+	response.locationIndex = locationIndex;
+	response.configServer = config;
 	return response;
 }
