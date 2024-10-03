@@ -6,7 +6,7 @@
 /*   By: jerperez <jerperez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 13:29:48 by jerperez          #+#    #+#             */
-/*   Updated: 2024/10/01 14:08:44 by jerperez         ###   ########.fr       */
+/*   Updated: 2024/10/03 11:48:20 by jerperez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,8 +32,13 @@ void	ConfigServer::_pushSplitParameters(\
 
 int	ConfigServer::_fillAll(void)
 {
-	if (this->_evalListen())
+	int	err_code;
+
+	if (INT32_MAX < this->_locations.size())
 		return (1);
+	err_code = this->_evalListen();
+	if (err_code)
+		return (err_code);
 	this->_evalServerName(); //
 	if (!this->ConfigBlock::inDirectives("autoindex"))
 		this->_directive_parameters["autoindex"].push_back("off");
