@@ -64,7 +64,7 @@ header_infos Server::handle_dir(header_infos &response,
 						oss <<"[handle_get_dir]	cgi file detected";
 						webservLogger.log(LVL_DEBUG, oss);
 					}
-					return handle_cgi(response,cgi,config, locationIndex, header_attributes);
+					return handle_get_cgi(response,cgi,config, locationIndex, header_attributes);
 				}
 
 
