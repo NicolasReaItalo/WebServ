@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:50:06 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/10/02 15:45:12 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/10/03 11:08:29 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -208,10 +208,7 @@ void Server::sendError(header_infos header, int errcode, int fd, int i)
                 header.ressourcePath = errorpage;
                 sendCustomError(header, errcode, fd, i);
                 return ;
-                
-            }
-            perror("Error opening error page");
-            
+            }            
         }
     }
     std::stringstream ss;

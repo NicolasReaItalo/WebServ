@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:49:44 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/10/02 10:42:00 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/10/03 10:53:09 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,7 +115,8 @@ void Server::receive_data(int fd, int i)
                     webservLogger.log(LVL_DEBUG, oss);
                 }
                 // Parse header
-                header = headerParser(headerStr, std::make_pair(fd_set[fd].address, fd_set[fd].port));                                
+                header = headerParser(headerStr, std::make_pair(fd_set[fd].address, fd_set[fd].port));
+                header.i_ev = i;
             } 
             else 
             {

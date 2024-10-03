@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:49:46 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/10/02 16:48:15 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/10/03 10:52:36 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,6 +67,7 @@ typedef struct s_header_infos
 	int locationIndex;
     std::streampos readIndex;
 	class ConfigServer *configServer;
+    int i_ev;
 } header_infos;
 
 typedef struct s_fdsets

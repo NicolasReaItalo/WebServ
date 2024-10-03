@@ -9,7 +9,7 @@ last_name = form.getvalue('last_name')
 
 header=""
 body=""
-body += "<html><head><title>Hello - GET CGI Program</title><link rel=\"stylesheet\" href=\"style.css\"></head>"
+body += "<html><head><title>Hello - GET CGI Program</title></head>"
 body += f"""<body>
 <div class="page">
 <div class="title">
