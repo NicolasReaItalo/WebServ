@@ -6,7 +6,7 @@
 /*   By: jerperez <jerperez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 13:29:48 by jerperez          #+#    #+#             */
-/*   Updated: 2024/10/03 11:48:20 by jerperez         ###   ########.fr       */
+/*   Updated: 2024/10/03 12:12:30 by jerperez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 #include <string>
 #include <sstream>
 #include <iostream>
+#include <climits>
 #include "config_error_constants.h"
 
 void	ConfigServer::_pushSplitParameters(\
@@ -34,7 +35,7 @@ int	ConfigServer::_fillAll(void)
 {
 	int	err_code;
 
-	if (INT32_MAX < this->_locations.size())
+	if (INT_MAX < this->_locations.size())
 		return (1);
 	err_code = this->_evalListen();
 	if (err_code)
