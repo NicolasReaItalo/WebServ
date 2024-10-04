@@ -1,13 +1,70 @@
 <!DOCTYPE html>
+<head>
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
+
+	<style>
+	body {
+	font-size:30px;
+	font-family: "Roboto", sans-serif;
+	background-color:#ffffff;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	flex-direction: column;
+	}
+
+.button{
+
+  background-color: #c2c2c2;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 4px;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	flex-direction: column;
+}
+
+header{
+	border-radius: 2px;
+	border-color: black;
+}
+
+
+
+.upload{
+background-color: rgb(116, 115, 115);
+border-radius: 5;
+}
+	</style>
+</head>
 <html>
 	<head><meta charset="utf-8"></head>
 <body>
+<header>
+	<h1>Upload some files !</h1>
+</header>
+<div class="upload">
+	<form action="/cgi-bin/cgi-post.py" method="POST" enctype="multipart/form-data">
 
-<h2>Formulaire de test CGI</h2>
-<form action="/cgi-bin/cgi-post.py" method="POST" enctype="multipart/form-data">
-  <input type="submit" value="Envoyer">
-  <input type="file" name="fichier" accept="*/*" />
-</form>
+		<input class="button" type="file" name="fichier1" accept="*/*" />
+		<input class="button" type="file" name="fichier2" accept="*/*" />
+		<input class="button" type="submit" value="Send!">
+	</form>
+
+</div>
 
 </body>
 </html>
+
+AWS
+terraform
+kubernetes
