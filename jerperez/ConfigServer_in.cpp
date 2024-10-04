@@ -6,7 +6,7 @@
 /*   By: jerperez <jerperez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 13:29:48 by jerperez          #+#    #+#             */
-/*   Updated: 2024/10/01 12:46:21 by jerperez         ###   ########.fr       */
+/*   Updated: 2024/10/03 11:15:20 by jerperez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,8 @@ bool		ConfigServer::inDirectives(\
 {
 	if (-1 == location)
 		return ConfigBlock::inDirectives(directive_name);
+	if (0 > location || this->_locations.size() <= (unsigned int)location)
+		return false;
 	return this->_locations[location].inDirectives(directive_name);
 }
 
@@ -43,6 +45,8 @@ bool	ConfigServer::inIODirectives(\
 {
 	if (-1 == location)
 		return ConfigBlock::inIODirectives(directive_name);
+	if (0 > location || this->_locations.size() <= (unsigned int)location)
+		return false;
 	return this->_locations[location].inIODirectives(directive_name);
 }
 
@@ -64,6 +68,8 @@ bool	ConfigServer::inDirectiveParameters(\
 	if (-1 != location)
 	{
 		const ConfigLocation	&lConfig = this->_locations[location];
+		if (0 > location || this->_locations.size() <= (unsigned int)location)
+			return false;
 		if (lConfig.inDirectives(directive_name))
 			return lConfig.inDirectiveParameters(directive_name, parameter);
 	}

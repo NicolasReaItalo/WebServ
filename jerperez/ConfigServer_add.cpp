@@ -6,7 +6,7 @@
 /*   By: jerperez <jerperez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 13:29:48 by jerperez          #+#    #+#             */
-/*   Updated: 2024/10/01 14:08:44 by jerperez         ###   ########.fr       */
+/*   Updated: 2024/10/03 12:12:30 by jerperez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 #include <string>
 #include <sstream>
 #include <iostream>
+#include <climits>
 #include "config_error_constants.h"
 
 void	ConfigServer::_pushSplitParameters(\
@@ -32,8 +33,13 @@ void	ConfigServer::_pushSplitParameters(\
 
 int	ConfigServer::_fillAll(void)
 {
-	if (this->_evalListen())
+	int	err_code;
+
+	if (INT_MAX < this->_locations.size())
 		return (1);
+	err_code = this->_evalListen();
+	if (err_code)
+		return (err_code);
 	this->_evalServerName(); //
 	if (!this->ConfigBlock::inDirectives("autoindex"))
 		this->_directive_parameters["autoindex"].push_back("off");

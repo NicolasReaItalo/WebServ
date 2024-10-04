@@ -6,7 +6,7 @@
 /*   By: jerperez <jerperez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 13:29:48 by jerperez          #+#    #+#             */
-/*   Updated: 2024/10/01 12:55:17 by jerperez         ###   ########.fr       */
+/*   Updated: 2024/10/03 11:15:36 by jerperez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,10 @@ const std::string &ConfigServer::getDirectiveParameter(\
 {
 	if (-1 != location)
 	{
+		if (0 > location || this->_locations.size() <= (unsigned int)location)
+			return this->_no_parameter;
 		const ConfigLocation	&lConfig = this->_locations[location];
+
 		if (lConfig.inDirectives(directive_name))
 			return lConfig.getDirectiveParameter(directive_name);
 	}
@@ -50,7 +53,10 @@ const std::string	&ConfigServer::getDirectiveOutput(\
 {
 	if (-1 != location)
 	{
+		if (0 > location || this->_locations.size() <= (unsigned int)location)
+			return this->_no_parameter;
 		const ConfigLocation	&lConfig = this->_locations[location];
+
 		if (lConfig.inIODirectives(directive_name)) // 
 			return lConfig.getDirectiveOutput(directive_name, input);
 	}
@@ -68,7 +74,10 @@ const ConfigServer::parameters_t	&ConfigServer::getDirectiveParameters(int locat
 {
 	if (-1 != location)
 	{
+		if (0 > location || this->_locations.size() <= (unsigned int)location)
+			return this->_no_parameters;
 		const ConfigLocation	&lConfig = this->_locations[location];
+
 		if (lConfig.inDirectives(directive_name))
 			return lConfig.getDirectiveParameters(directive_name);
 	}
