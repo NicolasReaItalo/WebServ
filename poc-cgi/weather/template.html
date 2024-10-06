@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Weather App</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="weather-app">
+        <h1>Weather today <br> in</h1>
+		<h2>{w_city.capitalize()}</h2>
+        <div class="weather-list">
+            <div class="weather-item">
+                <div class="hour">07:00</div>
+                <div class="temp">{temp(7)}°C</div>
+                <img src="{image(7)}" alt="{description(7)}" class="weather-icon">
+            </div>
+            <div class="weather-item">
+                <div class="hour">10:00</div>
+                <div class="temp">{temp(10)}°C</div>
+                <img src="{image(10)}" alt="{description(10)}" class="weather-icon">
+            </div>
+            <div class="weather-item">
+                <div class="hour">12:00</div>
+                <div class="temp">{temp(12)}°C</div>
+                <img src="{image(10)}" alt="{description(10)}" class="weather-icon">
+            </div>
+            <div class="weather-item">
+                <div class="hour">15:00</div>
+                <div class="temp">{temp(15)}°C</div>
+                <img src="{image(15)}"alt="{description(15)}" class="weather-icon">
+            </div>
+            <div class="weather-item">
+                <div class="hour">20:00</div>
+                <div class="temp">{temp(20)}°C</div>
+                <img src="{image(20)}" alt="{description(20)}" class="weather-icon">
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
