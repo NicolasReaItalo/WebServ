@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:49:44 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/10/03 12:02:08 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/10/07 15:46:34 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,11 @@ void Server::receive_data(int fd, int i)
         oss << "[POLLIN] Loading data from fd " << fd;
         webservLogger.log(LVL_DEBUG, oss);
     }
+    if (chunk.find(fd) != chunk.end())
+    {
+        headerParsed = true;
+        header = chunk[fd];
+    }
     
     while (true) {
         bytesRead = recv(fd, buffer, maxBodySize - 1, 0);
@@ -49,8 +54,13 @@ void Server::receive_data(int fd, int i)
             switch (header.toDo)
             {
                 case POST:
-                    method_post(header, body, fd, i);
+                {
+                    if (chunk.find(fd) != chunk.end())
+                        chunked_post(fd, body, chunk[fd]);
+                    else
+                        method_post(header, body, fd, i);
                     return;
+                }
                 case GET:
                     method_get(header, fd, i);
                     return;
@@ -108,14 +118,20 @@ void Server::receive_data(int fd, int i)
                 std::vector<unsigned char> bodyPart(buffer + headerEndPos + 4, buffer + bytesRead);
                 body.insert(body.end(), bodyPart.begin(), bodyPart.end());
 
-                headerParsed = true; // Mark header as parsed
+                
                 {
                     std::ostringstream oss;
                     oss << "[POLLIN] header from fd " << fd << " fully received, requesting parsing";
                     webservLogger.log(LVL_DEBUG, oss);
                 }
                 // Parse header
-                header = headerParser(headerStr, std::make_pair(fd_set[fd].address, fd_set[fd].port));
+                if (chunk.find(fd) == chunk.end())
+                {
+                    headerParsed = true; // Mark header as parsed
+                    header = headerParser(headerStr, std::make_pair(fd_set[fd].address, fd_set[fd].port));
+                }
+                else 
+                    header = chunk[fd];
                 header.i_ev = i;
             } 
             else 

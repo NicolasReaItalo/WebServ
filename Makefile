@@ -6,7 +6,7 @@
 #    By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/02/06 10:28:10 by jerperez          #+#    #+#              #
-#    Updated: 2024/10/02 12:40:12 by qgiraux          ###   ########.fr        #
+#    Updated: 2024/10/07 14:19:42 by qgiraux          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -33,6 +33,7 @@ SRCS_NREA_FILES	=	headerParser.cpp\
 SRCS_NREA	= 	$(addprefix nrea/, $(SRCS_NREA_FILES))
 
 SRCS_QGIRAUX_FILES	= 	chunk_send.cpp\
+						chunk_receive.cpp\
 						constructor.cpp\
 						generate_error_page.cpp\
 						generate_index_page.cpp\
