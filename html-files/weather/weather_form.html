@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Weather App</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="weather-app">
+		<h1>Weather app</h1>
+        <h2 class="chooser">Choose a city</h2>
+		<form action="/weather/weather.py" method="GET">
+			<select name="select" class="city_selection">
+				<option value="paris" selected>Paris</option>
+				<option value="tokyo" >Tokyo</option>
+				<option value="new-york">New-York</option>
+			</select>
+			<p><button>Submit</button></p>
+		</form>
+
+    </div>
+
+</body>
+</html>

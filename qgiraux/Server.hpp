@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:49:46 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/10/03 12:01:38 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/10/07 13:39:37 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@
 
 #define MAX_EVENTS 500
 #define BUFFER_SIZE 10000
-#define CHUNK_SIZE 1000
+#define CHUNK_SIZE 100
 #define TIMEOUT 5
 
 #define ERROR 1
@@ -129,7 +129,7 @@ class Server
 		header_infos handle_dir(header_infos &response,ConfigServer  * config,int locationIndex,std::map<std::string, std::string> &header_attributes);
 
         void cgi_send(const header_infos& header, int fd, int i);
-        void chunked_post(int fd, std::vector<unsigned char> body, int i, header_infos& header);
+        void chunked_post(int fd, std::vector<unsigned char> body, header_infos& header);
         void send_chunk(int fd, int i, const header_infos& header);
         void send_chunk(int fd, int i);
         void send_index(int fd, const header_infos& header, std::map<std::string, std::string>& index);

@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/02 10:40:07 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/10/07 10:54:02 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/10/07 12:14:21 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,6 +57,7 @@ void Server::method_get_cgi(header_infos& header, int fd, int i)
 	header.timestamp = std::time(NULL);
 	std::stringstream opath;
 	opath << "/tmp/tmpfile" << &header;
+	std::cout << opath.str().c_str() << std::endl;
 	int tr = open(opath.str().c_str(), O_RDWR | O_CREAT, S_IRUSR | S_IWUSR);
 	if (tr == -1) {
 		std::cerr << "Failed to open file: " << strerror(errno) << std::endl << opath.str() << std::endl;
@@ -84,38 +85,4 @@ void Server::method_get_cgi(header_infos& header, int fd, int i)
 		close(tr);
 	}
 		
-}
-
-
-
-
-
-
-size_t	ft_strlen(const char *s)
-{
-	unsigned int long	i;
-
-	i = 0;
-	while (s[i])
-		i++;
-	return (i);
-}
-
-
-char	*ft_strdup(const char *s)
-{
-	size_t	s_size;
-	char	*dup;
-	int		i;
-
-	i = 0;
-	s_size = ft_strlen(s);
-	dup = new char [ s_size +1];
-	while (s[i])
-	{
-		dup[i] = s[i];
-		i++;
-	}
-	dup[i] = '\0';
-	return (dup);
 }

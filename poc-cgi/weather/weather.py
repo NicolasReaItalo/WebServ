@@ -2,7 +2,7 @@ import json, requests, cgi
 
 form = cgi.FieldStorage()
 
-w_city = form.getvalue('city')
+w_city = form.getvalue('select')
 if w_city is None:
 	w_city = "paris"
 
@@ -55,7 +55,7 @@ def	error():
 
 # Ouverture des fichiers utils
 try:
-	with open("weather/weather_codes.json", 'r') as file:
+	with open("weather_codes.json", 'r') as file:
 		try:
 			weather_codes = json.load(file)
 		except Exception as e:
@@ -66,6 +66,7 @@ try:
 		exit()
 except FileNotFoundError:
 	error()
+	print("")
 	exit()
 
 
@@ -129,7 +130,7 @@ def render_template(file_path):
 
 # fin fonctions templates
 header = "Content-type: text/html\r\n"
-body = render_template('weather/template.html')
+body = render_template('template.html')
 if len(body) == 0:
 	error()
 	exit()
