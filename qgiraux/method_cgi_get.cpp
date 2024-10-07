@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/02 10:40:07 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/10/02 15:45:39 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/10/07 10:54:02 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,10 +24,10 @@ int execute_cgi
 	char **env = MapToEnv(envMap);
 	char **cmd = new char *[3];
 	
-	interpreter_path.copy(cmd[0], interpreter_path.length(), 0);
-	script_path.copy(cmd[1], script_path.length(), 0);
-
+	cmd[0] = strdup(interpreter_path.c_str());
+	cmd[1] = strdup(script_path.c_str());
 	cmd[2] = NULL;
+
 	if (dup2(p, STDOUT_FILENO) == -1) {
 		perror("dup2");
 		close(p);
@@ -43,7 +43,7 @@ int execute_cgi
 	delete [] cmd[0];
 	delete [] cmd[1];
 	delete [] cmd;
- 	return 1;
+	return 1;
 }
 
 void Server::method_get_cgi(header_infos& header, int fd, int i)
@@ -74,6 +74,7 @@ void Server::method_get_cgi(header_infos& header, int fd, int i)
 	{
 		execute_cgi(header.interpreterPath, header.ressourcePath, header.envMap, tr);
 		close(tr);
+		exit (0);
 	}
 	else
 	{

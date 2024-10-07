@@ -140,21 +140,28 @@ int Server::ServerStart()
             else
                 ++it;
         }
+
+        /*loop to check all CGI, ending them if timeout, sending data if done*/
         std::map<int, header_infos>::iterator ito;
         for (ito = cgiList.begin(); ito != cgiList.end();)
         {
-            // {
-            //     std::ostringstream oss;
-            //     oss << "[serverRun] checking on cgi fd " << ito->second.cgi_pid << "\n fd timestamp is " << ito->second.timestamp
-            //     << "\nserver timestamp is " << time;
-            //     webservLogger.log(LVL_INFO, oss);
-            // }
+            {
+                std::ostringstream oss;
+                oss << "[serverRun] checking on cgi fd " << ito->second.cgi_pid << "\n fd timestamp is " << ito->second.timestamp
+                << "\nserver timestamp is " << time;
+                webservLogger.log(LVL_INFO, oss);
+            }
             int status;
             int pidStat = waitpid(ito->second.cgi_pid, &status, WNOHANG);
+            /*if something went wrong with the CGI*/
             if (pidStat == -1)
-                perror("error: ");
+            {
+                perror("CGI error: ");
+                break;
+            }
             int tmp = ito->first;
-            if (pidStat != 0 && pidStat != -1)
+            /*if the CGI ended properly*/
+            if (pidStat != 0)
             {
                 cgiList[tmp].ressourcePath = cgiList[tmp].uri;
                 parse_cgi_tmp_file(cgiList[tmp]);
@@ -164,6 +171,7 @@ int Server::ServerStart()
                 cgiList.erase(tmp);
                 ito = cgiList.begin(); // Reset iterator after erase
             }
+            /*if the CGI timed out*/
             else if (time - cgiList[tmp].timestamp > TIMEOUT)
             {
                 if (kill(ito->second.cgi_pid, SIGINT) == 0)
@@ -183,9 +191,7 @@ int Server::ServerStart()
                 ito = cgiList.begin(); // Reset iterator after erase
             }
             else
-            {
-                ++ito;
-            }
+                ito++;
         }
     }
 	return (0);

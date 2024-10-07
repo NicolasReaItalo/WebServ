@@ -27,3 +27,4 @@ header += "Content-type: text/html\r\n"
 # header += f"Content-Length: {len(body.encode('utf-8'))}\r\n"
 
 print(f"{header}\r\n{body}",end='')
+exit()

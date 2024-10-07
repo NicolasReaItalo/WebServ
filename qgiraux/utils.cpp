@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:50:06 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/10/03 12:05:21 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/10/07 11:17:24 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -197,7 +197,6 @@ void Server::sendError(header_infos header, int errcode, int fd, int i)
     {
         std::stringstream ss;
         ss << errcode;
-        std::cout << header.locationIndex << ss.str() << std::endl;
         std::string errorpage = header.configServer->getDirectiveOutput(header.locationIndex, "error_page", ss.str());
         if (errorpage != "")
         {

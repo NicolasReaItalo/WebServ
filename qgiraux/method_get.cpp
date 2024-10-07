@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:49:38 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/10/03 12:00:11 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/10/07 11:09:38 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,7 @@ void Server::method_get(const header_infos& header, int fd, int i)
             << "time: " << time_str << "\r\n" << "\r\n";
 
             
-    std::cout << "\n\nFD " << fd << " I " << i << std::endl << std::endl;
+    // std::cout << "\n\nFD " << fd << " I " << i << std::endl << std::endl;
 
     
         std::string head = ss.str();
@@ -104,8 +104,8 @@ void Server::method_get(const header_infos& header, int fd, int i)
         }
     }
     {
-                std::ostringstream oss;
-                oss << "[method get] file sent to " << fd << "...";
-                webservLogger.log(LVL_INFO, oss);   
-            }
+        std::ostringstream oss;
+        oss << "[method get] file sent to " << fd << "...";
+        webservLogger.log(LVL_INFO, oss);   
+    }
 }
