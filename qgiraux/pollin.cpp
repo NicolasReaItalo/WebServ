@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:49:44 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/09/30 16:43:21 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/10/03 12:02:08 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,6 +53,9 @@ void Server::receive_data(int fd, int i)
                     return;
                 case GET:
                     method_get(header, fd, i);
+                    return;
+                case GET_CGI:
+                    method_get_cgi(header, fd, i);
                     return;
                 case DELETE:
                     method_delete(header, fd, i);
@@ -112,7 +115,8 @@ void Server::receive_data(int fd, int i)
                     webservLogger.log(LVL_DEBUG, oss);
                 }
                 // Parse header
-                header = headerParser(headerStr, std::make_pair(fd_set[fd].address, fd_set[fd].port));                                
+                header = headerParser(headerStr, std::make_pair(fd_set[fd].address, fd_set[fd].port));
+                header.i_ev = i;
             } 
             else 
             {

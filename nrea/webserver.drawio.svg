@@ -3157,7 +3157,7 @@
                             <div style="display: inline-block; font-size: 20px; font-family: Helvetica; color: rgb(240, 233, 230); line-height: 1.2; pointer-events: all; white-space: normal; overflow-wrap: normal;">
                                 variable
                                 <span style="font-family: monospace; font-size: medium; text-align: start;">
-                                    <font>
+                                    <font color="#ffffff">
                                         request_method
                                     </font>
                                 </span>

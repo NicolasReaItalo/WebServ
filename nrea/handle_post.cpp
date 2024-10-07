@@ -6,7 +6,7 @@
 /*   By: nrea <nrea@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/23 10:46:13 by nrea              #+#    #+#             */
-/*   Updated: 2024/10/02 11:32:28 by nrea             ###   ########.fr       */
+/*   Updated: 2024/10/01 14:44:02 by nrea             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,19 +39,6 @@ int locationIndex,std::map<std::string, std::string> header_attributes)
 			std::ostringstream oss;
 			oss <<"[handle_post]	The ressource "<<response.ressourcePath <<" already exist";
 			webservLogger.log(LVL_DEBUG, oss);
-		}
-		std::vector<std::string> cgi_ext;
-		cgi_ext.push_back(".php");
-		cgi_ext.push_back(".py");
-		std::string cgi = detect_cgi(response.ressourcePath, cgi_ext);
-		if (cgi != "") // une extension cgi a ete detecte das l'uri
-		{
-		{
-			std::ostringstream oss;
-			oss <<"[handle_post]	cgi file detected ==> handle_post_cgi()";
-			webservLogger.log(LVL_DEBUG, oss);
-		}
-		return handle_post_cgi(response, cgi, config, locationIndex, header_attributes);
 		}
 		return  response_error(HTTP_STATUS_CONFLICT, config, locationIndex);
 	}
