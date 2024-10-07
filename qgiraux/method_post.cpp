@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:49:40 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/10/07 14:59:04 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/10/07 16:30:20 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,14 +53,19 @@ void Server::method_post(header_infos& header, std::vector<unsigned char> body, 
             oss << "[method post] Transferred " << bytes_read << " bytes to " << header.ressourcePath;
             webservLogger.log(LVL_DEBUG, oss);
         }
-        if (-1 == send(fd, head.c_str(), head.size(), 0))
-                std::cerr << "error sending header\n";
-        // Check if we failed to read or write the full content
-        if (bytes_written != bytes_read)
+        if (cgiList.find(fd) != cgiList.end())
+            method_post_cgi(fd, header);
+        else
         {
-            std::cerr << "Error: Mismatch in bytes written." << std::endl;
-            sendError(header, 500, fd, i); // Send internal server error if there's a mismatch
-            return;
+            if (-1 == send(fd, head.c_str(), head.size(), 0))
+                    std::cerr << "error sending header\n";
+            // Check if we failed to read or write the full content
+            if (bytes_written != bytes_read)
+            {
+                std::cerr << "Error: Mismatch in bytes written." << std::endl;
+                sendError(header, 500, fd, i); // Send internal server error if there's a mismatch
+                return;
+            }
         }
     }
     else

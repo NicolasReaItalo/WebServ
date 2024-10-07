@@ -62,14 +62,20 @@ void Server::chunked_post(int fd, std::vector<unsigned char> body, header_infos&
     // Check if all chunks have been received
     if (parsed_body.size() == 0)
     {
+        
         std::string head = "HTTP/1.1 204 No Content\r\n\r\n";
         {
             std::ostringstream oss;
             oss << "[method post] Transferred all the chunks to " << header.ressourcePath;
             webservLogger.log(LVL_DEBUG, oss);
         }
-        if (-1 == send(fd, head.c_str(), head.size(), 0))
-                std::cerr << "error sending header\n";
+        if (cgiList.find(fd) != cgiList.end())
+            method_post_cgi(fd, header);
+        else
+        {
+            if (-1 == send(fd, head.c_str(), head.size(), 0))
+                    std::cerr << "error sending header\n";
+        }
         close(header.fd_ressource);
         chunk.erase(fd);
         if (!header.keepAlive)

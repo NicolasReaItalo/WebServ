@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:49:44 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/10/07 15:46:34 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/10/07 16:12:36 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,6 +67,17 @@ void Server::receive_data(int fd, int i)
                 case GET_CGI:
                     method_get_cgi(header, fd, i);
                     return;
+                case POST_CGI:
+                {
+                    cgiList[fd] = header;
+                    header.toDo = POST;
+                    std::stringstream opath;
+	                opath << "/tmp/tmpfile" << &cgiList[fd];
+                    header.ressourcePath = opath.str();
+                    method_post(header, body, fd, i);
+                    return;
+                }
+
                 case DELETE:
                     method_delete(header, fd, i);
                     return;

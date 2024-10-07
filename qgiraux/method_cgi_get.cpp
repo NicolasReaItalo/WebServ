@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/02 10:40:07 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/10/07 12:14:21 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/10/07 16:34:43 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ char** MapToEnv(std::map<std::string,std::string> const & map);
 size_t	ft_strlen(const char *s);
 char	*ft_strdup(const char *s);
 
-int execute_cgi
+static int execute_cgi
 (std::string interpreter_path, std::string script_path, std::map<std::string,std::string> envMap, int p)
 {
 	

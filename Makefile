@@ -6,7 +6,7 @@
 #    By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/02/06 10:28:10 by jerperez          #+#    #+#              #
-#    Updated: 2024/10/07 14:19:42 by qgiraux          ###   ########.fr        #
+#    Updated: 2024/10/07 16:35:34 by qgiraux          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -39,6 +39,7 @@ SRCS_QGIRAUX_FILES	= 	chunk_send.cpp\
 						generate_index_page.cpp\
 						method_autoindex.cpp\
 						method_cgi_get.cpp\
+						method_cgi_post.cpp\
 						method_delete.cpp\
 						method_error.cpp\
 						method_get.cpp\

@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/07 11:36:40 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/10/07 11:38:29 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/10/07 16:35:12 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,8 +17,8 @@ char** MapToEnv(std::map<std::string,std::string> const & map);
 size_t	ft_strlen(const char *s);
 char	*ft_strdup(const char *s);
 
-int execute_cgi
-(std::string interpreter_path, std::string script_path, std::map<std::string,std::string> envMap, int p)
+static int execute_cgi
+(std::string interpreter_path, std::string script_path, std::map<std::string,std::string> envMap, int p, int q)
 {
 	
 	char **env = MapToEnv(envMap);
@@ -37,34 +37,43 @@ int execute_cgi
 		delete [] cmd;
 		exit(EXIT_FAILURE);
 	}
+	if (dup2(q, STDIN_FILENO) == -1) {
+		perror("dup2");
+		close(p);
+		close(q);
+		freeEnv(env);
+		delete [] cmd[0];
+		delete [] cmd[1];
+		delete [] cmd;
+		exit(EXIT_FAILURE);
+	}
 	execve(cmd[0], cmd, env);
 	close(p);
+	close (q);
 	freeEnv(env);
 	delete [] cmd[0];
 	delete [] cmd[1];
 	delete [] cmd;
-	return 1;
+	exit (0);
 }
 
-void Server::method_post_cgi(header_infos& header, int fd, int i)
+void Server::method_post_cgi(int fd, header_infos& header)
 {
-	(void)i;
 	{
 		std::ostringstream oss;
 		oss << "[method CGI post] starting for fd " << fd;
 		webservLogger.log(LVL_INFO, oss);
 	}
-	header.timestamp = std::time(NULL);
+	
+	int q = open(header.ressourcePath.c_str(), O_RDWR);
 	std::stringstream opath;
-    std::stringstream ipath;
 	opath << "/tmp/tmpfile" << &header;
-    opath << "/tmp/tmpinfile" << &header;
+	std::cout << opath.str().c_str() << std::endl;
 	int tr = open(opath.str().c_str(), O_RDWR | O_CREAT, S_IRUSR | S_IWUSR);
 	if (tr == -1) {
 		std::cerr << "Failed to open file: " << strerror(errno) << std::endl << opath.str() << std::endl;
 		return;
-	}int tr = open(ipath.str().c_str(), O_RDWR | O_CREAT, S_IRUSR | S_IWUSR);
-    
+	}
 	header.uri = opath.str();
 	pid_t pid = fork();
 	
@@ -75,7 +84,7 @@ void Server::method_post_cgi(header_infos& header, int fd, int i)
 	}
 	if (pid == 0)
 	{
-		execute_cgi(header.interpreterPath, header.ressourcePath, header.envMap, tr);
+		execute_cgi(header.interpreterPath, header.ressourcePath, header.envMap, tr, q);
 		close(tr);
 		exit (0);
 	}
@@ -86,5 +95,5 @@ void Server::method_post_cgi(header_infos& header, int fd, int i)
 		cgiList[fd] = header;
 		close(tr);
 	}
-		
+
 }

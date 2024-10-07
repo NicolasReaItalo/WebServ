@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:49:46 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/10/07 13:39:37 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/10/07 16:30:01 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,6 +113,7 @@ class Server
 
         void method_get(const header_infos& header, int fd, int i);
         void method_get_cgi(header_infos& header, int fd, int i);
+        void method_post_cgi(int fd, header_infos& header);
         void method_post(header_infos& header, std::vector<unsigned char> body, int fd, int i);
         void method_delete(const header_infos& header, int fd, int i);
         void method_error(const header_infos& header, int fd, int i);
