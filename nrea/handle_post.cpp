@@ -6,7 +6,7 @@
 /*   By: nrea <nrea@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/23 10:46:13 by nrea              #+#    #+#             */
-/*   Updated: 2024/10/01 14:44:02 by nrea             ###   ########.fr       */
+/*   Updated: 2024/10/07 14:53:56 by nrea             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,10 +50,10 @@ int locationIndex,std::map<std::string, std::string> header_attributes)
 	{
 		{
 		std::ostringstream oss;
-		oss <<"[handle_post]	:" <<parent;
+		oss <<"[handle_post]	 the parent folder doesn't exist :" <<parent;
 		webservLogger.log(LVL_DEBUG, oss);
 		}
-		return response_error(HTTP_STATUS_INTERNAL_SERVER_ERROR, config, locationIndex);
+		return response_error(HTTP_STATUS_FORBIDDEN, config, locationIndex);
 	}
 	{
 		std::ostringstream oss;
@@ -106,12 +106,12 @@ int locationIndex,std::map<std::string, std::string> header_attributes)
 
 
 // On verifie que le type du fichier recu est accepte par le server
-	if (header_attributes["Content-Type"] != "")
-		response.contentType = header_attributes["Content-Type"];
-	else
-		response.contentType = get_mime_type(response.ressourcePath);
-	if (!matchAcceptServerContentTypes(header_attributes["Content-Type"],mimeList))
-			return response_error(HTTP_STATUS_CONFLICT, config, locationIndex);
+	// if (header_attributes["Content-Type"] != "")
+	// 	response.contentType = header_attributes["Content-Type"];
+	// else
+	// 	response.contentType = get_mime_type(response.ressourcePath);
+	// if (!matchAcceptServerContentTypes(header_attributes["Content-Type"],mimeList))
+	// 		return response_error(HTTP_STATUS_CONFLICT, config, locationIndex);
 
 	response.toDo = POST;
 	response.keepAlive = header_attributes["Connection"] == "keep-alive";
