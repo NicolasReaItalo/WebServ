@@ -1,34 +1,39 @@
 import json, requests, cgi
 
+cities = {
+"paris":{
+	"longitude":"2.33",
+	"latitude":"48.866667"
+},
+"tokyo":{
+	"longitude":"139.691706",
+	"latitude":"35.689487"
+},
+"new-york":{
+	"longitude":"-73.954468",
+	"latitude":"40.711874"
+}
+	}
+
+
 form = cgi.FieldStorage()
 
-w_city = form.getvalue('city')
-if w_city is None:
+w_city = form.getvalue('select')
+if w_city is None or w_city not in cities:
 	w_city = "paris"
 
+
+
+
 def coordinates(city: str)->dict:
-	cities = {
-	"paris":{
-		"longitude":"2.33",
-		"latitude":"48.866667"
-	},
-	"tokyo":{
-		"longitude":"139.691706",
-		"latitude":"35.689487"
-	},
-	"new-york":{
-		"longitude":"-73.954468",
-		"latitude":"40.711874"
-	}
-	}
 	if city not in cities:
 		city = "paris"
 	return cities[city]
 
 
 url = f"https://api.open-meteo.com/v1/forecast?\
-latitude={coordinates('tokyo').get('latitude')}\
-&longitude={coordinates('tokyo').get('longitude')}\
+latitude={coordinates(w_city).get('latitude')}\
+&longitude={coordinates(w_city).get('longitude')}\
 &hourly=apparent_temperature,weather_code\
 &forecast_days=1"
 
@@ -55,7 +60,7 @@ def	error():
 
 # Ouverture des fichiers utils
 try:
-	with open("weather/weather_codes.json", 'r') as file:
+	with open("html-files/weather/weather_codes.json", 'r') as file:
 		try:
 			weather_codes = json.load(file)
 		except Exception as e:
@@ -66,6 +71,7 @@ try:
 		exit()
 except FileNotFoundError:
 	error()
+	print("")
 	exit()
 
 
@@ -129,7 +135,7 @@ def render_template(file_path):
 
 # fin fonctions templates
 header = "Content-type: text/html\r\n"
-body = render_template('weather/template.html')
+body = render_template('html-files/weather/template.html')
 if len(body) == 0:
 	error()
 	exit()

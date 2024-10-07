@@ -6,7 +6,11 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/23 10:46:13 by nrea              #+#    #+#             */
+<<<<<<< HEAD
 /*   Updated: 2024/10/07 14:52:43 by qgiraux          ###   ########.fr       */
+=======
+/*   Updated: 2024/10/07 14:53:56 by nrea             ###   ########.fr       */
+>>>>>>> 3857f45f47a17b0c1cea98fde1a7e3db9b1b3905
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,10 +54,10 @@ int locationIndex,std::map<std::string, std::string> header_attributes)
 	{
 		{
 		std::ostringstream oss;
-		oss <<"[handle_post]	:" <<parent;
+		oss <<"[handle_post]	 the parent folder doesn't exist :" <<parent;
 		webservLogger.log(LVL_DEBUG, oss);
 		}
-		return response_error(HTTP_STATUS_INTERNAL_SERVER_ERROR, config, locationIndex);
+		return response_error(HTTP_STATUS_FORBIDDEN, config, locationIndex);
 	}
 	{
 		std::ostringstream oss;
