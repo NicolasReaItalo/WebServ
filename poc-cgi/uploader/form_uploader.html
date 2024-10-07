@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>CGI UPLOADER</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+	<div class="uploader-app">
+		<h1>UPLOADER</h1>
+        <h2>This extraordinary app <br> can upload three files at once!</h2>
+		<form action="/uploader/uploader.py" method="POST" enctype="multipart/form-data">
+			<div class="upload-list">
+				<input type="file" id="file1" name="file1"  required>
+				<input type="file" id="file2" name="file2" required>
+				<input type="file" id="file3" name="file3" required>
+			</div>
+			<button>Upload</button>
+		</form>
+
+    </div>
+
+</body>
+</html>
+
+<!-- nc -l 5000
+
+<form action="http://127.0.0.1:5000/uploader/uploader.py"
+-->
