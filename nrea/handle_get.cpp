@@ -6,7 +6,7 @@
 /*   By: nrea <nrea@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/18 13:27:16 by nrea              #+#    #+#             */
-/*   Updated: 2024/10/08 11:30:33 by nrea             ###   ########.fr       */
+/*   Updated: 2024/10/08 14:55:53 by nrea             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,7 +95,11 @@ ConfigServer  * config,int locationIndex,std::map<std::string, std::string> head
 	//On verifie que le content-type est autorise
 	if (!matchAcceptContentTypes(response.contentType, header_attributes["Accept"]))
 		return response_error(HTTP_STATUS_NOT_ACCEPTABLE, config, locationIndex);
-	response.keepAlive = header_attributes["Connection"] == "keep-alive";
+	if (header_attributes.find("Connection") != header_attributes.end() &&
+	header_attributes["Connection"] == "close")
+		response.keepAlive = false;
+	else
+		response.keepAlive = true;
 
 	return response;
 }

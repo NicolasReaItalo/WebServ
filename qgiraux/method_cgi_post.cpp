@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   method_cgi_post.cpp                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
+/*   By: nrea <nrea@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/07 11:36:40 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/10/08 12:41:24 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/10/08 13:19:59 by nrea             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,14 +20,14 @@ char	*ft_strdup(const char *s);
 static int execute_cgi
 (std::string interpreter_path, std::string script_path, std::map<std::string,std::string> envMap, int p, int q)
 {
-	
+
 	char **env = MapToEnv(envMap);
 	char **cmd = new char *[3];
-	
+
 	cmd[0] = strdup(interpreter_path.c_str());
 	cmd[1] = strdup(script_path.c_str());
 	cmd[2] = NULL;
-	
+
 
 	if (dup2(p, STDOUT_FILENO) == -1) {
 		perror("dup2");
@@ -65,8 +65,12 @@ void Server::method_post_cgi(int fd, header_infos& header)
 		oss << "[method CGI post] starting for fd " << fd;
 		webservLogger.log(LVL_INFO, oss);
 	}
-	
+
 	int q = open(header.uri.c_str(), O_RDWR);
+	if (q == -1) {
+		std::cerr << "Failed to open file: " << strerror(errno) << std::endl << header.uri << std::endl;
+		return;
+	}
 	std::stringstream opath;
 	opath << "/tmp/tmpfile" << &header;
 	std::cout << opath.str().c_str() << std::endl;
@@ -77,7 +81,7 @@ void Server::method_post_cgi(int fd, header_infos& header)
 	}
 	header.uri = opath.str();
 	pid_t pid = fork();
-	
+
 	if (pid == -1)
 	{
 		std::cerr << "fork" << std::endl;

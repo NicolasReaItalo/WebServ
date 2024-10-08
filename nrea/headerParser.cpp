@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   headerParser.cpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
+/*   By: nrea <nrea@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/12 16:20:48 by nrea              #+#    #+#             */
-/*   Updated: 2024/10/08 11:06:30 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/10/08 14:24:48 by nrea             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -136,6 +136,20 @@ header_infos Server::headerParser
 		return response_error(HTTP_STATUS_HTTP_VERSION_NOT_SUPPORTED, serverconfig, default_location);
 	}
 ////---------------------------------------
+///-----------Verifiation que Content-Length et Content-Encoding n'ont pas de conflit
+/*A sender MUST NOT send a Content-Length header field in
+any message that contains a Transfer-Encoding header field.*/
+	std::map<std::string, std::string>::iterator cl = header_attributes.find("Content-Length");
+	std::map<std::string, std::string>::iterator te = header_attributes.find("Transfer-Encoding");
+	if ((cl != header_attributes.end() && te != header_attributes.end()))
+	{
+		{
+		std::ostringstream oss;
+		oss <<"[HeaderParser] Both Content-Length and Content-Encoding are set in the header";
+		webservLogger.log(LVL_DEBUG, oss);
+		}
+		return response_error(HTTP_STATUS_BAD_REQUEST, serverconfig, default_location);
+	}
 
 ///ON VERIFIE QUE L'URI N'EST PAS VIDE ET COMMENCE PAR '/'-------------------------------------------
 	if (header_attributes["Raw_URI"].size() == 0 || header_attributes["Raw_URI"][0] != '/')
