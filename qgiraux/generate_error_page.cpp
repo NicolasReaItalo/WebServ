@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:49:30 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/10/07 14:29:19 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/10/08 10:44:49 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ std::string Server::generate_error_page(int errcode)
     << "Go Back to Home \n"
     << "</a></div> \n"
     << " <div class=\"bloc\">\n"
-	<< "<img src=\"https://http.cat/images/" << errcode << "\" alt=" << errcode <<" class=\"resizable-image\">\n"
+	<< "<img src=\"https://http.cat/images/" << errcode << ".jpg\" alt=" << errcode <<" class=\"resizable-image\">\n"
 	<< "	</div></div></body> </html>\n";
     return os.str();
 }
