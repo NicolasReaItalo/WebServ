@@ -156,7 +156,7 @@ int Server::ServerStart()
             /*if something went wrong with the CGI*/
             if (pidStat == -1)
             {
-                perror("CGI error: ");
+                // perror("CGI error: ");
                 break;
             }
             int tmp = ito->first;

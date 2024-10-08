@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/02 10:40:07 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/10/07 16:34:43 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/10/08 10:58:37 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,6 @@ void Server::method_get_cgi(header_infos& header, int fd, int i)
 	header.timestamp = std::time(NULL);
 	std::stringstream opath;
 	opath << "/tmp/tmpfile" << &header;
-	std::cout << opath.str().c_str() << std::endl;
 	int tr = open(opath.str().c_str(), O_RDWR | O_CREAT, S_IRUSR | S_IWUSR);
 	if (tr == -1) {
 		std::cerr << "Failed to open file: " << strerror(errno) << std::endl << opath.str() << std::endl;

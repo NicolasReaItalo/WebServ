@@ -141,4 +141,5 @@ if len(body) == 0:
 	exit()
 
 print(f"{header}\r\n{body}",end='\r\n')
+exit()
 

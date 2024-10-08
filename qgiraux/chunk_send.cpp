@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:49:25 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/10/07 12:21:38 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/10/08 11:44:44 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,11 @@ void Server::send_chunk(int fd, int i, const header_infos& header)
     {
         chunk[fd] = header;
 
-
+        if (fd_set.find(fd) == fd_set.end())
+        {
+            fdsets tmp = {"0", "0", time, true, false};
+            fd_set[fd] = tmp;
+        }
         fd_set[chunk[fd].fd_ressource] = fd_set[fd];
         fd_set[chunk[fd].fd_ressource].listener = false;
         std::string mime = mimeList[get_mime_type(chunk[fd].ressourcePath)];
@@ -73,7 +77,7 @@ void Server::send_chunk(int fd, int i)
     std::streamsize bytesRead = file.read(reinterpret_cast<char*>(tmp.data()), CHUNK_SIZE).gcount();
     std::string data;
     std::stringstream oss;
-    if (file.eof() || bytesRead < 0)
+    if (file.eof() || bytesRead < CHUNK_SIZE)
     {
         oss << std::hex << bytesRead << "\r\n"; 
         oss.write(reinterpret_cast<const char*>(&tmp[0]), bytesRead);
@@ -107,9 +111,10 @@ void Server::send_chunk(int fd, int i)
             webservLogger.log(LVL_ERROR, oss);
             close(fd);
             fd_set.erase(fd);
+            return;
         }
-        close(chunk[fd].fd_ressource);
-        fd_set.erase(chunk[fd].fd_ressource);
+        // close(chunk[fd].fd_ressource);
+        // fd_set.erase(chunk[fd].fd_ressource);
         chunk.erase(fd);
         if (cgiList.find(fd) != cgiList.end())
         {

@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:49:38 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/10/07 11:09:38 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/10/08 11:37:15 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,10 +60,6 @@ void Server::method_get(const header_infos& header, int fd, int i)
         if (header.bodySize != 0)
             ss << "Content-Length: " << header.bodySize << "\r\n"
             << "time: " << time_str << "\r\n" << "\r\n";
-
-            
-    // std::cout << "\n\nFD " << fd << " I " << i << std::endl << std::endl;
-
     
         std::string head = ss.str();
         if (fcntl(fd, F_GETFD) != -1)

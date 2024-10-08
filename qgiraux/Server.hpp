@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:49:46 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/10/07 16:30:01 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/10/08 12:09:45 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@
 
 #define MAX_EVENTS 500
 #define BUFFER_SIZE 10000
-#define CHUNK_SIZE 100
+#define CHUNK_SIZE 10000
 #define TIMEOUT 5
 
 #define ERROR 1
