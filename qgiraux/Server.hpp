@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:49:46 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/10/08 12:09:45 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/10/08 14:00:03 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,6 +53,7 @@ typedef struct s_header_infos
 {
 	int toDo;
     std::string uri;
+    std::string infile;
 	unsigned long bodySize;
 	std::string ressourcePath;
 	std::string contentType;

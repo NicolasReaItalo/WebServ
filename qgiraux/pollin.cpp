@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:49:44 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/10/08 12:41:03 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/10/08 14:27:39 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,8 +72,9 @@ void Server::receive_data(int fd, int i)
                     cgiList[fd] = header;
                     header.toDo = POST;
                     std::stringstream opath;
-	                opath << "/tmp/tmpfile" << &cgiList[fd];
-                    header.uri = opath.str();
+	                opath << "/tmp/tmpfilein" << &header;
+                    header.infile = header.ressourcePath;
+                    header.ressourcePath = opath.str();
                     method_post(header, body, fd, i);
                     return;
                 }

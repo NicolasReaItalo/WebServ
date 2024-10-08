@@ -1,5 +1,3 @@
-#!/usr/bin/python
-
 import cgi, cgitb
 
 form = cgi.FieldStorage()
@@ -17,10 +15,11 @@ body += f"""<body>
 </html>"""
 
 header += "HTTP/1.1 200 OK\r\n"
-header += "Content-type: text/html\r\n"
+header += "Content-Type: text/html\r\n"
 header += f"Content-Length: {len(body.encode('utf-8'))}\r\n"
 
 print(f"{header}\r\n{body}",end='')
+exit()
 
 
 

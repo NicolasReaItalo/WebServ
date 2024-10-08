@@ -163,10 +163,13 @@ int Server::ServerStart()
             /*if the CGI ended properly*/
             if (pidStat != 0)
             {
+                std::cout << "CGI ENDED\nprocessing on fd" << tmp << "\n";
                 cgiList[tmp].ressourcePath = cgiList[tmp].uri;
                 parse_cgi_tmp_file(cgiList[tmp]);
-                ito->second.bodySize = getFileSize(ito->second.uri.c_str());
+                cgiList[tmp].bodySize = getFileSize(cgiList[tmp].uri.c_str());
                 method_get(cgiList[tmp], tmp, 0);
+                cgiList.erase(tmp);
+                ito = cgiList.begin();
             }
             /*if the CGI timed out*/
             else if (time - cgiList[tmp].timestamp > TIMEOUT)

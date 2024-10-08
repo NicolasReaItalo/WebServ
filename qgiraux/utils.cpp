@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:50:06 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/10/08 12:06:36 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/10/08 15:00:45 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -247,7 +247,8 @@ void Server::failed_to_send(int fd)
 }
 
 
-void removeFirstThreeLines(const std::string& filename) {
+void removeFirstThreeLines(const std::string& filename)
+{
     std::ifstream inFile(filename.c_str());
     
     if (!inFile) {
@@ -255,7 +256,7 @@ void removeFirstThreeLines(const std::string& filename) {
         return;
     }
 
-    // Temporary file to store the content after removing the first 3 lines
+    // Temporary file to store the content after removing the HTTP header
     std::string tempFilename = filename + ".tmp";
     std::ofstream outFile(tempFilename.c_str());
 
@@ -266,11 +267,14 @@ void removeFirstThreeLines(const std::string& filename) {
     }
 
     std::string line;
-    int lineCount = 0;
+    bool headerEnded = false;
 
-    // Skip the first two lines
-    while (lineCount < 2 && std::getline(inFile, line)) {
-        ++lineCount;
+    // Skip lines until the end of the HTTP header is found
+    while (std::getline(inFile, line)) {
+        if (line == "\r" || line == "") {
+            headerEnded = true;
+            break;
+        }
     }
 
     // Write the remaining lines to the temporary file
@@ -291,7 +295,7 @@ void removeFirstThreeLines(const std::string& filename) {
 
 int Server::parse_cgi_tmp_file(header_infos& header)
 {
-    int tr = open(header.uri.c_str(), O_RDWR);
+    int tr = open(header.ressourcePath.c_str(), O_RDWR);
     if (tr == -1)
     {
         std::ostringstream oss;
@@ -336,7 +340,7 @@ int Server::parse_cgi_tmp_file(header_infos& header)
     {
         if (line.find("Content-Type:") != std::string::npos)
         {
-            header.contentType = line.substr(line.find(":") + 2); // Extract content type value
+            header.contentType = line.substr(line.find(":") + 2, line.size() - line.find(":") - 3); // Extract content type value
             break;
         }
     }

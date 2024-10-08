@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/02 10:40:07 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/10/08 10:58:37 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/10/08 14:19:55 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,7 +79,6 @@ void Server::method_get_cgi(header_infos& header, int fd, int i)
 	else
 	{
 		header.cgi_pid = pid;
-		// close(header.cgi_pid);
 		cgiList[fd] = header;
 		close(tr);
 	}

@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:49:58 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/09/27 15:26:24 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/10/08 15:13:25 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,6 +47,10 @@ body {
 	padding: 10px; 
 	border-radius: 5px; 
 	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); 
+	flex-direction: row;
+	align-items: center;
+	justify-content: center;
+	
 } 
 
 .resizable-image {
@@ -62,6 +66,11 @@ body {
 /* Force the third image to appear on a new line */
 .resizable-image:nth-child(3) {
     flex-basis: 100%; /* Takes up full width, moving it to the next line */
+}
+
+.bloc a {
+	display: block;
+	margin: 10px 0;
 }
 
 h1 { 
@@ -102,4 +111,30 @@ a:hover {
 
 a:hover { 
 	background-color: #aaaaad; 
+}
+
+
+button {
+	background-color: rgba(0, 0, 0, 0.2);
+	border: solid;
+	border-width: 1px;
+	border-radius: 5px;
+	font-size: 30px;
+	color: #555;
+	padding: 0 0em 0 0;
+	margin: 0;
+	width: 100%;
+}
+
+.home-button {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #728aa3;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+}
+
+.home-button:hover {
+    background-color: #798b9e;
 }
