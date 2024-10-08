@@ -1,4 +1,5 @@
-import json, requests, cgi
+import json, requests, cgi, os
+from http.cookies import SimpleCookie
 
 cities = {
 "paris":{
@@ -18,9 +19,16 @@ cities = {
 
 form = cgi.FieldStorage()
 
+# Check for 'select' in cookies
+cookie = SimpleCookie()
+if 'HTTP_COOKIE' in os.environ:
+    cookie.load(os.environ['HTTP_COOKIE'])
+
 w_city = form.getvalue('select')
+if w_city is None and 'select' in cookie:
+    w_city = cookie['select'].value
 if w_city is None or w_city not in cities:
-	w_city = "paris"
+    w_city = "paris"
 
 
 
@@ -134,7 +142,7 @@ def render_template(file_path):
 ##
 
 # fin fonctions templates
-header = "Content-type: text/html\r\n"
+header = "Content-type: text/html\r\nSet-Cookie: select=" + w_city + "; Max-Age=3600; SameSite=Strict\r\n"
 body = render_template('html-files/weather/template.html')
 if len(body) == 0:
 	error()

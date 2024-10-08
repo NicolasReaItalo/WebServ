@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:49:46 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/10/08 14:00:03 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/10/08 16:32:13 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,6 +69,7 @@ typedef struct s_header_infos
     std::streampos readIndex;
 	class ConfigServer *configServer;
     int i_ev;
+    std::string cookie;
 } header_infos;
 
 typedef struct s_fdsets

@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:50:06 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/10/08 15:00:45 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/10/08 16:32:59 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -341,6 +341,11 @@ int Server::parse_cgi_tmp_file(header_infos& header)
         if (line.find("Content-Type:") != std::string::npos)
         {
             header.contentType = line.substr(line.find(":") + 2, line.size() - line.find(":") - 3); // Extract content type value
+            break;
+        }
+        if (line.find("Set-Cookie:") != std::string::npos)
+        {
+            header.cookie = line.substr(line.find(":") + 2, line.size() - line.find(":") - 3); // Extract content type value
             break;
         }
     }
