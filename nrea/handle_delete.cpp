@@ -6,7 +6,7 @@
 /*   By: nrea <nrea@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/24 11:18:45 by nrea              #+#    #+#             */
-/*   Updated: 2024/09/27 15:34:51 by nrea             ###   ########.fr       */
+/*   Updated: 2024/10/08 13:31:34 by nrea             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,6 +65,7 @@ int locationIndex, std::map<std::string, std::string> header_attributes)
 	response.locationIndex = locationIndex;
 	response.configServer = config;
 	response.keepAlive = false;
+	response.chunked = false;
 
 	// response pour initialiser ces champs vides
 	response.interpreterPath = "";

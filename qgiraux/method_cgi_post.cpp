@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/07 11:36:40 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/10/08 14:40:17 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/10/08 15:17:25 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,10 +20,10 @@ char	*ft_strdup(const char *s);
 static int execute_cgi
 (std::string interpreter_path, std::string script_path, std::map<std::string,std::string> envMap, int p, int q)
 {
-	
+
 	char **env = MapToEnv(envMap);
 	char **cmd = new char *[3];
-	
+
 	cmd[0] = strdup(interpreter_path.c_str());
 	cmd[1] = strdup(script_path.c_str());
 	cmd[2] = NULL;
@@ -69,7 +69,7 @@ void Server::method_post_cgi(int fd, header_infos& header)
 	std::cout << "uri is " << header.uri << std::endl;
 	std::cout << "infile is " << header.infile << std::endl;
 	pid_t pid = fork();
-	
+
 	if (pid == -1)
 	{
 		std::cerr << "fork" << std::endl;
