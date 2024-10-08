@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+         #
+#    By: nrea <nrea@student.42.fr>                  +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/02/06 10:28:10 by jerperez          #+#    #+#              #
-#    Updated: 2024/10/07 16:35:34 by qgiraux          ###   ########.fr        #
+#    Updated: 2024/10/08 11:12:38 by nrea             ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -21,7 +21,8 @@ SRCS_NREA_FILES	=	headerParser.cpp\
 					handle_post.cpp\
 					handle_delete.cpp\
 					handle_get_dir.cpp\
-					handle_cgi.cpp\
+					handle_get_cgi.cpp\
+					handle_post_cgi.cpp\
 					response_error.cpp\
 					response_autoindex.cpp\
 					response_redirect.cpp\
