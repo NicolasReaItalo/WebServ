@@ -56,7 +56,7 @@ header_infos Server::handle_dir(header_infos &response,
 				std::vector<std::string> cgi_ext;
 				cgi_ext.push_back(".php");
 				cgi_ext.push_back(".py");
-				std::string cgi = detect_cgi(response.ressourcePath, cgi_ext);
+				std::string cgi = detect_cgi(response.ressourcePath);
 				if (cgi != "") // une extension cgi a ete detecte das l'uri
 				{
 					{
@@ -64,7 +64,7 @@ header_infos Server::handle_dir(header_infos &response,
 						oss <<"[handle_get_dir]	cgi file detected";
 						webservLogger.log(LVL_DEBUG, oss);
 					}
-					return handle_cgi(response,cgi,config, locationIndex, header_attributes);
+					return handle_get_cgi(response,cgi,config, locationIndex, header_attributes);
 				}
 
 

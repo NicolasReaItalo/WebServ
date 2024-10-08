@@ -6,7 +6,7 @@
 /*   By: nrea <nrea@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/30 15:42:22 by nrea              #+#    #+#             */
-/*   Updated: 2024/10/01 14:12:35 by nrea             ###   ########.fr       */
+/*   Updated: 2024/10/08 11:29:58 by nrea             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,8 +75,11 @@ void freeEnv(char **env)
 // with ? has already been removed
 // /cgi-bin/my_script.cgi/path/to/resource
 std::string	detect_cgi
-(std::string const &uri, std::vector<std::string> const &cgi_ext)
+(std::string const &uri)
 {
+	std::vector<std::string> cgi_ext;
+	cgi_ext.push_back(".php");
+	cgi_ext.push_back(".py");
 	std::vector<std::string>::const_iterator it;
 
 	for (it = cgi_ext.begin(); it != cgi_ext.end(); it++)
