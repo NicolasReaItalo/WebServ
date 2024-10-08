@@ -6,7 +6,7 @@
 /*   By: nrea <nrea@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/18 13:44:25 by nrea              #+#    #+#             */
-/*   Updated: 2024/10/08 11:14:16 by nrea             ###   ########.fr       */
+/*   Updated: 2024/10/08 11:27:18 by nrea             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,6 +55,8 @@ header_infos response_redirect(std::string  &return_code, std::string  &redir_ur
 
 header_infos handle_get_cgi(header_infos & response, std::string cgi, ConfigServer *config,
 int locationIndex, std::map<std::string,std::string> &header_attributes);
+header_infos handle_post_cgi(header_infos & response, std::string cgi,
+ConfigServer *config,int locationIndex, std::map<std::string,std::string> &header_attributes);
 bool contains_only_numeric(std::string str);
 long getFileSize(std::string filename);
 std::string getFileExtension(std::string uri);

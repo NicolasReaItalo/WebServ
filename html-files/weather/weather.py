@@ -65,14 +65,14 @@ try:
 			weather_codes = json.load(file)
 		except Exception as e:
 			error()
-			exit()
+			exit(1)
 	if not isinstance(weather_codes, dict):
 		error()
-		exit()
+		exit(1)
 except FileNotFoundError:
 	error()
 	print("")
-	exit()
+	exit(1)
 
 
 # requet a openweather et verification du json
@@ -80,15 +80,15 @@ except FileNotFoundError:
 response = requests.get(url)
 if response.status_code != 200:
 	error()
-	exit()
+	exit(1)
 weather_infos = response.json()
 if not "hourly" in weather_infos:
 	error()
-	exit()
+	exit(1)
 hourly = weather_infos.get('hourly')
 if not "time" in hourly or not "apparent_temperature" in hourly or not "weather_code" in hourly:
 	error()
-	exit()
+	exit(1)
 
 # Fonctions templates
 
@@ -138,7 +138,7 @@ header = "Content-type: text/html\r\n"
 body = render_template('html-files/weather/template.html')
 if len(body) == 0:
 	error()
-	exit()
+	exit(1)
 
 print(f"{header}\r\n{body}",end='\r\n')
-
+exit(0)

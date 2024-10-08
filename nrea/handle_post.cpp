@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   handle_post.cpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
+/*   By: nrea <nrea@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/23 10:46:13 by nrea              #+#    #+#             */
-/*   Updated: 2024/10/07 15:52:01 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/10/08 11:31:03 by nrea             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,17 @@ int locationIndex,std::map<std::string, std::string> header_attributes)
 		return  response_error(HTTP_STATUS_FORBIDDEN, config, locationIndex);
 	}
 
-	///<========== TODO ajouter le cas de CGI (une requete POST vers un script CGI existant)
+// On cherche a detecter un eventuel cgi
+	std::string cgi = detect_cgi(header_attributes["URI"]);
+	if (cgi != "") // une extension cgi a ete detecte das l'uri
+	{
+		{
+			std::ostringstream oss;
+			oss <<"[handle_get]	cgi file detected";
+			webservLogger.log(LVL_DEBUG, oss);
+		}
+		return handle_post_cgi(response,cgi,config, locationIndex, header_attributes);
+	}
 
 	if (file.file_exist()) // si la ressource existe deja on ne va pas l'ecraser
 	{

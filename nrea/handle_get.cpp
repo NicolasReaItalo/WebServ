@@ -6,7 +6,7 @@
 /*   By: nrea <nrea@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/18 13:27:16 by nrea              #+#    #+#             */
-/*   Updated: 2024/10/08 11:13:18 by nrea             ###   ########.fr       */
+/*   Updated: 2024/10/08 11:30:33 by nrea             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,11 +107,9 @@ header_infos Server::handle_get(header_infos &response,
 {
 	struct stat stat_buf;
 	int ret;
-	std::vector<std::string> cgi_ext;
-	cgi_ext.push_back(".php");
-	cgi_ext.push_back(".py");
+
 // On cherche a detecter un eventuel cgi
-	std::string cgi = detect_cgi(header_attributes["URI"], cgi_ext);
+	std::string cgi = detect_cgi(header_attributes["URI"]);
 	if (cgi != "") // une extension cgi a ete detecte das l'uri
 	{
 		{

@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   Logger.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
+/*   By: nrea <nrea@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 10:17:49 by nrea              #+#    #+#             */
-/*   Updated: 2024/10/08 10:46:27 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/10/08 11:33:21 by nrea             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Logger.hpp"
 
-Logger webservLogger(LVL_NO_LOG);
+Logger webservLogger(LVL_DEBUG);
 
 std::string Logger::timestamp(void)
 {
