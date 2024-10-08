@@ -8,6 +8,16 @@
 </head>
 <body>
     <div class="weather-app">
+        <h1>Weather app</h1>
+        <h2 class="chooser">Choose a city</h2>
+		<form action="/weather/weather.py" method="GET">
+			<select name="select" class="city_selection">
+				<option value="paris" id="city" selected>Paris</option>
+				<option value="tokyo" id="city">Tokyo</option>
+				<option value="new-york" id="city">New-York</option>
+			</select>
+			<p><button>Submit</button></p>
+		</form>
         <h1>Weather today <br> in</h1>
 		<h2>{w_city.capitalize()}</h2>
         <div class="weather-list">

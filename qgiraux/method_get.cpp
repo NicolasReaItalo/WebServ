@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:49:38 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/10/08 14:55:07 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/10/08 15:51:18 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,8 @@ void Server::method_get(const header_infos& header, int fd, int i)
         time_str.erase(time_str.find_last_not_of("\n") + 1);
         std::stringstream ss;
         ss  << "HTTP/1.1 200 OK\r\n"
-        << "Content-Type: " << header.contentType << "\r\n";
+        << "Content-Type: " << header.contentType << "\r\n"
+        << "Set-Cookie: sessionId=on; Max-Age=3600\r\n";
         if (header.bodySize != 0)
             ss << "Content-Length: " << header.bodySize << "\r\n"
             << "time: " << time_str << "\r\n" << "\r\n";
@@ -69,7 +70,6 @@ void Server::method_get(const header_infos& header, int fd, int i)
                 oss << "[method get] Sending header 200 -OK to " << fd << "...";
                 webservLogger.log(LVL_INFO, oss);   
             }
-            std::cout << "header is " << head.c_str() << std::endl;
             if (-1 == send(fd, head.c_str(), head.size(), 0))
             {
                 std::ostringstream oss;
