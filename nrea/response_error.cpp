@@ -6,7 +6,7 @@
 /*   By: nrea <nrea@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 10:13:31 by nrea              #+#    #+#             */
-/*   Updated: 2024/09/30 18:43:07 by nrea             ###   ########.fr       */
+/*   Updated: 2024/10/08 10:50:28 by nrea             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,8 @@ header_infos response_error(std::string error_code, ConfigServer  * config,int l
 	response.ressourcePath = dummy_get_customerrorPage(); // pour TEST
 	if (response.ressourcePath.size())
 		response.bodySize = getFileSize(response.ressourcePath.c_str());
+	else
+		response.bodySize = 0;
 	response.configServer = config;
 	response.locationIndex = locationIndex;
 	response.chunked = false;
