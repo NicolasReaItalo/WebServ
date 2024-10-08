@@ -32,6 +32,11 @@ body::before {
     text-align: center;
 }
 
+.bloc {
+    text-align: center;
+    margin-top: 20px;
+}
+
 h1 {
     margin: 0%;
     padding: 0%;
@@ -49,7 +54,9 @@ h2 {
 
 .weather-list {
     display: flex;
+    justify-content: center;
     flex-direction: column;
+    flex-wrap: wrap;
     gap: 15px;
 }
 
@@ -116,4 +123,17 @@ button {
 	padding: 0 0em 0 0;
 	margin: 0;
 	width: 100%;
+}
+
+.home-button {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #007BFF;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+}
+
+.home-button:hover {
+    background-color: #0056b3;
 }
