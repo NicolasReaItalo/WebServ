@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:49:38 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/10/08 16:34:24 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/10/08 17:03:19 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 #include <ctime>
 #include <sstream>
 
-void Server::method_get(const header_infos& header, int fd, int i)
+void Server::method_get(const header_infos& header, int fd)
 {
     {
         std::ostringstream oss;
@@ -31,7 +31,7 @@ void Server::method_get(const header_infos& header, int fd, int i)
             oss << "[method get] failed to open " << header.ressourcePath << ", sending 404 to "<<fd;
             webservLogger.log(LVL_ERROR, oss);
             }
-            sendError(header, 404, fd, i);
+            sendError(header, 404, fd);
             return;
         }
         close(tr);
@@ -41,7 +41,7 @@ void Server::method_get(const header_infos& header, int fd, int i)
         std::ostringstream oss;
         oss << "[method get] file bigger than max authorized size, sending by CHUNKS";
         webservLogger.log(LVL_INFO, oss);
-        send_chunk(fd, i, header);
+        send_chunk(fd, header);
         return ;
     }
     else

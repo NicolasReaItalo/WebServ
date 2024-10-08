@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:49:46 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/10/08 16:32:13 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/10/08 17:17:51 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,7 @@
 #define GET_CGI 7
 #define POST_CGI 8
 
+/*structure used to stock all information gotten fron a request header or the associated server configuration*/
 typedef struct s_header_infos
 {
 	int toDo;
@@ -72,6 +73,7 @@ typedef struct s_header_infos
     std::string cookie;
 } header_infos;
 
+/*all important infos on each open fds*/
 typedef struct s_fdsets
 {
     std::string address;
@@ -81,47 +83,72 @@ typedef struct s_fdsets
     bool        client;
 } fdsets;
 
+/*variable to deal with SIGINT*/
 extern volatile sig_atomic_t stopper;
+/*adding the logger to all functions*/
 extern Logger webservLogger;
 
 class Server
 {
     private :
+        /*the number of servers*/
         int list_size;
+        /*the list of all the parsed servers fron the .conf file*/
         std::list<ConfigServer> servers;
+        /*vector of the listening sockets, on which new connexions arrive*/
         std::vector<int> server_fd;
         int epoll_fd, new_socket;
+        /* number of fds loaded in epoll*/
         int nfds;
-        std::map<int, fdsets> fd_set;
+        /*vectors used to set the sockets, and to listen on them*/
         std::vector<struct sockaddr_in> address;
         std::vector<struct epoll_event> ev;
+        /*structure that stocks all the events received by epoll, that need to be dealt with*/
         struct epoll_event events[MAX_EVENTS];
+        /*on each loop, gets the time*/
         time_t time;
-
+        /*list of open fds*/
+        std::map<int, fdsets> fd_set;
+        /*list of allowed mimes, and their associated extention*/
         std::map<std::string, std::string> mimeList;
+        /*list of error codes, and their associated messages*/
         std::map<int, std::string> errorList;
+        /*list of fds on which a chunked request is being done, and their assouciated header*/
         std::map<int, header_infos> chunk;
+        /*list of fds on which a cgi isbeing done, and their assouciated header*/
         std::map<int, header_infos> cgiList;
+        /*size set by the BUFFER_SIZE, for the buffer*/
         unsigned long maxBodySize;
 
-
+        /*required to start or stop the server*/
         void set_mimeList();
         void set_errorList();
-
-        /*on an event pollin*/
-        void receive_data(int fd, int i);
         void closeAllFd();
         void killAllChildren();
+        
+        /*on loops*/
+        int ServerRun();
+        void receive_data(int fd, int i);
 
-        void method_get(const header_infos& header, int fd, int i);
-        void method_get_cgi(header_infos& header, int fd, int i);
+        /*methods that can be called by a header-request*/
+        void method_get(const header_infos& header, int fd);
+        void method_get_cgi(header_infos& header, int fd);
         void method_post_cgi(int fd, header_infos& header);
-        void method_post(header_infos& header, std::vector<unsigned char> body, int fd, int i);
-        void method_delete(const header_infos& header, int fd, int i);
-        void method_error(const header_infos& header, int fd, int i);
-        void method_autoindex(const header_infos& header, int fd, int i);
+        void method_post(header_infos& header, std::vector<unsigned char> body, int fd);
+        void method_delete(const header_infos& header, int fd);
+        void method_error(const header_infos& header, int fd);
+        void method_autoindex(const header_infos& header, int fd);
         void method_return(const header_infos& header, int fd);
 
+        /*special cases to modify behaviour of methods*/
+        void chunked_post(int fd, std::vector<unsigned char> body, header_infos& header);
+        void send_chunk(int fd, const header_infos& header);
+        void send_chunk(int fd);
+        void send_index(int fd, const header_infos& header, std::map<std::string, std::string>& index);
+        void sendError(header_infos header, int errcode, int fd);
+        void sendCustomError(header_infos header, int errcode, int fd);
+
+        /*utils used mostly to parse header*/
         std::string get_mime_type(const std::string &uri);
         header_infos headerParser(std::string rawBuffer, std::pair<std::string, std::string> interface);
 		ConfigServer * findServer(std::pair<std::string, std::string> interface, std::string host);
@@ -131,14 +158,7 @@ class Server
 		header_infos handle_delete(header_infos &response, ConfigServer  * config,int locationIndex,std::map<std::string, std::string> header_attributes);
 		header_infos handle_dir(header_infos &response,ConfigServer  * config,int locationIndex,std::map<std::string, std::string> &header_attributes);
 
-        void cgi_send(const header_infos& header, int fd, int i);
-        void chunked_post(int fd, std::vector<unsigned char> body, header_infos& header);
-        void send_chunk(int fd, int i, const header_infos& header);
-        void send_chunk(int fd, int i);
-        void send_index(int fd, const header_infos& header, std::map<std::string, std::string>& index);
-        void sendError(header_infos header, int errcode, int fd, int i);
-        void sendCustomError(header_infos header, int errcode, int fd, int i);
-
+        /*utils used mostly to run server*/
         bool is_fd_in_chunklist(int fd);
         std::string generate_error_page(int errcode);
         std::string generate_index_page(std::map<std::string, std::string> index, const header_infos& header);
@@ -149,7 +169,6 @@ class Server
     public :
         Server(std::list<ConfigServer> servers);
         int ServerStart();
-        int ServerRun();
         void ServerClose();
         ~Server();
 

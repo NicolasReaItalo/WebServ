@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/02 10:40:07 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/10/08 14:19:55 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/10/08 17:00:12 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,9 +46,8 @@ static int execute_cgi
 	return 1;
 }
 
-void Server::method_get_cgi(header_infos& header, int fd, int i)
+void Server::method_get_cgi(header_infos& header, int fd)
 {
-	(void)i;
 	{
 		std::ostringstream oss;
 		oss << "[method CGI get] starting for fd " << fd;

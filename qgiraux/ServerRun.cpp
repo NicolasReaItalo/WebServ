@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:49:52 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/10/07 14:14:27 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/10/08 17:03:48 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -114,7 +114,7 @@ int Server::ServerRun()
         /*envoi d'une response en chunks*/
         else if (events[i].events & EPOLLOUT)
         {
-            send_chunk(fd, i);
+            send_chunk(fd);
         }
 
         /*sonething went wrong*/

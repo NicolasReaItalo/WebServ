@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:50:06 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/10/08 16:32:59 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/10/08 17:04:07 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,7 +103,7 @@ void Server::set_errorList()
 
 }
 
-void Server::sendCustomError(header_infos header, int errcode, int fd, int i)
+void Server::sendCustomError(header_infos header, int errcode, int fd)
 {
     {
         std::ostringstream oss;
@@ -119,7 +119,7 @@ void Server::sendCustomError(header_infos header, int errcode, int fd, int i)
             oss << "[custom error] failed to open " << header.ressourcePath << ", sending 404 to "<<fd;
             webservLogger.log(LVL_ERROR, oss);
             }
-            sendError(header, 404, fd, i);
+            sendError(header, 404, fd);
             return;
         }
         close(tr);
@@ -129,7 +129,7 @@ void Server::sendCustomError(header_infos header, int errcode, int fd, int i)
         std::ostringstream oss;
         oss << "[custom error] file bigger than max authorized size, sending by CHUNKS";
         webservLogger.log(LVL_INFO, oss);
-        send_chunk(fd, i, header);
+        send_chunk(fd, header);
         return ;
     }
     else
@@ -189,7 +189,7 @@ void Server::sendCustomError(header_infos header, int errcode, int fd, int i)
 }
 
 /*prototype for sendError function*/
-void Server::sendError(header_infos header, int errcode, int fd, int i)
+void Server::sendError(header_infos header, int errcode, int fd)
 {
     std::string time_str = std::ctime(&time);
     std::string body;
@@ -206,7 +206,7 @@ void Server::sendError(header_infos header, int errcode, int fd, int i)
                 close(tr);
                 std::stringstream oss;             
                 header.ressourcePath = errorpage;
-                sendCustomError(header, errcode, fd, i);
+                sendCustomError(header, errcode, fd);
                 return ;
                 
             }

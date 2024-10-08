@@ -99,7 +99,7 @@ void Server::chunked_post(int fd, std::vector<unsigned char> body, header_infos&
     if (header.bodySize > size)
     {
         std::cout << size << " " << header.bodySize << std::endl;
-        sendError(header, 413, fd, header.i_ev);
+        sendError(header, 413, fd);
         close(header.fd_ressource);
         chunk.erase(fd);
         if (!header.keepAlive)
@@ -119,7 +119,7 @@ void Server::chunked_post(int fd, std::vector<unsigned char> body, header_infos&
     size_t bytes_written = write(header.fd_ressource, &(parsed_body[0]), parsed_body.size());
     if (bytes_written < 0)
     {
-        sendError(header, 500, fd, header.i_ev); // Send internal server error if there's a mismatch
+        sendError(header, 500, fd); // Send internal server error if there's a mismatch
         close(header.fd_ressource);
         chunk.erase(fd);
         remove(header.ressourcePath.c_str());
@@ -136,27 +136,4 @@ void Server::chunked_post(int fd, std::vector<unsigned char> body, header_infos&
         }
         return;
     }
-
-    // // Send 204 No Content header if all chunks have been processed
-    // std::string head = "HTTP/1.1 204 No Content\r\n\r\n";
-    // {
-    //     std::ostringstream oss;
-    //     oss << "[method post chunked] Transferred all the chunks to " << header.ressourcePath;
-    //     webservLogger.log(LVL_DEBUG, oss);
-    // }
-    // if (-1 == send(fd, head.c_str(), head.size(), 0))
-    //         std::cerr << "error sending header\n";
-    // close(header.fd_ressource);
-    // chunk.erase(fd);
-    // if (!header.keepAlive)
-    // {
-    //     if (epoll_ctl(epoll_fd, EPOLL_CTL_DEL, fd, NULL) == -1) 
-    //     {
-    //         std::ostringstream oss;
-    //         oss << "Failed to remove fd from epoll: " << strerror(errno);
-    //         webservLogger.log(LVL_ERROR, oss);
-    //     }
-    //     close(fd);
-    //     fd_set.erase(fd); // Remove the file descriptor from the fd_set
-    // }
 }

@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:49:25 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/10/08 11:44:44 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/10/08 17:02:55 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@
 #include <ctime>
 #include <fstream>
 
-void Server::send_chunk(int fd, int i, const header_infos& header)
+void Server::send_chunk(int fd, const header_infos& header)
 {
     {
         std::ostringstream oss;
@@ -49,8 +49,8 @@ void Server::send_chunk(int fd, int i, const header_infos& header)
             webservLogger.log(LVL_DEBUG, oss);
         }
         send(fd, head.c_str(), head.size(), 0);
-        events[i].events = EPOLLOUT | EPOLLET;
-        if (epoll_ctl(epoll_fd, EPOLL_CTL_MOD, fd, &events[i]) == -1)
+        events[chunk[fd].i_ev].events = EPOLLOUT | EPOLLET;
+        if (epoll_ctl(epoll_fd, EPOLL_CTL_MOD, fd, &events[chunk[fd].i_ev]) == -1)
         {
             std::cerr << "epoll_ctl failed: " << strerror(errno) << std::endl;
             close(fd);
@@ -59,7 +59,7 @@ void Server::send_chunk(int fd, int i, const header_infos& header)
         chunk[fd].readIndex = 0;
     }
 }
-void Server::send_chunk(int fd, int i)
+void Server::send_chunk(int fd)
 {
     //if already in chunk list ==>send next chunk
     std::ifstream file(chunk[fd].ressourcePath.c_str(), std::ios::binary);
@@ -103,8 +103,8 @@ void Server::send_chunk(int fd, int i)
 
             return failed_to_send(fd);
         }
-        events[i].events = EPOLLIN | EPOLLET;
-        if (epoll_ctl(epoll_fd, EPOLL_CTL_MOD, fd, &events[i]) == -1)
+        events[chunk[fd].i_ev].events = EPOLLIN | EPOLLET;
+        if (epoll_ctl(epoll_fd, EPOLL_CTL_MOD, fd, &events[chunk[fd].i_ev]) == -1)
         {
             std::ostringstream oss;
             oss << "[send chunk] epoll_ctl failed: " << strerror(errno);
@@ -134,8 +134,8 @@ void Server::send_chunk(int fd, int i)
 
             return failed_to_send(fd);
         }
-        events[i].events = EPOLLOUT | EPOLLET;
-        if (epoll_ctl(epoll_fd, EPOLL_CTL_MOD, fd, &events[i]) == -1)
+        events[chunk[fd].i_ev].events = EPOLLOUT | EPOLLET;
+        if (epoll_ctl(epoll_fd, EPOLL_CTL_MOD, fd, &events[chunk[fd].i_ev]) == -1)
         {
             std::ostringstream oss;
             oss << "[send chunk] epoll_ctl failed: " << strerror(errno);

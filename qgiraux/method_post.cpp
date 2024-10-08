@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:49:40 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/10/07 16:30:20 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/10/08 16:57:14 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 #include <ostream>
 
 
-void Server::method_post(header_infos& header, std::vector<unsigned char> body, int fd, int i)
+void Server::method_post(header_infos& header, std::vector<unsigned char> body, int fd)
 {
     {
         std::ostringstream oss;
@@ -28,7 +28,7 @@ void Server::method_post(header_infos& header, std::vector<unsigned char> body, 
     if (-1 == header.fd_ressource)
     {
         std::cerr << "Failed to open " << header.ressourcePath << std::endl;
-        sendError(header, 500, fd, i); // Send internal server error if file open fails
+        sendError(header, 500, fd); // Send internal server error if file open fails
         return;
     }
     fdsets tmp = {"0","0",time, false, false};
@@ -44,7 +44,7 @@ void Server::method_post(header_infos& header, std::vector<unsigned char> body, 
         if (bytes_written == -1)
         {
             std::cerr << "Error writing to file: " << strerror(errno) << std::endl;
-            sendError(header, 500, fd, i); // Send internal server error if write fails
+            sendError(header, 500, fd); // Send internal server error if write fails
             return;
         }
         std::string head = "HTTP/1.1 204 No Content\r\n\r\n";
@@ -63,7 +63,7 @@ void Server::method_post(header_infos& header, std::vector<unsigned char> body, 
             if (bytes_written != bytes_read)
             {
                 std::cerr << "Error: Mismatch in bytes written." << std::endl;
-                sendError(header, 500, fd, i); // Send internal server error if there's a mismatch
+                sendError(header, 500, fd); // Send internal server error if there's a mismatch
                 return;
             }
         }

@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:49:44 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/10/08 14:27:39 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/10/08 17:00:59 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,14 +58,14 @@ void Server::receive_data(int fd, int i)
                     if (chunk.find(fd) != chunk.end())
                         chunked_post(fd, body, chunk[fd]);
                     else
-                        method_post(header, body, fd, i);
+                        method_post(header, body, fd);
                     return;
                 }
                 case GET:
-                    method_get(header, fd, i);
+                    method_get(header, fd);
                     return;
                 case GET_CGI:
-                    method_get_cgi(header, fd, i);
+                    method_get_cgi(header, fd);
                     return;
                 case POST_CGI:
                 {
@@ -75,18 +75,18 @@ void Server::receive_data(int fd, int i)
 	                opath << "/tmp/tmpfilein" << &header;
                     header.infile = header.ressourcePath;
                     header.ressourcePath = opath.str();
-                    method_post(header, body, fd, i);
+                    method_post(header, body, fd);
                     return;
                 }
 
                 case DELETE:
-                    method_delete(header, fd, i);
+                    method_delete(header, fd);
                     return;
                 case AUTOINDEX:
-                    method_autoindex(header, fd, i);
+                    method_autoindex(header, fd);
                     return;
                 case ERROR:
-                    method_error(header, fd, i);
+                    method_error(header, fd);
                     return;
                 case RETURN:
                     method_return(header, fd);
