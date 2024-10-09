@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/03 15:20:58 by jerperez          #+#    #+#             */
-/*   Updated: 2024/09/27 15:33:10 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/10/09 17:47:04 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,7 +66,10 @@ int	main(int ac, char *av[])
 
 	signal(SIGINT, handle_sigint);
 	if (2 == ac)
-		ret = _parse(av[1], servers);
+	{
+		if ((ret = _parse(av[1], servers)) != 0)
+			return 1;
+	}
 	else
 		return ret;
 	Server server(servers);

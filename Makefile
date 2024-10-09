@@ -6,14 +6,14 @@
 #    By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/02/06 10:28:10 by jerperez          #+#    #+#              #
-#    Updated: 2024/10/09 17:09:09 by qgiraux          ###   ########.fr        #
+#    Updated: 2024/10/09 17:22:00 by qgiraux          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = webserv
 
 CXX = c++
-CPPFLAGS = -Wall -Wextra -Werror -g3 -std=c++98	-I./server -I./nrea -I./jerperez
+CPPFLAGS = -Wall -Wextra -Werror -g3 -std=c++98	-I./server -I./header_parser -I./jerperez
 
 SRCS_NREA_FILES	=	headerParser.cpp\
 					findServer.cpp\
@@ -31,7 +31,7 @@ SRCS_NREA_FILES	=	headerParser.cpp\
 					utils.cpp\
 					FileInfos.cpp
 
-SRCS_NREA	= 	$(addprefix nrea/, $(SRCS_NREA_FILES))
+SRCS_NREA	= 	$(addprefix header_parser/, $(SRCS_NREA_FILES))
 
 SRCS_QGIRAUX_FILES	= 	chunk_send.cpp\
 						chunk_receive.cpp\

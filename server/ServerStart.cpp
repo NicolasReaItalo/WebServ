@@ -147,8 +147,7 @@ int Server::ServerStart()
         {
             {
                 std::ostringstream oss;
-                oss << "[serverRun] checking on cgi fd " << ito->second.cgi_pid << "\n fd timestamp is " << ito->second.timestamp
-                << "\nserver timestamp is " << time;
+                oss << "[serverRun] checking on cgi fd " << ito->second.cgi_pid;
                 webservLogger.log(LVL_INFO, oss);
             }
             int status;
