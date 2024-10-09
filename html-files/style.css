@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:49:58 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/10/08 15:13:25 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/10/09 17:07:21 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,8 @@ body {
 }
 
 .title { 
+	margin-top: 30px;
+	margin-bottom: 10px;
 	text-align: center; 
 	background-color: #5a5b8a; 
 	padding: 10px; 
@@ -40,18 +42,22 @@ body {
 } 
 
 .bloc { 
-	display: flex;
-	gap: 10px;
-	text-align: center; 
-	background-color: #7071a1; 
-	padding: 10px; 
-	border-radius: 5px; 
-	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); 
-	flex-direction: row;
-	align-items: center;
-	justify-content: center;
+	margin-top: 5px;
+	margin-bottom: 5px;
+    display: flex;
+    gap: 10px;
+    text-align: center; 
+    background-color: #7071a1; 
+    padding: 10px; 
+    border-radius: 5px; 
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); 
+    flex-direction: row; /* Ensure items are in a row */
+    align-items: center; /* Vertically center the items */
+    justify-content: center; /* Horizontally center the items */
+    height: 100%; /* Ensure the container takes full height */
+	min-width:500px;
 	
-} 
+}
 
 .resizable-image {
     max-width: 500px; /* Adjust the size to fit within the container */
@@ -133,8 +139,34 @@ button {
     color: white;
     text-decoration: none;
     border-radius: 5px;
+	text-align-last: center;
 }
 
 .home-button:hover {
     background-color: #798b9e;
+}
+
+.styled-button {
+    background-color: #4CAF50; /* Green background */
+    border: none; /* Remove borders */
+    color: white; /* White text */
+    padding: 15px 32px; /* Some padding */
+    text-align: center; /* Centered text */
+    text-decoration: none; /* Remove underline */
+    display: inline-block; /* Make the container inline-block */
+    font-size: 16px; /* Increase font size */
+    margin: 4px 2px; /* Some margin */
+    cursor: pointer; /* Pointer/hand icon */
+    border-radius: 12px; /* Rounded corners */
+}
+
+.styled-button:hover {
+    background-color: #45a049; /* Darker green on hover */
+}
+
+.username-label {
+    font-weight: bold; /* Make the text bold */
+    color: #000000; /* Change the text color */
+    font-size: 18px; /* Increase the font size */
+    margin-right: 10px; /* Add some space between the label and the input */
 }

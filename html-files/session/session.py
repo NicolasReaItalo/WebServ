@@ -19,10 +19,18 @@ def print_header():
 
 def print_html(content):
     print(f"""
-    <html>
-    <head><title>Login Page</title></head>
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <title>
+            Login Page
+        </title>
+        <link rel="stylesheet" href="../style.css"> 
+    </head>
     <body>
-        {content}
+        <div class="page">
+            {content}
+        </div>
     </body>
     </html>
     """)
@@ -32,7 +40,7 @@ def send_cookie(username):
     cookie = http.cookies.SimpleCookie()
     cookie["session"] = username + ":" + SECRET_KEY
     # Set cookie expiration for 1 day
-    expires = "Max-Age=360; SameSite=Strict"
+    expires = "Max-Age=30; SameSite=Strict"
     cookie["session"]["Max-Age"] = expires
     print(cookie.output(header="Set-Cookie:") + "\r\n", end='')
 
@@ -50,12 +58,18 @@ def check_cookie():
 
 def login_form():
     return """
-    <h1>Login</h1>
-    <form method="POST" action="/session/session.py">
-        Username: <input type="text" name="username"><br>
-        Password: <input type="password" name="password"><br>
-        <input type="submit" value="Login">
-    </form>
+    <div class="title">
+            <h1>Login</h1>
+        </div>
+        <div class="bloc">
+            <form method="POST" action="/session/session.py">
+                <br>
+                <label class="username-label">Username:</label><input type="text" name="username"><br>
+                <label class="username-label">Password:</label><input type="password" name="password"><br>
+                <br><input type="submit" value="Login" class="home-button">
+            </form>
+        </div>
+        <a HREF="../index.html" class="home-button">go to home</a
     """
 
 def process_login():
@@ -70,12 +84,23 @@ def process_login():
         print_header()
         send_cookie(username)
         print("\r\n", end='')
-        print_html(f"<h2>Welcome, {username}!</h2><p>You are now logged in.</p>")
+        print_html(f"""
+                    <div class="title">
+                        <h2>Welcome, {username}!</h2>
+                    </div>
+                    <div class="bloc">
+                        <p>You are now logged in.</p>
+                    </div>
+                    <div class="bloc">
+                        <a HREF="../index.html">go to home"</a>
+                    </div>
+
+                   """)
     else:
         # Invalid credentials
         print_header()
         print("\r\n", end='')
-        print_html("<h2>Invalid username or password</h2>" + login_form())
+        print_html("<div class=\"title\"><h2>Invalid username or password</h2></div>" + login_form())
 
 def main():
 
@@ -84,7 +109,17 @@ def main():
     if logged_in_user:
         print_header()
         print("\r\n", end='')
-        print_html(f"<h2>Welcome back, {logged_in_user}!</h2><p>You are already logged in.</p>")
+        print_html(f"""
+                    <div class="title">
+                        <h2>Welcome back, {logged_in_user}!</h2>
+                    </div>
+                    <div class="bloc">
+                        <p><br>You are already logged in.</p>
+                    </div>
+                    <div class="bloc">
+                        <a HREF="../index.html">go to home</a>
+                    </div>
+                    """)
 
     else:
         # If not logged in, either show the login form or process the login
