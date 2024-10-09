@@ -11,7 +11,8 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
+    height: auto;
+    overflow: auto;
 }
 
 body::before {
@@ -23,8 +24,10 @@ body::before {
     bottom: 0;
     background-color: rgba(0, 0, 0, 0.2);
     z-index: -1;
+    overflow: auto;
 }
 .weather-app {
+    margin-top: 20px;
     background-color: rgba(255, 248, 248,0.7);
     padding: 20px;
     border-radius: 10px;
@@ -94,6 +97,10 @@ h2 {
 	color: #555;
 }
 
+.city_selection{
+    background-color: #c0cac1;
+}
+
 select {
 	/* appearance: none; */
 	background-color: rgba(0, 0, 0, 0.2);
@@ -114,7 +121,7 @@ select {
 }
 
 button {
-	background-color: rgba(0, 0, 0, 0.2);
+	background-color: #d6dbcf;
 	border: solid;
 	border-width: 1px;
 	border-radius: 5px;
@@ -128,7 +135,7 @@ button {
 .home-button {
     display: inline-block;
     padding: 10px 20px;
-    background-color: #007BFF;
+    background-color: #007bff41;
     color: white;
     text-decoration: none;
     border-radius: 5px;

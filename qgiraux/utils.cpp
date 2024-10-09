@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:50:06 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/10/08 17:04:07 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/10/09 11:24:48 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -312,6 +312,7 @@ int Server::parse_cgi_tmp_file(header_infos& header)
     {
         
         int t = read(tr, buffer, 2);
+        std::cout << buffer;
         if (t == 0)
         {
             std::ostringstream oss;
