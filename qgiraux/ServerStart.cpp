@@ -166,7 +166,7 @@ int Server::ServerStart()
                 cgiList[tmp].ressourcePath = cgiList[tmp].uri;
                 parse_cgi_tmp_file(cgiList[tmp]);
                 cgiList[tmp].bodySize = getFileSize(cgiList[tmp].uri.c_str());
-                method_get(cgiList[tmp], tmp, 0);
+                method_get(cgiList[tmp], tmp);
 				remove(ito->second.uri.c_str());
 				if (ito->second.toDo == POST || ito->second.toDo == POST_CGI)
 					remove(ito->second.infile.c_str());
