@@ -1,6 +1,6 @@
 #include "Server.hpp"
 #include "Logger.hpp"
-#include <sys/wait.h> 
+#include <sys/wait.h>
 
 int getFileSize(const char* filename) {
     // Open the file in binary mode
@@ -28,7 +28,7 @@ int Server::ServerStart()
     std::list<ConfigServer>::iterator it = servers.begin();
     //create the epoll
     epoll_fd = epoll_create1(0);
-    if (epoll_fd == -1) 
+    if (epoll_fd == -1)
     {
         std::ostringstream oss;
         oss << "[serverStart] epoll_create1 failed: " << strerror(errno);
@@ -36,7 +36,7 @@ int Server::ServerStart()
         close(epoll_fd);
         return 1;
     }
-    
+
     fdsets tmp = {"0", "0", time, true, false};
     fd_set[epoll_fd] = tmp;
 
@@ -54,7 +54,7 @@ int Server::ServerStart()
 
         //configure the socket options
         int opt = 1;
-        if (setsockopt(server_fd[i], SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT | SO_KEEPALIVE, &opt, sizeof(opt))) 
+        if (setsockopt(server_fd[i], SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT | SO_KEEPALIVE, &opt, sizeof(opt)))
         {
             std::ostringstream oss;
             oss << "[serverStart] setsockopt failed: " << strerror(errno);
@@ -84,7 +84,7 @@ int Server::ServerStart()
         fdsets tmp = {it->getAddress(), it->getPort(), time, true, false};
         fd_set[server_fd[i]] = tmp;
         //making server_fd a passive socket, to accept incoming connexion requests
-        if (listen(server_fd[i], 32) < 0) 
+        if (listen(server_fd[i], 32) < 0)
         {
             {
                 std::ostringstream oss;
@@ -98,7 +98,7 @@ int Server::ServerStart()
         epoll_event event;
         event.events = EPOLLIN;
         event.data.fd = server_fd[i];
-        if (epoll_ctl(epoll_fd, EPOLL_CTL_ADD, server_fd[i], &event) == -1) 
+        if (epoll_ctl(epoll_fd, EPOLL_CTL_ADD, server_fd[i], &event) == -1)
         {
             std::ostringstream oss;
             oss << "[serverStart] epoll_ctl failed: " << strerror(errno);
@@ -166,7 +166,10 @@ int Server::ServerStart()
                 cgiList[tmp].ressourcePath = cgiList[tmp].uri;
                 parse_cgi_tmp_file(cgiList[tmp]);
                 cgiList[tmp].bodySize = getFileSize(cgiList[tmp].uri.c_str());
-                method_get(cgiList[tmp], tmp);
+                method_get(cgiList[tmp], tmp, 0);
+				remove(ito->second.uri.c_str());
+				if (ito->second.toDo == POST || ito->second.toDo == POST_CGI)
+					remove(ito->second.infile.c_str());
                 cgiList.erase(tmp);
                 ito = cgiList.begin();
             }
@@ -185,7 +188,7 @@ int Server::ServerStart()
                     oss << "[serverRun] Failed to kill CGI process with PID " << ito->second.cgi_pid;
                     webservLogger.log(LVL_ERROR, oss);
                 }
-                // remove(ito->second.uri.c_str());
+                remove(ito->second.uri.c_str());
                 cgiList.erase(tmp);
                 ito = cgiList.begin(); // Reset iterator after erase
             }
