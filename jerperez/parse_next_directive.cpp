@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   parser.cpp                                         :+:      :+:    :+:   */
+/*   parse_next_directive.cpp                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jerperez <jerperez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/03 17:54:04 by jerperez          #+#    #+#             */
-/*   Updated: 2024/09/26 10:59:17 by jerperez         ###   ########.fr       */
+/*   Updated: 2024/10/09 16:26:18 by jerperez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 #include "parser.hpp"
 #include <string>
 #include <cstring>
+#include "config_error_constants.h"
 
 /* skip space
  *
@@ -68,6 +69,7 @@ static char	_add_block_instructions(
 {
 	int	err_code;
 
+	_skip_space(it_list, it_end);
 	while (it_list != it_end)
 	{
 		if (TK_BLOCK_OPEN == it_list->token_id)
@@ -83,7 +85,7 @@ static char	_add_block_instructions(
 		}
 		_skip_space(it_list, it_end);
 	}
-	return ('\0');
+	return '\0';
 }
 
 /* Updates next directive starting at iterator

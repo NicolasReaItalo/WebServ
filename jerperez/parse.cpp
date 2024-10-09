@@ -6,7 +6,7 @@
 /*   By: jerperez <jerperez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 16:02:57 by jerperez          #+#    #+#             */
-/*   Updated: 2024/10/01 14:12:26 by jerperez         ###   ########.fr       */
+/*   Updated: 2024/10/03 11:04:31 by jerperez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -137,6 +137,8 @@ int	pr_parse(token_deq_t &list, std::list<ConfigServer> &servers)
 			_print_dir(next_directive); //
 		ConfigServer	server;
 		server.setKnownDirectives(&knownDirectives);
+		std::cout << "out:" << &server.getDirectiveOutput(1, "error_page","404")<< std::endl;//
+		std::cout << "out:" << &server.getDirectiveOutput(1, "patate","patate")<< std::endl;//
 		err_code = server.addServer(&next_directive);
 		if (err_code)
 			return err_code; //_print_error_code
