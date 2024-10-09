@@ -142,7 +142,7 @@ def render_template(file_path):
 ##
 
 # fin fonctions templates
-header = "Content-type: text/html\r\nSet-Cookie: select=" + w_city + "; Max-Age=3600; SameSite=Strict\r\n"
+header = "Content-type: text/html\r\nSet-Cookie: select=" + w_city + "; Max-Age=360; SameSite=Strict\r\n"
 body = render_template('html-files/weather/template.html')
 if len(body) == 0:
 	error()

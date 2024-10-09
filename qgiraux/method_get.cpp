@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:49:38 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/10/08 17:03:19 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/10/09 14:59:56 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,6 +82,7 @@ void Server::method_get(const header_infos& header, int fd)
                 oss << "[method get] Sending file to " << fd << "...";
                 webservLogger.log(LVL_INFO, oss);   
             }
+            std::cout << "\nmehod_get.cpp line 85, header sent to client :\n" << head.c_str();
             if (-1 == send(fd, &(data[0]), header.bodySize, 0))
             {
                 std::ostringstream oss;

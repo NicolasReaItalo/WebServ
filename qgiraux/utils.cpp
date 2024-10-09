@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:50:06 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/10/09 11:24:48 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/10/09 15:07:34 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -307,12 +307,10 @@ int Server::parse_cgi_tmp_file(header_infos& header)
     char buffer[3];
     size_t pos = headerLine.str().find("\r\n\r\n");
     off_t bytesRead = 0;
-    
     while( pos == std::string::npos)
     {
         
         int t = read(tr, buffer, 2);
-        std::cout << buffer;
         if (t == 0)
         {
             std::ostringstream oss;
@@ -334,20 +332,23 @@ int Server::parse_cgi_tmp_file(header_infos& header)
         pos = headerLine.str().find("\r\n\r\n");
         bytesRead += t;
     }
+    std::cout << "utils.cpp, line 335 -> checking what the cgi sends\n\n";
+    std::cout << headerLine.str() << std::endl;
     std::string headers = headerLine.str();
     std::istringstream headerStream(headers);
     std::string line;
     while (std::getline(headerStream, line) && line != "\r")
     {
+        std::cout << line << std::endl;
         if (line.find("Content-Type:") != std::string::npos)
         {
+            std::cout << "content type found\n";
             header.contentType = line.substr(line.find(":") + 2, line.size() - line.find(":") - 3); // Extract content type value
-            break;
         }
-        if (line.find("Set-Cookie:") != std::string::npos)
+        else if (line.find("Set-Cookie:") != std::string::npos)
         {
+            std::cout << "cookie found\n";
             header.cookie = line.substr(line.find(":") + 2, line.size() - line.find(":") - 3); // Extract content type value
-            break;
         }
     }
     close(tr);

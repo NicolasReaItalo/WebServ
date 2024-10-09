@@ -167,6 +167,9 @@ int Server::ServerStart()
                 parse_cgi_tmp_file(cgiList[tmp]);
                 cgiList[tmp].bodySize = getFileSize(cgiList[tmp].uri.c_str());
                 method_get(cgiList[tmp], tmp);
+                remove(ito->second.uri.c_str());
+                if (ito->second.toDo == POST || ito->second.toDo == POST_CGI)
+                    remove(ito->second.infile.c_str());
                 cgiList.erase(tmp);
                 ito = cgiList.begin();
             }
@@ -185,7 +188,7 @@ int Server::ServerStart()
                     oss << "[serverRun] Failed to kill CGI process with PID " << ito->second.cgi_pid;
                     webservLogger.log(LVL_ERROR, oss);
                 }
-                // remove(ito->second.uri.c_str());
+                remove(ito->second.uri.c_str());
                 cgiList.erase(tmp);
                 ito = cgiList.begin(); // Reset iterator after erase
             }
