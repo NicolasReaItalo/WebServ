@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:49:28 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/09/27 14:01:39 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/10/10 14:53:43 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 Server::Server(std::list<ConfigServer> servers) : servers(servers)
 {
     list_size = servers.size();
+    tmpfindex = 0;
     std::vector<int> vect(list_size);
     std::vector<struct sockaddr_in> vect2(list_size);
     server_fd = vect;
