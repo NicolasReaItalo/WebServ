@@ -6,7 +6,7 @@
 /*   By: jerperez <jerperez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 13:29:48 by jerperez          #+#    #+#             */
-/*   Updated: 2024/10/10 10:24:40 by jerperez         ###   ########.fr       */
+/*   Updated: 2024/10/10 11:54:04 by jerperez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,35 +20,37 @@
 
 static void	_perror_parsing(Directive* unknown_directive, int err_code)
 {
-	std::cout << "ConfigServer: error: ";
+	std::cerr << "ConfigServer: error: ";
 	if (CF_ERRNOTB == err_code)
-		std::cout << CF_ERRNOTB_MSG;
+		std::cerr << CF_ERRNOTB_MSG;
 	else if (CF_ERRNOTS == err_code)
-		std::cout << CF_ERRNOTS_MSG;
+		std::cerr << CF_ERRNOTS_MSG;
 	else if (CF_ERRDPARAM == err_code)
-		std::cout << CF_ERRDPARAM_MSG;
+		std::cerr << CF_ERRDPARAM_MSG;
 	else if (CF_ERRDBADPNUM == err_code)
-		std::cout << CF_ERRDBADPNUM_MSG;
+		std::cerr << CF_ERRDBADPNUM_MSG;
+	else if (CF_ERRDMISSING == err_code)
+		std::cerr << CF_ERRDMISSING_MSG;
 	else if (CF_ERRDUNKNOWN == err_code)
-		std::cout << CF_ERRDUNKNOWN_MSG;
+		std::cerr << CF_ERRDUNKNOWN_MSG;
 	else if (CF_ERRDNONAME == err_code)
-		std::cout << CF_ERRDNONAME_MSG;
+		std::cerr << CF_ERRDNONAME_MSG;
 	else if (CF_ERRNOTL == err_code)
-		std::cout << CF_ERRNOTL_MSG;
+		std::cerr << CF_ERRNOTL_MSG;
 	else if (CF_ERRNOTD == err_code)
-		std::cout << CF_ERRNOTD_MSG;
+		std::cerr << CF_ERRNOTD_MSG;
 	else if (CF_ERRNOURI == err_code)
-		std::cout << CF_ERRNOURI_MSG;
+		std::cerr << CF_ERRNOURI_MSG;
 	else
-		std::cout << "code: " << err_code;
+		std::cerr << "code: " << err_code;
 	if (-1 != unknown_directive->getType())
 	{
 		const Directive::args_t &args = unknown_directive->getArgs();
 
 		if (false == args.empty())
-			std::cout << " in directive: `" << args.front() << '\'';
+			std::cerr << " in directive: `" << args.front() << '\'';
 	}
-	std::cout << std::endl;
+	std::cerr << std::endl;
 }
 
 void	ConfigServer::_pushSplitParameters(\
