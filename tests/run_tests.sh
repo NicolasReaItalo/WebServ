@@ -52,12 +52,18 @@ echo
 echo
 
 echo -e "$BPurple (+) TEST : Series de tests simple sur un seul server $Color_Off"
+
+touch tests/03_server_simple/server-files/file_forbidden.html
+chmod 0 tests/03_server_simple/server-files/file_forbidden.html
+
 ./webserv tests/03_server_simple/conf/server_simple.conf > /dev/null &
 bg_pid=$!
 echo "starting server pid : $bg_pid"
 # sleep 1
 $hurl_bin --test tests/03_server_simple/test-server_simple.hurl
 kill $bg_pid
+
+rm -f tests/03_server_simple/server-files/file_forbidden.html
 echo
 echo
 

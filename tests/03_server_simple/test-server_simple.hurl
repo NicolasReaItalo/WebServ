@@ -21,3 +21,22 @@ HTTP 404
 GET http://localhost:8080/file_forbidden.html
 HTTP 403
 
+#Requete GET vers dossier autoindex on sans directive index
+GET http://localhost:8080/autoindex_ok
+HTTP 200
+
+#Requete GET vers dossier autoindex off sans directive index
+GET http://localhost:8080/autoindex_off
+HTTP 403
+
+#Requete GET vers uri n'existant pas avec un message d'erreur custom
+GET http://localhost:8080/misc/not_found
+HTTP 404
+[Asserts]
+body contains "<h1>CUSTOM ERROR 404</h1>"
+
+#Requete GET vers uri interdite avec un message d'erreur custom
+GET http://localhost:8080/misc/
+HTTP 404
+[Asserts]
+body contains "<h1>CUSTOM ERROR 403</h1>"
