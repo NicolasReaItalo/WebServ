@@ -6,7 +6,7 @@
 /*   By: nrea <nrea@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/12 16:20:48 by nrea              #+#    #+#             */
-/*   Updated: 2024/10/08 14:24:48 by nrea             ###   ########.fr       */
+/*   Updated: 2024/10/10 11:18:14 by nrea             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -163,12 +163,8 @@ any message that contains a Transfer-Encoding header field.*/
 	}
 ///---------------------------------------------------------------------------------------------------
 
-///CONVERSION DES CARACTERES SPECIAUX DE L'URI---------------------------------------------
-	try
-	{
-		header_attributes["Converted_URI"] = convert_uri(header_attributes["Raw_URI"]);
-	}
-	catch(const std::exception& e)
+
+	if (contains_forbbiden(header_attributes["Raw_URI"] ))
 	{
 		{
 		std::ostringstream oss;
@@ -184,7 +180,7 @@ any message that contains a Transfer-Encoding header field.*/
 	// on reutilise tmp pour split l'uri
 	{
 	std::vector<std::string> tmp;
-	tmp = splitString(header_attributes["Converted_URI"], "?");
+	tmp = splitString(header_attributes["Raw_URI"], "?");
 	if (tmp.size() == 2 )
 	{
 		header_attributes["URI"] = tmp[0];
@@ -202,6 +198,11 @@ any message that contains a Transfer-Encoding header field.*/
 	else
 		header_attributes["URI"] = tmp[0];
 	}
+///CONVERSION DES CARACTERES SPECIAUX DE L'URI---------------------------------------------
+	header_attributes["URI"] = url_decode(header_attributes["URI"]);
+	header_attributes["QUERY_STRING"] = url_decode(header_attributes["QUERY_STRING"]);
+
+
 ///------------------------------------------------------------------------------
 // ON RECUPERE LA LOCATION pour la mettre en cache pour les appels suivant a configServer
 	// serverconfig->_debug_print();

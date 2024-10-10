@@ -6,7 +6,7 @@
 /*   By: nrea <nrea@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/18 14:15:21 by nrea              #+#    #+#             */
-/*   Updated: 2024/10/01 14:01:54 by nrea             ###   ########.fr       */
+/*   Updated: 2024/10/10 11:41:46 by nrea             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,79 +64,39 @@ bool matchAcceptServerContentTypes(std::string file_content_type, std::map<std::
 	return false;
 }
 
-//remove special characters  --> A completer
-std::string  convert_uri(std::string const &uri)
-{
-	std::string converted = uri;
-	std::map<std::string, std::string> conversion;
-	conversion["%20"] = " ";
-	conversion["%21"] = "!";
-	conversion["%22"] = "\"";
-	conversion["%23"] = "#";
-	conversion["%24"] = "$";
-	conversion["%25"] = "%";
-	conversion["%26"] = "&";
-	conversion["%27"] = "'";
-	conversion["%28"] = "(";
-	conversion["%29"] = ")";
-	conversion["%2A"] = "*";
-	conversion["%2B"] = "+";
-	conversion["%2C"] = ",";
-	conversion["%2D"] = "-";
-	conversion["%2E"] = ".";
-	conversion["%2F"] = "/";
-	conversion["%3A"] = ":";
-	conversion["%3B"] = ";";
-	conversion["%3C"] = "<";
-	conversion["%3D"] = "=";
-	conversion["%3E"] = ">";
-	conversion["%3F"] = "?";
-	conversion["%40"] = "@";
-	conversion["%5B"] = "[";
-	conversion["%5C"] = "\\";
-	conversion["%5D"] = "]";
-	conversion["%5E"] = "^";
-	conversion["%5F"] = "_";
-	conversion["%60"] = "`";
-	conversion["%7B"] = "{";
-	conversion["%7D"] = "}";
-	conversion["%7E"] = "~";
 
-	std::size_t pos = converted.find('%');
-	while (pos != std::string::npos)
-	{
-		if (pos + 2 >= converted.size())
-		{
-			throw std::runtime_error("BAD REQUEST");
-		}
 
-		std::string code = converted.substr(pos, 3);
-		std::map<std::string, std::string>::iterator it = conversion.find(code);
-		if (it != conversion.end())
-		{
-			converted.replace(pos, 3, it->second);
-		}
-		else
-		{
-			throw std::runtime_error("BAD REQUEST");
-		}
-		pos = converted.find('%', pos + it->second.length());
-	}
-	// cas du +
-	pos = converted.find('+');
-	while (pos != std::string::npos)
-	{
-		converted.replace(pos, 1, " ");
-		pos = converted.find('%', pos + 1);
-	}
+char from_hex(char ch) {
+    if (std::isdigit(ch)) {
+        return ch - '0';
+    } else if (std::isxdigit(ch)) {
+        return std::tolower(ch) - 'a' + 10;
+    }
+    return -1;
+}
 
-	return converted;
+
+// /%6E%6F%74%65%73/%6E%6F%74%65%73%2E%70%68%70 ==> /notes/notes.php
+std::string url_decode(const std::string &url) {
+    std::string result;
+    for (std::size_t i = 0; i < url.size(); ++i) {
+        if (url[i] == '%' && i + 2 < url.size() && isxdigit(url[i + 1]) && isxdigit(url[i + 2])) {
+            char hex_char = from_hex(url[i + 1]) * 16 + from_hex(url[i + 2]);
+            result += hex_char;
+            i += 2;
+        } else if (url[i] == '+') {
+            result += ' ';
+        } else {
+            result += url[i];
+        }
+    }
+    return result;
 }
 
 bool contains_forbbiden(std::string const &uri)
 {
 	std::string auth = "ABCDEFGHIJKLMNOPQRSTUVWXYZ\
-	abcdefghijklmnopqrstuvwxyz0123456789-._~:/?#[]@!$&'()*+,;=%";
+	abcdefghijklmnopqrstuvwxyz0123456789-._~:/?#[]@!$&()*+,;=%";
 
 	for(std::string::const_iterator it = uri.begin(); it != uri.end(); ++it)
 	{
@@ -148,7 +108,6 @@ bool contains_forbbiden(std::string const &uri)
 	}
 	return false;
 }
-
 
 long getFileSize(std::string filename)
 {
@@ -163,7 +122,7 @@ std::string getFileExtension(std::string uri)
 	std::string extension = "";
 	size_t dot = uri.rfind(".");
 	if ( dot != std::string::npos && dot && wrong.find(uri[dot-1]) == std::string::npos &&
-		wrong.find(uri[dot+1]) == std::string::npos ) // a refactoriser pour eviter out of bounds dans le cas ou uri se finit par '.'
+		dot + 1 > uri.size() && wrong.find(uri[dot+1]) == std::string::npos )
 	{
 		extension = uri.substr(dot + 1, uri.size() - dot - 1 );
 	}

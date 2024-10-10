@@ -6,7 +6,7 @@
 /*   By: nrea <nrea@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/18 13:44:25 by nrea              #+#    #+#             */
-/*   Updated: 2024/10/08 11:27:18 by nrea             ###   ########.fr       */
+/*   Updated: 2024/10/10 10:45:01 by nrea             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,7 @@ std::string getFileExtension(std::string uri);
 std::string getParentDir(std::string uri);
 
 bool contains_forbbiden(std::string const &uri);
-std::string  convert_uri(std::string const &uri);
+std::string  url_decode(std::string const &uri);
 std::vector<std::string> splitString(const std::string& str, std::string delimiter);
 
 header_infos handle_cgi(header_infos & response, std::string cgi, ConfigServer *config,int locationIndex, std::map<std::string,std::string> &header_attributes);
