@@ -6,7 +6,7 @@
 /*   By: nrea <nrea@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/02 11:05:47 by nrea              #+#    #+#             */
-/*   Updated: 2024/10/02 11:38:05 by nrea             ###   ########.fr       */
+/*   Updated: 2024/10/10 12:24:36 by nrea             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -108,7 +108,6 @@ ConfigServer *config,int locationIndex, std::map<std::string,std::string> &heade
 	{
 		{
 			std::ostringstream oss;
-			std::cout << static_cast<unsigned long>(atol(header_attributes["Content-Length"].c_str())) << std::endl << static_cast<unsigned long>(atol(config->getDirectiveParameter(locationIndex, "client_body_path").c_str())) << std::endl;;
 			oss <<"[handle_post]	the Content-length exceed the max body size accepted for a non-chunked request";
 			webservLogger.log(LVL_DEBUG, oss);
 		}
