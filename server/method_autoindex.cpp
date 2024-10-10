@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   method_autoindex.cpp                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jerperez <jerperez@student.42.fr>          +#+  +:+       +#+        */
+/*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/23 10:42:10 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/10/10 12:47:30 by jerperez         ###   ########.fr       */
+/*   Updated: 2024/10/10 12:53:08 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,6 @@
 void Server::method_autoindex(const header_infos& header, int fd)
 {
     std::map<std::string, std::string> index;
-    std::cout << header.uri << " " << header.locationIndex << std::endl;
     std::string root = header.configServer->getFullPath(header.uri, header.locationIndex);
     std::string path = header.ressourcePath;
     
