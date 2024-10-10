@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:49:55 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/10/02 14:01:35 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/10/10 14:41:13 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,8 +46,7 @@ void Server::killAllChildren()
     
     for (it = chunk.begin(); it != chunk.end(); ++it)
     {
-        close(it->second.fd_ressource);
-        remove(it->second.ressourcePath.c_str());
+        close(it->second.fd_ressource);        
     }
     chunk.clear();
  }

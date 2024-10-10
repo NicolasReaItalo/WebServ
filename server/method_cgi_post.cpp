@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/07 11:36:40 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/10/10 12:18:15 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/10/10 14:29:45 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,7 @@ void Server::method_post_cgi(int fd, header_infos& header)
 	}
 	header.timestamp = std::time(NULL);
 	std::stringstream opath;
-	opath << "/tmp/tmpfileout" << &header;
+	opath << "/tmp/tmpfileout" << &fd;
 	
 	int tr = open(opath.str().c_str(), O_RDWR | O_CREAT, S_IRUSR | S_IWUSR);
 	if (tr == -1) {
