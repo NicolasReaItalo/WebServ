@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   method_autoindex.cpp                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
+/*   By: jerperez <jerperez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/23 10:42:10 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/10/08 17:00:52 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/10/10 12:47:30 by jerperez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,7 @@ void Server::method_autoindex(const header_infos& header, int fd)
         std::ostringstream oss;
         oss << "[method autoindex] can't open directory " << currentdir;
         webservLogger.log(LVL_ERROR, oss);
+		sendError(header, 403, fd);
         return;
     }
     {
