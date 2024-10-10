@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+         #
+#    By: jerperez <jerperez@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/02/06 10:28:10 by jerperez          #+#    #+#              #
-#    Updated: 2024/10/09 17:22:00 by qgiraux          ###   ########.fr        #
+#    Updated: 2024/10/10 15:53:21 by jerperez         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -79,7 +79,7 @@ SRCS_JERPEREZ_FILES	= tokenizer.cpp\
 			ConfigBlock.cpp\
 			ConfigLocation.cpp\
 
-SRCS_JERPEREZ	= 	$(addprefix jerperez/, $(SRCS_JERPEREZ_FILES))
+SRCS_JERPEREZ	= 	$(addprefix config/, $(SRCS_JERPEREZ_FILES))
 
 
 SRCS	=	main.cpp\
