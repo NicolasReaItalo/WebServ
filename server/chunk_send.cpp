@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:49:25 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/10/10 10:57:19 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/10/10 14:45:04 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -118,7 +118,8 @@ void Server::send_chunk(int fd)
         chunk.erase(fd);
         if (cgiList.find(fd) != cgiList.end())
         {
-            remove (cgiList[fd].uri.c_str());
+            remove(cgiList[fd].uri.c_str());
+            //std::cerr << "remove " << cgiList[fd].uri.c_str() << "in chunk_send.cpp line 122" << std::endl;
             cgiList.erase(fd);
         }
     }

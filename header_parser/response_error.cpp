@@ -6,7 +6,7 @@
 /*   By: nrea <nrea@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 10:13:31 by nrea              #+#    #+#             */
-/*   Updated: 2024/10/08 15:07:11 by nrea             ###   ########.fr       */
+/*   Updated: 2024/10/10 14:22:52 by nrea             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,24 +34,5 @@ header_infos response_error(std::string error_code, ConfigServer  * config,int l
 		response.keepAlive = false;
 	else
 		response.keepAlive = true;
-	{
-		std::ostringstream oss;
-		oss <<"[HeaderParser]	RESPONSE  {"<<response.returnCode <<"} ";
-		oss <<"{"<<str_todo(response.toDo)<<"}"<<"{"<<response.ressourcePath <<"}";
-		if (response.keepAlive)
-			oss<<"{keep-alive}";
-		else
-			oss<<"{close}";
-		if (response.chunked)
-			oss<<"{chunked}";
-		else
-			oss<<"{not chunked}";
-		oss<<"";
-		oss<<"{body-size: " << response.bodySize;
-		oss<<"} ";
-		oss<<"{content-type: " << response.contentType<<"}";
- 		webservLogger.log(LVL_DEBUG, oss);
-	}
-
 	return response;
 }

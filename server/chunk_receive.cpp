@@ -122,6 +122,7 @@ void Server::chunked_post(int fd, std::vector<unsigned char> body, header_infos&
         close(header.fd_ressource);
         chunk.erase(fd);
         remove(header.ressourcePath.c_str());
+        //std::cerr << "remove " << header.ressourcePath.c_str() << "in chunk_receive.cpp line 124" << std::endl;
         if (!header.keepAlive)
         {
             if (epoll_ctl(epoll_fd, EPOLL_CTL_DEL, fd, NULL) == -1) 

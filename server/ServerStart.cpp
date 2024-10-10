@@ -167,8 +167,12 @@ int Server::ServerStart()
                 cgiList[tmp].bodySize = getFileSize(cgiList[tmp].uri.c_str());
                 method_get(cgiList[tmp], tmp);
 				remove(ito->second.uri.c_str());
+                //std::cerr << "remove " << ito->second.uri.c_str() << "in server_start.cpp line 169" << std::endl;
 				if (ito->second.toDo == POST || ito->second.toDo == POST_CGI)
+                {
 					remove(ito->second.infile.c_str());
+                    //std::cerr << "remove " << ito->second.infile.c_str() << "in server_start.cpp line 171" << std::endl;
+                }
                 cgiList.erase(tmp);
                 ito = cgiList.begin();
             }
@@ -188,6 +192,7 @@ int Server::ServerStart()
                     webservLogger.log(LVL_ERROR, oss);
                 }
                 remove(ito->second.uri.c_str());
+                //std::cerr << "remove " << ito->second.uri.c_str() << "in server_start.cpp line 194" << std::endl;
                 cgiList.erase(tmp);
                 ito = cgiList.begin(); // Reset iterator after erase
             }

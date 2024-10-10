@@ -103,6 +103,7 @@ header_infos Server::handle_dir(header_infos &response,
 				oss <<"[handle_get_dir]	"<<" autoindex allowed in "<<response.ressourcePath ;
 				webservLogger.log(LVL_DEBUG, oss);
 			}
+			response.uri = header_attributes["URI"];
 			return response_autoindex(config, locationIndex, response);
 		}
 		else
