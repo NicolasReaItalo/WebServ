@@ -6,7 +6,7 @@
 /*   By: jerperez <jerperez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 13:29:48 by jerperez          #+#    #+#             */
-/*   Updated: 2024/10/10 11:04:09 by jerperez         ###   ########.fr       */
+/*   Updated: 2024/10/10 11:49:08 by jerperez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,7 @@ cgi client_body_path client_max_body_size location root return server_name"
 # define CF_ERRDBADTOKEN 127
 # define CF_ERRDBADTOKEN_MSG "invalid token"
 //
-# define CF_ERRNOTHING 24
+# define CF_ERRNOTHING 30
 # define CF_ERRNOTHING_MSG "no server"
 // Change to 1 to enable debug
 # ifndef CF_DEBUG
