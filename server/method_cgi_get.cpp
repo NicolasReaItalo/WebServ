@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/02 10:40:07 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/10/08 17:00:12 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/10/10 11:46:34 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,10 +14,8 @@
 #include "cgi_utils.hpp"
 
 char** MapToEnv(std::map<std::string,std::string> const & map);
-size_t	ft_strlen(const char *s);
-char	*ft_strdup(const char *s);
 
-static int execute_cgi
+int execute_cgi
 (std::string interpreter_path, std::string script_path, std::map<std::string,std::string> envMap, int p)
 {
 	
@@ -71,6 +69,16 @@ void Server::method_get_cgi(header_infos& header, int fd)
 	}
 	if (pid == 0)
 	{
+		std::map<int, fdsets>::iterator it;
+        for (it = fd_set.begin(); it != fd_set.end();)
+        {
+			if (it->first != tr)
+			{
+				close (it->first);
+				fd_set.erase(it->first);
+				it = fd_set.begin();
+			}
+		}
 		execute_cgi(header.interpreterPath, header.ressourcePath, header.envMap, tr);
 		close(tr);
 		exit (0);

@@ -98,7 +98,6 @@ void Server::chunked_post(int fd, std::vector<unsigned char> body, header_infos&
     chunk[fd].bodySize = header.bodySize;
     if (header.bodySize > size)
     {
-        std::cout << size << " " << header.bodySize << std::endl;
         sendError(header, 413, fd);
         close(header.fd_ressource);
         chunk.erase(fd);

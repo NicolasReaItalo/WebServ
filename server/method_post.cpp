@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:49:40 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/10/08 16:57:14 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/10/10 12:21:54 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,7 +72,6 @@ void Server::method_post(header_infos& header, std::vector<unsigned char> body, 
     {
         // If the request is chunked, handle the chunked transfer encoding
         chunk[fd] = header;
-        std::cout << "chunked post request. first chunk is of size " << body.size() << std::endl;
         header.bodySize = 0;
         chunked_post(fd, body, header);
         return;

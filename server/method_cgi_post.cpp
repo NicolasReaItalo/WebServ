@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/07 11:36:40 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/10/08 17:57:42 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/10/10 12:18:15 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,6 @@
 #include "cgi_utils.hpp"
 
 char** MapToEnv(std::map<std::string,std::string> const & map);
-size_t	ft_strlen(const char *s);
-char	*ft_strdup(const char *s);
 
 static int execute_cgi
 (std::string interpreter_path, std::string script_path, std::map<std::string,std::string> envMap, int p, int q)
@@ -75,6 +73,16 @@ void Server::method_post_cgi(int fd, header_infos& header)
 	
 	if (pid == 0)
 	{
+		std::map<int, fdsets>::iterator it;
+        for (it = fd_set.begin(); it != fd_set.end();)
+        {
+			if (it->first != tr && it->first != q)
+			{
+				close (it->first);
+				fd_set.erase(it->first);
+				it = fd_set.begin();
+			}
+		}
 		if (dup2(tr, STDOUT_FILENO) == -1) {
 			perror("dup2 stdout");
 			close(tr);
@@ -84,7 +92,6 @@ void Server::method_post_cgi(int fd, header_infos& header)
 			perror("dup2 stdin");
 			close(tr);
 			close(q);
-
 			exit(EXIT_FAILURE);
 		}
 		execute_cgi(header.interpreterPath, header.ressourcePath, header.envMap, tr, q);
