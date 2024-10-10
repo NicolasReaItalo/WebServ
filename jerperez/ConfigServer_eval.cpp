@@ -6,7 +6,7 @@
 /*   By: jerperez <jerperez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 13:29:48 by jerperez          #+#    #+#             */
-/*   Updated: 2024/10/01 14:07:40 by jerperez         ###   ########.fr       */
+/*   Updated: 2024/10/10 10:26:25 by jerperez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 #include <string>
 #include <sstream>
 #include <iostream>
-#include "config_error_constants.h"
+#include "config_constants.h"
 
 //Evals
 int	ConfigServer::_evalServerName(void)

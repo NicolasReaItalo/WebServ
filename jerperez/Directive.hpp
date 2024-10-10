@@ -6,7 +6,7 @@
 /*   By: jerperez <jerperez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/03 17:31:53 by jerperez          #+#    #+#             */
-/*   Updated: 2024/09/19 16:33:50 by jerperez         ###   ########.fr       */
+/*   Updated: 2024/10/09 16:35:40 by jerperez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,8 +15,8 @@
 
 # include <string>
 # include <deque>
-# define PR_DIR_TYPE_SIMPLE 1
-# define PR_DIR_TYPE_BLOCK 2
+# define CF_DIR_TYPE_SIMPLE 1
+# define CF_DIR_TYPE_BLOCK 2
 
 class Directive
 {

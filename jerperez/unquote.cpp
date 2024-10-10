@@ -6,7 +6,7 @@
 /*   By: jerperez <jerperez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/03 15:21:14 by jerperez          #+#    #+#             */
-/*   Updated: 2024/09/09 16:02:28 by jerperez         ###   ########.fr       */
+/*   Updated: 2024/10/10 10:05:03 by jerperez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,17 +15,17 @@
 
 static void	_add_c_no_quote(unsigned char c, int *quote_char, std::string &word)
 {
-		if (TK_QUOTE == c)
-			*quote_char = TK_QUOTE;
-		else if (TK_ESCAPE == c)
-			*quote_char = TK_ESCAPE;
+		if (CF_QUOTE == c)
+			*quote_char = CF_QUOTE;
+		else if (CF_ESCAPE == c)
+			*quote_char = CF_ESCAPE;
 		else
 			word += c;
 }
 
 static void	_add_c_double_quote(unsigned char c, int *quote_char, std::string &word)
 {
-	if (TK_QUOTE == c)
+	if (CF_QUOTE == c)
 		*quote_char = 0;
 	else
 		word += c;
@@ -39,7 +39,7 @@ static void	_add_c_escape_quote(unsigned char c, int *quote_char, std::string &w
 
 /*  Removes "" end \ from string
  */
-void	tk_unquote(std::string &word)
+void	cf_unquote(std::string &word)
 {
 	const int		length = word.length();
 	std::string		new_str("");
@@ -50,9 +50,9 @@ void	tk_unquote(std::string &word)
 	{
 		if (0 == quote_char)
 			_add_c_no_quote(word[i], &quote_char, new_str);
-		else if (TK_QUOTE == quote_char)
+		else if (CF_QUOTE == quote_char)
 			_add_c_double_quote(word[i], &quote_char, new_str);
-		else if (TK_ESCAPE == quote_char)
+		else if (CF_ESCAPE == quote_char)
 			_add_c_escape_quote(word[i], &quote_char, new_str);
 	}
 	word = new_str;

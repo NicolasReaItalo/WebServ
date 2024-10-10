@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
+/*   By: jerperez <jerperez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/03 15:20:58 by jerperez          #+#    #+#             */
-/*   Updated: 2024/10/09 17:47:04 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/10/10 10:03:50 by jerperez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ static int	_parse(char *pathname, std::list<ConfigServer> &servers)
 		std::cerr << "error: fstream: Failed to open configuration file" << std::endl;
 		return (1);
 	}
-	if (tk_tokenize(f, list))
+	if (cf_tokenize(f, list))
 	{
 		std::cerr << "error: tokenizer: Failed to tokentize" << std::endl;
 		f.close();
