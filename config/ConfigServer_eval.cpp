@@ -6,7 +6,7 @@
 /*   By: jerperez <jerperez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 13:29:48 by jerperez          #+#    #+#             */
-/*   Updated: 2024/10/10 10:26:25 by jerperez         ###   ########.fr       */
+/*   Updated: 2024/10/10 15:17:14 by jerperez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,51 @@
 #include <sstream>
 #include <iostream>
 #include "config_constants.h"
+
+static int	_atoi_strict(const std::string &num, std::size_t n)
+{
+	const std::size_t 	len = num.length();
+
+	if (0 == len || len > n)
+		return -1;
+	char				c;
+	int					value;
+
+	value = 0;
+	for (std::size_t i = 0; i < len; ++i)
+	{
+		c = num[i];
+		if ('0' > c || '9' < c)
+			return -1;
+		value = 10 * value + (c - '0');
+	}
+	return value;
+}
+
+static bool _is_address(const std::string &address)
+{
+	std::stringstream	ss(address);
+	std::string			s255;
+	int	val255;
+	int	length;
+
+	length = 0;
+	while (std::getline(ss, s255, '.') && 5 != length)
+	{
+		val255 = _atoi_strict(s255, 3);
+		if (val255 < 0 || val255 > 255)
+			return false;
+		++length;
+	}
+	return (4 == length);
+}
+
+static bool _is_port(const std::string &port)
+{
+	const int	val65535 = _atoi_strict(port, 5);
+
+	return (val65535 > 0 && val65535 <= 65535);
+}
 
 //Evals
 int	ConfigServer::_evalServerName(void)
@@ -39,11 +84,11 @@ int	ConfigServer::_evalListen(void)
 	std::stringstream		ss(listenParameter.front());
 	std::string				elem;
 	int						i = 0;
-	while (std::getline(ss, elem, ':'))
+	while (std::getline(ss, elem, ':') && i != 3)
 	{
-		if (0 == i)
+		if (0 == i && _is_address(elem))
 			this->_address = elem;
-		else if (1 == i)
+		else if (1 == i && _is_port(elem))
 			this->_port = elem;
 		else
 			return CF_ERRDPARAM;
