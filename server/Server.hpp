@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:49:46 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/10/10 12:27:45 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/10/10 14:54:00 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,6 +91,7 @@ extern Logger webservLogger;
 class Server
 {
     private :
+        int tmpfindex;
         /*the number of servers*/
         int list_size;
         /*the list of all the parsed servers fron the .conf file*/
