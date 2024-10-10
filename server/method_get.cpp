@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:49:38 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/10/09 17:44:17 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/10/10 15:03:49 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,7 @@ void Server::method_get(const header_infos& header, int fd)
         std::string time_str = std::ctime(&time);;
         time_str.erase(time_str.find_last_not_of("\n") + 1);
         std::stringstream ss;
-        ss  << "HTTP/1.1 200 OK\r\n"
+        ss  << "HTTP/1.1 " << header.returnCode << " OK\r\n"
         << "Content-Type: " << header.contentType << "\r\n";
         if (!header.cookie.empty())
             ss << "Set-Cookie: " << header.cookie << "\r\n";

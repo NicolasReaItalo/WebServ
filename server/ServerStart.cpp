@@ -109,7 +109,16 @@ int Server::ServerStart()
         {
             std::ostringstream oss;
             oss << "[serverStart] server online\n\t\thost:port = " << it->getAddress() << ":" << it->getPort();
-            oss << "\n\t\tServer name =" << it->getServerNames().front();
+            oss << "\n\t\tServer names = ";
+            const ConfigServer::parameters_t names = it->getServerNames();
+            ConfigServer::parameters_t::const_iterator name_it = names.begin();
+            for (;name_it != names.end();)
+            {
+                oss << *name_it;
+                name_it++;
+                if (name_it != names.end())
+                    oss << ", ";
+            }
             webservLogger.log(LVL_INFO, oss);
         }
         it++;

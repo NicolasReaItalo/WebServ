@@ -21,6 +21,9 @@ $form= <<<END
 	<input type="text" class="form-control" name="msg" placeholder="Enter your note" required  >
 	<button>Submit Note</button>
 	</form>
+	<div class="title">
+		<a href="/index.html" class="home-button">go to home</a>
+	</div>
 	 <script>
         // Faire défiler .applist vers le bas à chaque chargement de la page
         window.onload = function() {

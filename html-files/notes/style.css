@@ -118,3 +118,18 @@ button {
 	margin: 0;
 	width: 30%;
 }
+
+.home-button {
+	margin-top: 20px;
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #728aa3;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+	text-align-last: center;
+}
+
+.home-button:hover {
+    background-color: #798b9e;
+}

@@ -6,13 +6,13 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 10:17:49 by nrea              #+#    #+#             */
-/*   Updated: 2024/10/08 13:31:15 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/10/10 15:00:34 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Logger.hpp"
 
-Logger webservLogger(LVL_INFO);
+Logger webservLogger(LVL_DEBUG);
 
 std::string Logger::timestamp(void)
 {
