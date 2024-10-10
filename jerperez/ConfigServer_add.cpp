@@ -6,7 +6,7 @@
 /*   By: jerperez <jerperez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 13:29:48 by jerperez          #+#    #+#             */
-/*   Updated: 2024/10/10 11:54:04 by jerperez         ###   ########.fr       */
+/*   Updated: 2024/10/10 14:04:29 by jerperez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,7 @@ static void	_perror_parsing(Directive* unknown_directive, int err_code)
 		const Directive::args_t &args = unknown_directive->getArgs();
 
 		if (false == args.empty())
-			std::cerr << " in directive: `" << args.front() << '\'';
+			std::cerr << " at directive: `" << args.front() << '\'';
 	}
 	std::cerr << std::endl;
 }

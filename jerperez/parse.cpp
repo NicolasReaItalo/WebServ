@@ -6,7 +6,7 @@
 /*   By: jerperez <jerperez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 16:02:57 by jerperez          #+#    #+#             */
-/*   Updated: 2024/10/10 11:53:30 by jerperez         ###   ########.fr       */
+/*   Updated: 2024/10/10 14:02:31 by jerperez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,11 +73,11 @@ static void	_print_error_code(\
 	if (it_curr != it_end)
 	{
 		if (-1 == it_curr->token_id)
-			std::cerr << "at word: `" << it_curr->word;
+			std::cerr << "at word: `" << it_curr->word << "' ";
 		else
-			std::cerr << "at token: `" << (char)(it_curr->token_id);
+			std::cerr << "at token: `" << (char)(it_curr->token_id) << "' ";
 	}
-	std::cerr << "' code: " << err_code << std::endl;
+	std::cerr << "code: " << err_code << std::endl;
 }
 
 //
