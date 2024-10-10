@@ -6,7 +6,7 @@
 /*   By: jerperez <jerperez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 16:02:57 by jerperez          #+#    #+#             */
-/*   Updated: 2024/10/10 10:25:41 by jerperez         ###   ########.fr       */
+/*   Updated: 2024/10/10 11:05:51 by jerperez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,6 +113,11 @@ int	pr_parse(token_deq_t &list, std::list<ConfigServer> &servers)
 		if (err_code)
 			return err_code;
 		servers.push_back(server);
+	}
+	if (servers.empty())
+	{
+		std::cerr << "parse: error: " << CF_ERRNOTHING_MSG << std::endl;
+		return (CF_ERRNOTHING);
 	}
 	return 0;
 }
