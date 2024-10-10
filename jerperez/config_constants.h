@@ -6,7 +6,7 @@
 /*   By: jerperez <jerperez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 13:29:48 by jerperez          #+#    #+#             */
-/*   Updated: 2024/10/10 11:49:08 by jerperez         ###   ########.fr       */
+/*   Updated: 2024/10/10 15:17:07 by jerperez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ cgi client_body_path client_max_body_size location root return server_name"
 # define CF_DFLT_CLIENT_MAX_BODY_SIZE "500000"
 //
 # define CF_ERRDPARAM 2
-# define CF_ERRDPARAM_MSG "invalid number of parameters for mandatory directive"
+# define CF_ERRDPARAM_MSG "invalid parameters for mandatory directive"
 # define CF_ERRNOTB 3
 # define CF_ERRNOTB_MSG "expected block directive"
 # define CF_ERRNOTS 4
