@@ -6,7 +6,7 @@
 /*   By: nrea <nrea@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/23 10:46:13 by nrea              #+#    #+#             */
-/*   Updated: 2024/10/08 14:55:45 by nrea             ###   ########.fr       */
+/*   Updated: 2024/10/10 15:47:25 by nrea             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,7 +92,7 @@ int locationIndex,std::map<std::string, std::string> header_attributes)
 			<< header_attributes["Transfer-Encoding"];
 			webservLogger.log(LVL_DEBUG, oss);
 			}
-
+			return response_error(HTTP_STATUS_NOT_IMPLEMENTED, config, locationIndex);
 		}
 		response.chunked =  true;
 		{
@@ -100,12 +100,12 @@ int locationIndex,std::map<std::string, std::string> header_attributes)
 			oss <<"[handle_post]	the Transfer-Encoding is set to chunked";
 			webservLogger.log(LVL_DEBUG, oss);
 		}
-		return response_error(HTTP_STATUS_NOT_IMPLEMENTED, config, locationIndex);
 	}
 	else // Si la requete n'est pas chunk un header Content-Length doit etre present
 		// on fait les verifactions qui s'imposent : presence, taille
 
 	{
+		response.chunked =  false;
 		{
 			std::ostringstream oss;
 			oss <<"[handle_post]	the Transfer-Encoding is not set to chunked\
