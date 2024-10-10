@@ -14,7 +14,6 @@
 # define CONFIGBLOCK_HPP
 
 #include <string>
-#include <list>
 #include <map>
 #include "Directive.hpp"
 

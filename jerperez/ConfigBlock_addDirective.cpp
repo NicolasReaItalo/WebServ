@@ -11,8 +11,9 @@
 /* ************************************************************************** */
 
 #include <string>
+#include <iostream>
 #include "ConfigBlock.hpp"
-#include "config_error_constants.h"
+#include "config_constants.h"
 #include "Directive.hpp"
 
 int	ConfigBlock::_addDirective_unique(\
@@ -20,7 +21,7 @@ int	ConfigBlock::_addDirective_unique(\
 	const Directive::args_t &parameters)
 {
 	if (parameters.empty())
-		return CF_ERRDNOPARAM;
+		return CF_ERRDBADPNUM;
 	this->_directive_parameters[name] = parameters;
 	return 0;
 }
@@ -30,12 +31,12 @@ int	ConfigBlock::_addDirective_io(\
 	Directive::args_t parameters)
 {
 	if (parameters.empty())
-		return CF_ERRDNOPARAM;
+		return CF_ERRDBADPNUM;
 	const std::string output = parameters.back();
 
 	parameters.pop_back();
 	if (parameters.empty())
-		return CF_ERRDNOPARAM;
+		return CF_ERRDBADPNUM;
 	const Directive::args_t::const_iterator	it_end = parameters.end();
 
 	for (Directive::args_t::const_iterator it = parameters.begin(); \

@@ -6,7 +6,7 @@
 /*   By: jerperez <jerperez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/03 15:20:49 by jerperez          #+#    #+#             */
-/*   Updated: 2024/09/09 16:03:11 by jerperez         ###   ########.fr       */
+/*   Updated: 2024/10/10 10:03:34 by jerperez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,6 @@
 
 # include <string>
 
-void	tk_unquote(std::string &word);
+void	cf_unquote(std::string &word);
 
 #endif

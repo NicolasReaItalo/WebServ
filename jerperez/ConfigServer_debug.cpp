@@ -6,7 +6,7 @@
 /*   By: jerperez <jerperez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 13:29:48 by jerperez          #+#    #+#             */
-/*   Updated: 2024/10/01 13:06:52 by jerperez         ###   ########.fr       */
+/*   Updated: 2024/10/10 10:37:03 by jerperez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,6 +56,6 @@ void		ConfigServer::_debug_print(void)
 	for (std::vector<ConfigLocation>::iterator it = locations.begin(); it_end != it; ++it)
 	{
 		std::cout << "location `" << it->getUri() << "'" << std::endl;
-		it->_debug_print();
+		it->ConfigBlock::_debug_print();//
 	}
 }

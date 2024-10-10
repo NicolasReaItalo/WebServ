@@ -6,7 +6,7 @@
 /*   By: jerperez <jerperez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/03 15:21:14 by jerperez          #+#    #+#             */
-/*   Updated: 2024/10/01 14:27:04 by jerperez         ###   ########.fr       */
+/*   Updated: 2024/10/10 10:06:43 by jerperez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,20 +21,20 @@ static void	_add_c_to_token(unsigned char c, int *quote_char, std::string &word,
 
 	if (0 == *quote_char)
 	{
-		p_c = (char *)(std::strchr(TK_METACHAR, c));
+		p_c = (char *)(std::strchr(CF_METACHAR, c));
 		if (NULL != p_c)
 		{
 			t_token	tk;
 			if (false == word.empty())
 			{
-				if (TK_COMMENT == word[0])
+				if (CF_COMMENT == word[0])
 				{
 					word.erase();
-					*quote_char = TK_COMMENT;
+					*quote_char = CF_COMMENT;
 					return ;
 				}
 				tk.word = word;
-				tk_unquote(tk.word); // Should not be there if variable expansion
+				cf_unquote(tk.word); // Should not be there if variable expansion
 				tk.token_id = -1;
 				list.push_back(tk);	
 				word.erase();
@@ -52,16 +52,16 @@ static void	_add_c_to_token(unsigned char c, int *quote_char, std::string &word,
 
 static void	_add_c_no_quote(unsigned char c, int *quote_char, std::string &word, token_deq_t &list)
 {
-		if (TK_QUOTE == c)
-			*quote_char = TK_QUOTE;
-		else if (TK_ESCAPE == c)
-			*quote_char = TK_ESCAPE;
+		if (CF_QUOTE == c)
+			*quote_char = CF_QUOTE;
+		else if (CF_ESCAPE == c)
+			*quote_char = CF_ESCAPE;
 		_add_c_to_token(c, quote_char, word, list);
 }
 
 static void	_add_c_double_quote(unsigned char c, int *quote_char, std::string &word, token_deq_t &list)
 {
-	if (TK_QUOTE == c)
+	if (CF_QUOTE == c)
 		*quote_char = 0;
 	_add_c_to_token(c, quote_char, word, list);
 }
@@ -85,11 +85,11 @@ static int	_add_token_quote(std::string line, token_deq_t &list, std::string &wo
 		c = line[i];
 		if (0 == *quote_char)
 			_add_c_no_quote(c, quote_char, word, list);
-		else if (TK_QUOTE == *quote_char)
+		else if (CF_QUOTE == *quote_char)
 			_add_c_double_quote(c, quote_char, word, list);
-		else if (TK_ESCAPE == *quote_char)
+		else if (CF_ESCAPE == *quote_char)
 			_add_c_escape_quote(c, quote_char, word, list);
-		else if (TK_COMMENT == *quote_char)
+		else if (CF_COMMENT == *quote_char)
 		{
 			*quote_char = 0;
 			return 0;
@@ -97,18 +97,18 @@ static int	_add_token_quote(std::string line, token_deq_t &list, std::string &wo
 		else
 			return 0xBADC0DE;
 	}
-	if (TK_COMMENT == *quote_char)
+	if (CF_COMMENT == *quote_char)
 		*quote_char = 0;
 	else if (0 == *quote_char)
-		_add_c_to_token(TK_SPACE_NEWLINE, quote_char, word, list);
+		_add_c_to_token(CF_SPACE_NEWLINE, quote_char, word, list);
 	else
-		word += '\n';
+		word += CF_SPACE_NEWLINE;
 	return 0;
 }
 
 /* Tokenizes file
  */
-int	tk_tokenize(std::fstream &input_file, token_deq_t &list)
+int	cf_tokenize(std::fstream &input_file, token_deq_t &list)
 {
 	std::string			line;
 	int					errcode;
@@ -121,7 +121,7 @@ int	tk_tokenize(std::fstream &input_file, token_deq_t &list)
 		errcode = _add_token_quote(line, list, word, &quote_char);
 	if (errcode)
 		return errcode;
-	else if (quote_char && '#' != quote_char)
-		return TK_ERRQUOTE + quote_char;
+	else if (quote_char && CF_COMMENT != quote_char)
+		return CF_ERRQUOTE + quote_char;
 	return 0;
 }
