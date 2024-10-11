@@ -34,11 +34,14 @@ int Server::ServerStart()
         oss << "[serverStart] epoll_create1 failed: " << strerror(errno);
         webservLogger.log(LVL_ERROR, oss);
         close(epoll_fd);
+        std::cout << "closing fd " <<epoll_fd << "server_start line 36\n";
+        
         return 1;
     }
 
     fdsets tmp = {"0", "0", time, true, false};
     fd_set[epoll_fd] = tmp;
+    std::cout << "added fd " << epoll_fd << " to fd_set server_start line 42\n";
 
     // For each Server initialize the servers sockets
     for (int i = 0; i < list_size; i++)
@@ -144,6 +147,7 @@ int Server::ServerStart()
                     webservLogger.log(LVL_INFO, oss);
                 }
                 close(tmp);
+                std::cout << "closing fd " << tmp << "server_start line 37\n";
                 fd_set.erase(tmp);
             }
             else

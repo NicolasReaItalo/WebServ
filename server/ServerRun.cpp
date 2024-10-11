@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:49:52 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/10/08 17:03:48 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/10/11 13:53:40 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,6 +70,13 @@ int Server::ServerRun()
                         webservLogger.log(LVL_ERROR, oss);
                         break;
                     }
+                    if (new_socket == 0)
+                    {
+                        std::ostringstream oss;
+                        oss << "[serverRun] accept failed: accepted on 0";
+                        webservLogger.log(LVL_ERROR, oss);
+                        break;
+                    }
                     // Set the new socket to non-blocking mode
                     if (set_nonblocking(new_socket) == -1)
                     {
@@ -92,6 +99,7 @@ int Server::ServerRun()
                         close(new_socket);
                         continue;
                     }
+                    
                     fd_set[new_socket] = fd_set[fd];
                     fd_set[new_socket].listener = false;
                     fd_set[new_socket].client = true;
@@ -125,6 +133,7 @@ int Server::ServerRun()
             oss << "epoll error on fd: " << fd;
             webservLogger.log(LVL_ERROR, oss);
             close(fd);
+            std::cout << "closing fd " << fd << "server_run line 135\n";
             fd_set.erase(fd);
         }
         else

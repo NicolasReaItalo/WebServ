@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:49:40 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/10/10 12:21:54 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/10/11 14:03:20 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,7 @@ void Server::method_post(header_infos& header, std::vector<unsigned char> body, 
     }
     fdsets tmp = {"0","0",time, false, false};
     fd_set[header.fd_ressource] = tmp;
+    std::cout << "added fd " << header.fd_ressource << " to fd_set method_post line 35\n";
 
     // If the request is not chunked (i.e., receiving the entire body in one go)
     if (!header.chunked)

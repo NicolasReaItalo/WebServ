@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:49:25 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/10/10 14:45:04 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/10/11 14:13:56 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,8 +37,6 @@ void Server::send_chunk(int fd, const header_infos& header)
             fdsets tmp = {"0", "0", time, true, false};
             fd_set[fd] = tmp;
         }
-        fd_set[chunk[fd].fd_ressource] = fd_set[fd];
-        fd_set[chunk[fd].fd_ressource].listener = false;
         std::string mime = mimeList[get_mime_type(chunk[fd].ressourcePath)];
 
         /*create and send the header*/
@@ -54,6 +52,7 @@ void Server::send_chunk(int fd, const header_infos& header)
         {
             std::cerr << "epoll_ctl failed: " << strerror(errno) << std::endl;
             close(fd);
+            std::cout << "closing fd " << fd << "chunk-send line 56\n";
             fd_set.erase(fd);
         }
         chunk[fd].readIndex = 0;
@@ -77,7 +76,7 @@ void Server::send_chunk(int fd)
     std::streamsize bytesRead = file.read(reinterpret_cast<char*>(tmp.data()), CHUNK_SIZE).gcount();
     std::string data;
     std::stringstream oss;
-    if (file.eof() || bytesRead < CHUNK_SIZE)
+    if (file.eof()/* || bytesRead < CHUNK_SIZE*/)
     {
         oss << std::hex << bytesRead << "\r\n"; 
         oss.write(reinterpret_cast<const char*>(&tmp[0]), bytesRead);
@@ -110,6 +109,7 @@ void Server::send_chunk(int fd)
             oss << "[send chunk] epoll_ctl failed: " << strerror(errno);
             webservLogger.log(LVL_ERROR, oss);
             close(fd);
+            std::cout << "closing fd " << fd << "chunk-send line 112\n";
             fd_set.erase(fd);
             return;
         }
@@ -142,6 +142,7 @@ void Server::send_chunk(int fd)
             oss << "[send chunk] epoll_ctl failed: " << strerror(errno);
             webservLogger.log(LVL_ERROR, oss);
             close(fd);
+            std::cout << "closing fd " << fd << "chunk-send line 147\n";
             fd_set.erase(fd);
             chunk.erase(fd);
             return;

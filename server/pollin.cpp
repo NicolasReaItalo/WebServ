@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:49:44 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/10/10 16:44:35 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/10/11 13:36:21 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,16 +48,16 @@ void Server::receive_data(int fd, int i)
         {
             {
                 std::ostringstream oss;
-                oss << "[POLLIN] body from fd " << fd << " fully received, selecting method...";
+                oss << "[POLLIN] body from fd " << fd << " fully received, selecting method..." << header.toDo;
                 webservLogger.log(LVL_DEBUG, oss);
             }
-            if (chunk.find(fd) != chunk.end())
+            if (chunk.find(fd) != chunk.end() && chunk[fd].timestamp == POST)
             {
                 fd_set[fd].timer = time;
                 chunked_post(fd,  body, chunk[fd]);
                 return;
             }
-            std::cout << "body is " << &(body[0]) << std::endl;
+            // std::cout << "body is " << &(body[0]) << std::endl;
             switch (header.toDo)
             {
                 case POST:
@@ -100,7 +100,7 @@ void Server::receive_data(int fd, int i)
                     return;
                 default:
                     std::ostringstream oss;
-                    oss << "[POLLIN] Unknown method on fd " << fd;
+                    oss << "[POLLIN] Unknown method on fd " << fd << " : " << header.toDo;
                     webservLogger.log(LVL_ERROR, oss);
                     return;  
             }
@@ -148,6 +148,7 @@ void Server::receive_data(int fd, int i)
                 {
                     headerParsed = true; // Mark header as parsed
                     header = headerParser(headerStr, std::make_pair(fd_set[fd].address, fd_set[fd].port));
+                    std::cout << "HEADER ON " << fd << " IS : \n" << headerStr << std::endl;
                 }
                 else 
                     header = chunk[fd];

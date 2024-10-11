@@ -78,6 +78,7 @@ void Server::chunked_post(int fd, std::vector<unsigned char> body, header_infos&
                     std::cerr << "error sending header\n";
         }
         close(header.fd_ressource);
+        std::cout << "closing fd " << header.fd_ressource << "chunk-receive line 80\n";
         chunk.erase(fd);
         if (!header.keepAlive)
         {
@@ -88,6 +89,7 @@ void Server::chunked_post(int fd, std::vector<unsigned char> body, header_infos&
                 webservLogger.log(LVL_ERROR, oss);
             }
             close(fd);
+            std::cout << "closing fd " << fd << "chunk-receive line 92\n";
             fd_set.erase(fd); // Remove the file descriptor from the fd_set
         }
         return;
@@ -103,6 +105,7 @@ void Server::chunked_post(int fd, std::vector<unsigned char> body, header_infos&
         close(header.fd_ressource);
         fd_set.erase(header.fd_ressource);
         close(fd);
+        std::cout << "closing fd " << fd << "chunk-receive line 107\n";
         chunk.erase(fd);
         if (!header.keepAlive)
         {
@@ -113,6 +116,7 @@ void Server::chunked_post(int fd, std::vector<unsigned char> body, header_infos&
                 webservLogger.log(LVL_ERROR, oss);
             }
             close(fd);
+            std::cout << "closing fd " << fd << "chunk-receive line 119\n";
             fd_set.erase(fd); // Remove the file descriptor from the fd_set
         }
         return;
