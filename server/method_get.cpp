@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:49:38 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/10/11 14:07:12 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/10/11 15:26:07 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ void Server::method_get(const header_infos& header, int fd)
         oss << "[method get] starting for fd " << fd;
         webservLogger.log(LVL_INFO, oss);
     }
-    if (header.bodySize > CHUNK_SIZE)
+    if (header.bodySize > maxBodySize)
     {
         std::ostringstream oss;
         oss << "[method get] file bigger than max authorized size, sending by CHUNKS";

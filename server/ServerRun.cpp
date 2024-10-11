@@ -6,14 +6,14 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:49:52 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/10/11 13:53:40 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/10/11 15:14:19 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Server.hpp"
 #include <ctime>
 
-int set_nonblocking(int sockfd) {
+static int set_nonblocking(int sockfd) {
     int flags = fcntl(sockfd, F_GETFL, 0);
     if (flags == -1) {
         std::cerr << "fcntl(F_GETFL) failed: " << strerror(errno) << std::endl;
@@ -62,6 +62,7 @@ int Server::ServerRun()
                 {
                     struct sockaddr_in client_address;
                     socklen_t addrlen = sizeof(client_address);
+                    set_nonblocking(fd);
                     new_socket = accept(fd, (struct sockaddr *)&client_address, &addrlen);
                     if (new_socket == -1)
                     {

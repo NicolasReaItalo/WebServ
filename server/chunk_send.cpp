@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:49:25 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/10/11 14:13:56 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/10/11 15:28:36 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@
 
 void Server::send_chunk(int fd, const header_infos& header)
 {
+    std::cout << "send a chunk...\n";
     {
         std::ostringstream oss;
         oss << "[send chunk] sending body by chunks to " << fd << "...";
@@ -50,9 +51,10 @@ void Server::send_chunk(int fd, const header_infos& header)
         events[chunk[fd].i_ev].events = EPOLLOUT | EPOLLET;
         if (epoll_ctl(epoll_fd, EPOLL_CTL_MOD, fd, &events[chunk[fd].i_ev]) == -1)
         {
-            std::cerr << "epoll_ctl failed: " << strerror(errno) << std::endl;
+            std::ostringstream oss;
+            oss << "epoll_ctl failed: " << strerror(errno);
+            webservLogger.log(LVL_DEBUG, oss);
             close(fd);
-            std::cout << "closing fd " << fd << "chunk-send line 56\n";
             fd_set.erase(fd);
         }
         chunk[fd].readIndex = 0;
@@ -60,6 +62,7 @@ void Server::send_chunk(int fd, const header_infos& header)
 }
 void Server::send_chunk(int fd)
 {
+    std::cout << "send a chunk...\n";
     //if already in chunk list ==>send next chunk
     std::ifstream file(chunk[fd].ressourcePath.c_str(), std::ios::binary);
     if (!file) 

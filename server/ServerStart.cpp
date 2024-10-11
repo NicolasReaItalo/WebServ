@@ -21,6 +21,24 @@ int getFileSize(const char* filename) {
     return static_cast<int>(fileSize);
 }
 
+static int set_nonblocking(int sockfd) {
+    int flags = fcntl(sockfd, F_GETFL, 0);
+    if (flags == -1) {
+        std::cerr << "fcntl(F_GETFL) failed: " << strerror(errno) << std::endl;
+        return 0;
+    }
+    if (fcntl(sockfd, F_SETFL, flags | O_NONBLOCK) == -1) {
+        std::cerr << "fcntl(F_SETFL) failed: " << strerror(errno) << std::endl;
+        return 0;
+    }
+    {
+        std::ostringstream oss;
+        oss << "[serverRun] Socket " << sockfd << " set to non-blocking";
+        webservLogger.log(LVL_DEBUG, oss);
+    }
+    return 1;
+}
+
 int Server::ServerStart()
 {
     time = std::time(NULL);
@@ -69,6 +87,7 @@ int Server::ServerStart()
         address[i].sin_family = AF_INET;
         address[i].sin_addr.s_addr = inet_addr(it->getAddress().c_str());
         address[i].sin_port = htons(atoi(it->getPort().c_str()));
+        set_nonblocking(server_fd[i]);
 
         //binding the server_fd on the correct address
         if (bind(server_fd[i], (struct sockaddr *)& address[i], sizeof(address[i])) < 0)
