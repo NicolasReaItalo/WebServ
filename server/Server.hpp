@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:49:46 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/10/11 15:29:49 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/10/11 17:02:15 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@
 
 #define MAX_EVENTS 500
 #define BUFFER_SIZE 5000
-#define CHUNK_SIZE 100
+#define CHUNK_SIZE 1000
 #define TIMEOUT 5
 
 #define ERROR 1
@@ -166,12 +166,15 @@ class Server
         std::vector<unsigned char> load_file(const std::string &filename);
         void failed_to_send(int fd);
         int parse_cgi_tmp_file(header_infos& header);
+
+        bool is_socket_open(int fd);
         
     public :
         Server(std::list<ConfigServer> servers);
         int ServerStart();
         void ServerClose();
         ~Server();
+        
 
 
 };

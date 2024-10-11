@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:49:38 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/10/11 15:26:07 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/10/11 16:54:26 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,10 +54,10 @@ void Server::method_get(const header_infos& header, int fd)
         {
             {
                 std::ostringstream oss;
-                oss << "[method get] Sending header 200 -OK to " << fd << "...";
+                oss << "[method get] Sending header 200 -OK to " << fd << "..." ;
                 webservLogger.log(LVL_INFO, oss);   
             }
-            if (-1 == send(fd, head.c_str(), head.size(), 0))
+            if (!is_socket_open(fd) || -1 == send(fd, head.c_str(), head.size(), 0))
             {
                 std::ostringstream oss;
                 oss << "[method get] Failed to send header to " << fd;
@@ -65,10 +65,10 @@ void Server::method_get(const header_infos& header, int fd)
             }
             {
                 std::ostringstream oss;
-                oss << "[method get] Sending file to " << fd << "...";
+                oss << "[method get] Sending file to " << fd << "..." << data.size() << &(data[0]);
                 webservLogger.log(LVL_INFO, oss);   
             }
-            if (-1 == send(fd, &(data[0]), header.bodySize, 0))
+            if (!is_socket_open(fd) || -1 == send(fd, &(data[0]), data.size(), MSG_NOSIGNAL))
             {
                 std::ostringstream oss;
                 oss << "[method get] Failed to send body to " << fd;

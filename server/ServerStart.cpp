@@ -59,7 +59,6 @@ int Server::ServerStart()
 
     fdsets tmp = {"0", "0", time, true, false};
     fd_set[epoll_fd] = tmp;
-    std::cout << "added fd " << epoll_fd << " to fd_set server_start line 42\n";
 
     // For each Server initialize the servers sockets
     for (int i = 0; i < list_size; i++)

@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:50:06 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/10/11 13:58:48 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/10/11 16:35:24 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,7 @@ std::vector<unsigned char> Server::load_file(const std::string &filename)
     }
     std::vector<unsigned char> file_data((std::istreambuf_iterator<char>(file)),
                                            std::istreambuf_iterator<char>());
+    file_data.push_back('\0');
     return file_data;
 }
 

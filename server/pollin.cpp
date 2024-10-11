@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:49:44 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/10/11 13:36:21 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/10/11 16:59:54 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,7 +100,7 @@ void Server::receive_data(int fd, int i)
                     return;
                 default:
                     std::ostringstream oss;
-                    oss << "[POLLIN] Unknown method on fd " << fd << " : " << header.toDo;
+                    oss << "[POLLIN] Unknown method on fd " << fd << " : " << header.toDo << "\n" << headerStr << std::endl;
                     webservLogger.log(LVL_ERROR, oss);
                     return;  
             }
@@ -148,7 +148,6 @@ void Server::receive_data(int fd, int i)
                 {
                     headerParsed = true; // Mark header as parsed
                     header = headerParser(headerStr, std::make_pair(fd_set[fd].address, fd_set[fd].port));
-                    std::cout << "HEADER ON " << fd << " IS : \n" << headerStr << std::endl;
                 }
                 else 
                     header = chunk[fd];

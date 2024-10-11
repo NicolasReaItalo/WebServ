@@ -74,7 +74,7 @@ void Server::chunked_post(int fd, std::vector<unsigned char> body, header_infos&
             method_post_cgi(fd, header);
         else
         {
-            if (-1 == send(fd, head.c_str(), head.size(), 0))
+            if (!is_socket_open(fd) || -1 == send(fd, head.c_str(), head.size(), 0))
                     std::cerr << "error sending header\n";
         }
         close(header.fd_ressource);
