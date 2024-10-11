@@ -25,6 +25,7 @@ void Server::chunked_post(int fd, std::vector<unsigned char> body, header_infos&
         oss << "[method post chunk] starting for a new chunk..." << header.ressourcePath;
         webservLogger.log(LVL_DEBUG, oss);
     }
+    fd_set[header.fd_ressource].timer = time;
     std::ostringstream str;
     str << std::string(body.begin(), body.end());
 
@@ -100,6 +101,8 @@ void Server::chunked_post(int fd, std::vector<unsigned char> body, header_infos&
     {
         sendError(header, 413, fd);
         close(header.fd_ressource);
+        fd_set.erase(header.fd_ressource);
+        close(fd);
         chunk.erase(fd);
         if (!header.keepAlive)
         {
@@ -120,6 +123,8 @@ void Server::chunked_post(int fd, std::vector<unsigned char> body, header_infos&
     {
         sendError(header, 500, fd); // Send internal server error if there's a mismatch
         close(header.fd_ressource);
+        fd_set.erase(header.fd_ressource);
+        close(fd);
         chunk.erase(fd);
         remove(header.ressourcePath.c_str());
         //std::cerr << "remove " << header.ressourcePath.c_str() << "in chunk_receive.cpp line 124" << std::endl;
