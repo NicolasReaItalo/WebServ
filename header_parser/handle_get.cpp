@@ -6,7 +6,7 @@
 /*   By: nrea <nrea@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/18 13:27:16 by nrea              #+#    #+#             */
-/*   Updated: 2024/10/08 14:55:53 by nrea             ###   ########.fr       */
+/*   Updated: 2024/10/11 10:45:16 by nrea             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,8 +74,7 @@ ConfigServer  * config,int locationIndex,std::map<std::string, std::string> head
 	//Si la taille est trop grande on passe en chunked; //TODO
 	// --------------------------------------
 
-	if (response.bodySize >
-	static_cast<unsigned long>(atol(config->getDirectiveParameter(locationIndex, "client_max_body_size").c_str())))
+	if (response.bodySize > CHUNK_SIZE)
 		response.chunked = true;
 	else
 		response.chunked = false;

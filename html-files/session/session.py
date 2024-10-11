@@ -92,7 +92,7 @@ def process_login():
                         <p>You are now logged in.</p>
                     </div>
                     <div class="bloc">
-                        <a HREF="../index.html">go to home"</a>
+                        <a HREF="../index.html">go to home</a>
                     </div>
 
                    """)

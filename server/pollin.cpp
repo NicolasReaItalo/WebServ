@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:49:44 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/10/10 14:55:18 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/10/10 16:44:35 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,6 +51,13 @@ void Server::receive_data(int fd, int i)
                 oss << "[POLLIN] body from fd " << fd << " fully received, selecting method...";
                 webservLogger.log(LVL_DEBUG, oss);
             }
+            if (chunk.find(fd) != chunk.end())
+            {
+                fd_set[fd].timer = time;
+                chunked_post(fd,  body, chunk[fd]);
+                return;
+            }
+            std::cout << "body is " << &(body[0]) << std::endl;
             switch (header.toDo)
             {
                 case POST:

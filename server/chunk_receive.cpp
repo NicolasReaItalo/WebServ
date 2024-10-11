@@ -119,6 +119,7 @@ void Server::chunked_post(int fd, std::vector<unsigned char> body, header_infos&
     }
 
     size_t bytes_written = write(header.fd_ressource, &(parsed_body[0]), parsed_body.size());
+    fd_set[header.fd_ressource].timer = time;
     if (bytes_written < 0)
     {
         sendError(header, 500, fd); // Send internal server error if there's a mismatch
