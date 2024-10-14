@@ -16,6 +16,12 @@
 #include "config_constants.h"
 #include "Directive.hpp"
 
+/*Change me to add IO directives*/
+static bool	_is_io_directive(std::string &directive_name)
+{
+	return ("cgi" == directive_name || "error_page" == directive_name);
+}
+
 int	ConfigBlock::_addDirective_unique(\
 	const std::string &name,\
 	const Directive::args_t &parameters)
@@ -59,7 +65,7 @@ int		ConfigBlock::_addDirective(Directive* directive)
 	else if (!this->_knownDirective(name))
 		return CF_ERRDUNKNOWN;
 	args_copy.pop_front();
-	if ("cgi" == name || "error_page" == name)
+	if (_is_io_directive(name))
 		return this->_addDirective_io(name, args_copy);
 	else
 		return this->_addDirective_unique(name, args_copy);
