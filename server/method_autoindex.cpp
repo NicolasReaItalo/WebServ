@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/23 10:42:10 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/10/10 13:10:31 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/10/14 12:50:37 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,7 +94,7 @@ void Server::send_index(int fd, const header_infos& header, std::map<std::string
         oss << "[method autoindex] Sending header to " << fd << "...";
         webservLogger.log(LVL_INFO, oss);   
     }
-    if (-1 == send(fd, head.c_str(), head.size(), 0))
+    if (-1 == send(fd, head.c_str(), head.size(), MSG_NOSIGNAL))
     {
         std::ostringstream oss;
         oss << "[method autoindex] error sending header to fd" << fd;
@@ -105,7 +105,7 @@ void Server::send_index(int fd, const header_infos& header, std::map<std::string
         oss << "[method autoindex] Sending body to " << fd << "...";
         webservLogger.log(LVL_INFO, oss);   
     }
-    if (-1 == send(fd, body.c_str(), body.size(), 0))
+    if (-1 == send(fd, body.c_str(), body.size(), MSG_NOSIGNAL))
     {
         std::ostringstream oss;
         oss << "[method autoindex] error sending body to fd" << fd;

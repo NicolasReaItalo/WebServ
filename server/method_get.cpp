@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:49:38 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/10/14 11:57:17 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/10/14 12:50:48 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,7 @@ void Server::method_get(const header_infos& header, int fd)
                 oss << "[method get] Sending header 200 -OK to " << fd << "..." ;
                 webservLogger.log(LVL_INFO, oss);   
             }
-            if (!is_socket_open(fd) || -1 == send(fd, head.c_str(), head.size(), 0))
+            if (!is_socket_open(fd) || -1 == send(fd, head.c_str(), head.size(), MSG_NOSIGNAL))
             {
                 std::ostringstream oss;
                 oss << "[method get] Failed to send header to " << fd;

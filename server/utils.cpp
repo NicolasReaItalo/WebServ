@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:50:06 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/10/14 11:57:42 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/10/14 12:51:33 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -157,7 +157,7 @@ void Server::sendCustomError(header_infos header, int errcode, int fd)
                 oss << "[custom error] Sending header " << errcode << errorList[errcode] << " to " << fd << "...";
                 webservLogger.log(LVL_INFO, oss);   
             }
-            if (-1 == send(fd, head.c_str(), head.size(), 0))
+            if (-1 == send(fd, head.c_str(), head.size(), MSG_NOSIGNAL))
             {
                 std::ostringstream oss;
                 oss << "[custom error] Failed to send header to " << fd;
@@ -168,7 +168,7 @@ void Server::sendCustomError(header_infos header, int errcode, int fd)
                 oss << "[custom error] Sending file to " << fd << "...";
                 webservLogger.log(LVL_INFO, oss);   
             }
-            if (-1 == send(fd, &(data[0]), header.bodySize, 0))
+            if (-1 == send(fd, &(data[0]), header.bodySize, MSG_NOSIGNAL))
             {
                 std::ostringstream oss;
                 oss << "[custom error] Failed to send body to " << fd;
@@ -229,8 +229,8 @@ void Server::sendError(header_infos header, int errcode, int fd)
         body = generate_error_page(errcode);
     }
     std::string head = ss.str();
-    send(fd, head.c_str(), head.size(), header.i_ev);
-    send(fd, body.c_str(), body.size(), header.i_ev);
+    send(fd, head.c_str(), head.size(), header.i_ev | MSG_NOSIGNAL);
+    send(fd, body.c_str(), body.size(), header.i_ev | MSG_NOSIGNAL);
 
     if (shutdown(fd, SHUT_WR) == -1) {
         perror("shutdown");
@@ -240,7 +240,9 @@ void Server::sendError(header_infos header, int errcode, int fd)
 
 void Server::failed_to_send(int fd)
 {
-    std::cerr << "Failed to send data: " << strerror(errno) << std::endl;
+    std::ostringstream oss;
+    oss << "[failed_to_send] Failed to send data: " << strerror(errno);
+    webservLogger.log(LVL_ERROR, oss);
     close(fd);
     fd_set.erase(fd);
     chunk.erase(fd);
@@ -248,12 +250,14 @@ void Server::failed_to_send(int fd)
 }
 
 
-void removeFirstThreeLines(const std::string& filename)
+void removeHeader(const std::string& filename)
 {
     std::ifstream inFile(filename.c_str());
     
     if (!inFile) {
-        std::cerr << "Could not open the file for reading: " << filename << std::endl;
+        std::ostringstream oss;
+        oss << "[removeHeader] Could not open the file for reading: " << filename;
+        webservLogger.log(LVL_ERROR, oss);
         return;
     }
 
@@ -262,7 +266,9 @@ void removeFirstThreeLines(const std::string& filename)
     std::ofstream outFile(tempFilename.c_str());
 
     if (!outFile) {
-        std::cerr << "Could not open the file for writing: " << tempFilename << std::endl;
+        std::ostringstream oss;
+        oss << "[removeHeader] Could not open the file for writing: " << tempFilename;
+        webservLogger.log(LVL_ERROR, oss);
         inFile.close();
         return;
     }
@@ -288,9 +294,13 @@ void removeFirstThreeLines(const std::string& filename)
 
     // Now, replace the original file with the temporary file
     if (remove(filename.c_str()) != 0) {
-        std::cerr << "Error deleting the original file: " << filename << std::endl;
+        std::ostringstream oss;
+        oss << "[removeHeader] Error deleting the original file: " << filename;
+        webservLogger.log(LVL_ERROR, oss);
     } else if (rename(tempFilename.c_str(), filename.c_str()) != 0) {
-        std::cerr << "Error renaming the temporary file: " << tempFilename << std::endl;
+        std::ostringstream oss;
+        oss << "[removeHeader] Error renaming the temporary file: " << tempFilename;
+        webservLogger.log(LVL_ERROR, oss);
     }
 }
 
@@ -349,6 +359,6 @@ int Server::parse_cgi_tmp_file(header_infos& header)
     }
     close(tr);
 
-    removeFirstThreeLines(header.uri);
+    removeHeader(header.uri);
     return 0;
 }

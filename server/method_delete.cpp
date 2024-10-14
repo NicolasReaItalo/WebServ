@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:49:35 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/10/14 12:20:36 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/10/14 12:50:44 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ void Server::method_delete(const header_infos& header, int fd)
         << "time: " << time_str << "\r\n" << "\r\n";
 
         std::string head = ss.str();
-        send(fd, head.c_str(), head.size(), 0);
+        send(fd, head.c_str(), head.size(), MSG_NOSIGNAL);
     }
     else
     {

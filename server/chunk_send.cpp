@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:49:25 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/10/14 12:18:05 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/10/14 12:50:24 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,7 @@ void Server::send_chunk(int fd, const header_infos& header)
             oss << "[send chunk] sending header to: " << fd;
             webservLogger.log(LVL_DEBUG, oss);
         }
-        send(fd, head.c_str(), head.size(), 0);
+        send(fd, head.c_str(), head.size(), MSG_NOSIGNAL);
         events[chunk[fd].i_ev].events = EPOLLOUT | EPOLLET;
         if (epoll_ctl(epoll_fd, EPOLL_CTL_MOD, fd, &events[chunk[fd].i_ev]) == -1)
         {
@@ -92,13 +92,8 @@ void Server::send_chunk(int fd)
         oss << std::hex << bytesRead << "\r\n"; 
         oss.write(reinterpret_cast<const char*>(&tmp[0]), bytesRead);
         oss << "\r\n";
-        data = oss.str();
-        {
-            std::ostringstream oss;
-            oss << "[send chunk] sending next chunk to " << fd;
-            webservLogger.log(LVL_DEBUG, oss);
-        }                
-        ssize_t bytesSent = send(fd, data.c_str(), data.size(), 0);
+        data = oss.str();                
+        ssize_t bytesSent = send(fd, data.c_str(), data.size(), MSG_NOSIGNAL);
         if (bytesSent == -1){
 
             return failed_to_send(fd);
@@ -108,7 +103,7 @@ void Server::send_chunk(int fd)
             oss << "[send chunk] sending last chunk to " << fd;
             webservLogger.log(LVL_DEBUG, oss);
         }
-        bytesSent = send(fd, "0\r\n\r\n", 5, 0);
+        bytesSent = send(fd, "0\r\n\r\n", 5, MSG_NOSIGNAL);
         if (bytesSent == -1){
 
             return failed_to_send(fd);

@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:49:40 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/10/14 12:22:42 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/10/14 12:50:53 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,7 @@ void Server::method_post(header_infos& header, std::vector<unsigned char> body, 
             method_post_cgi(fd, header);
         else
         {
-            if (-1 == send(fd, head.c_str(), head.size(), 0))
+            if (-1 == send(fd, head.c_str(), head.size(), MSG_NOSIGNAL))
             {
                 std::ostringstream oss;
                 oss << "[method post] Error sending header";

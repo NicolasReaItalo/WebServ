@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:49:44 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/10/14 12:06:21 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/10/14 12:42:09 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ void Server::receive_data(int fd, int i)
     }
     
     while (true) {
-        bytesRead = recv(fd, buffer, maxBodySize - 1, 0);
+        bytesRead = recv(fd, buffer, maxBodySize - 1, MSG_NOSIGNAL);
         
         //if receiving a chunk from a chunked POST
         if (bytesRead < 0) 
@@ -102,6 +102,13 @@ void Server::receive_data(int fd, int i)
                     std::ostringstream oss;
                     oss << "[POLLIN] Unknown method on fd " << fd << " : " << header.toDo << "\n" << headerStr << std::endl;
                     webservLogger.log(LVL_ERROR, oss);
+                    close(fd);
+                    if (chunk.find(fd) != chunk.end())
+                        chunk.erase(fd);
+                    fd_set.erase(fd);
+                    if (cgiList.find(fd) != cgiList.end())
+                        cgiList.erase(fd);
+                    
                     return;  
             }
         }

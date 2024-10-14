@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:49:52 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/10/14 12:26:02 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/10/14 12:43:12 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -123,6 +123,7 @@ int Server::ServerRun()
         /*request entrante sur une connexion etablie*/
         else if (events[i].events & EPOLLIN)
         {
+            std::cout << "got here\n";
             receive_data(fd, i);
         }
 
