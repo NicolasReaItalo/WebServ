@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:49:38 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/10/14 10:42:13 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/10/14 11:57:17 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,7 +84,6 @@ void Server::method_get(const header_infos& header, int fd)
                 webservLogger.log(LVL_INFO, oss);
             }
             close(fd);
-            std::cout << "closing fd " << fd << "method_get line 101\n";
             fd_set.erase(fd);
         }
     }

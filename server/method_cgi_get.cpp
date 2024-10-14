@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/02 10:40:07 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/10/10 14:54:34 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/10/14 12:19:20 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,8 +55,11 @@ void Server::method_get_cgi(header_infos& header, int fd)
 	std::stringstream opath;
 	opath << "/tmp/tmpfile" << tmpfindex++;
 	int tr = open(opath.str().c_str(), O_RDWR | O_CREAT, S_IRUSR | S_IWUSR);
-	if (tr == -1) {
-		std::cerr << "Failed to open file: " << strerror(errno) << std::endl << opath.str() << std::endl;
+	if (tr == -1) 
+	{
+		std::ostringstream oss;
+		oss << "[method CGI get] Failed to open file: " << strerror(errno) << std::endl << opath.str();
+		webservLogger.log(LVL_ERROR, oss);
 		return;
 	}
 	header.uri = opath.str();
@@ -64,7 +67,10 @@ void Server::method_get_cgi(header_infos& header, int fd)
 	
 	if (pid == -1)
 	{
-		std::cerr << "fork" << std::endl;
+		std::ostringstream oss;
+		oss << "[method CGI get] Failed to fork";
+		webservLogger.log(LVL_ERROR, oss);
+		return;
 		return;
 	}
 	if (pid == 0)

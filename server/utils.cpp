@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:50:06 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/10/11 16:35:24 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/10/14 11:57:42 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -124,7 +124,6 @@ void Server::sendCustomError(header_infos header, int errcode, int fd)
             return;
         }
         close(tr);
-        std::cout << "closing fd " << tr << "utils line 125\n";
     }
     if (header.bodySize > CHUNK_SIZE)
     {
@@ -185,7 +184,6 @@ void Server::sendCustomError(header_infos header, int errcode, int fd)
                 webservLogger.log(LVL_INFO, oss);
             }
             close(fd);
-            std::cout << "closing fd " << fd << "utils line 186\n";
             fd_set.erase(fd);
         }
     }
@@ -207,7 +205,6 @@ void Server::sendError(header_infos header, int errcode, int fd)
             if (tr > 0)
             {
                 close(tr);
-                std::cout << "closing fd " << tr << "utils line 209\n";
                 std::stringstream oss;             
                 header.ressourcePath = errorpage;
                 sendCustomError(header, errcode, fd);
@@ -245,7 +242,6 @@ void Server::failed_to_send(int fd)
 {
     std::cerr << "Failed to send data: " << strerror(errno) << std::endl;
     close(fd);
-    std::cout << "closing fd " << fd << "utils line 247\n";
     fd_set.erase(fd);
     chunk.erase(fd);
     return;
@@ -322,7 +318,6 @@ int Server::parse_cgi_tmp_file(header_infos& header)
             oss << "[cgi file parser] cgi tmp file format is incorrect";
             webservLogger.log(LVL_ERROR, oss);
             close(tr);
-            std::cout << "closing fd " << tr << "utils line 324\n";
             return 1;
         }
         if (t == -1)
@@ -331,7 +326,6 @@ int Server::parse_cgi_tmp_file(header_infos& header)
             oss << "[cgi file parser] read error on cgi tmp file";
             webservLogger.log(LVL_ERROR, oss);
             close(tr);
-            std::cout << "closing fd " << tr << "utils line 333\n";
             return 1;
         }
         buffer[t] = '\0';
@@ -354,7 +348,6 @@ int Server::parse_cgi_tmp_file(header_infos& header)
         }
     }
     close(tr);
-    std::cout << "closing fd " << tr << "utils line 355\n";
 
     removeFirstThreeLines(header.uri);
     return 0;

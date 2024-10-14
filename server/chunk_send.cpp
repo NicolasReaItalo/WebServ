@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:49:25 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/10/11 16:53:52 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/10/14 12:18:05 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,7 +76,7 @@ void Server::send_chunk(int fd)
     if (!file) 
     {
         std::ostringstream oss;
-        oss << "[send chunk] Error opening file: " << chunk[fd].ressourcePath;
+        oss << "[send chunk] Error opening file: " << chunk[fd].ressourcePath << " for fd " << fd ;
         perror("error code :");
         webservLogger.log(LVL_ERROR, oss);
         return ; // Return an empty vector
@@ -120,7 +120,6 @@ void Server::send_chunk(int fd)
             oss << "[send chunk] epoll_ctl failed: " << strerror(errno);
             webservLogger.log(LVL_ERROR, oss);
             close(fd);
-            std::cout << "closing fd " << fd << "chunk-send line 112\n";
             fd_set.erase(fd);
             return;
         }
@@ -130,7 +129,6 @@ void Server::send_chunk(int fd)
         if (cgiList.find(fd) != cgiList.end())
         {
             remove(cgiList[fd].uri.c_str());
-            //std::cerr << "remove " << cgiList[fd].uri.c_str() << "in chunk_send.cpp line 122" << std::endl;
             cgiList.erase(fd);
         }
     }
@@ -143,8 +141,13 @@ void Server::send_chunk(int fd)
         data = oss.str();
         if (!is_socket_open(fd))
         {
-            std::cerr << "problem on fd\n";
-            return failed_to_send(fd);
+            std::ostringstream oss;
+            oss << "[send chunk] fd " << fd << " unavailable: ";
+            webservLogger.log(LVL_ERROR, oss);
+            close(fd);
+            fd_set.erase(fd);
+            chunk.erase(fd);
+            return;
         }
         ssize_t bytesSent = send(fd, data.c_str(), data.size(), MSG_NOSIGNAL);
         if (bytesSent == -1)
@@ -158,7 +161,6 @@ void Server::send_chunk(int fd)
             oss << "[send chunk] epoll_ctl failed: " << strerror(errno);
             webservLogger.log(LVL_ERROR, oss);
             close(fd);
-            std::cout << "closing fd " << fd << "chunk-send line 147\n";
             fd_set.erase(fd);
             chunk.erase(fd);
             return;

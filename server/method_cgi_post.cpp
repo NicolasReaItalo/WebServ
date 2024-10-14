@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/07 11:36:40 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/10/10 14:55:09 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/10/14 12:23:07 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,9 @@ void Server::method_post_cgi(int fd, header_infos& header)
 	
 	int q = open(header.infile.c_str(), O_RDWR);
 	if (q == -1) {
-		std::cerr << "Failed to open file: " << strerror(errno) << std::endl << header.infile << std::endl;
+		std::ostringstream oss;
+		oss << "[method CGI post] Failed to open file: " << strerror(errno) << std::endl << header.infile;
+		webservLogger.log(LVL_ERROR, oss);
 		return;
 	}
 	header.timestamp = std::time(NULL);
@@ -58,7 +60,9 @@ void Server::method_post_cgi(int fd, header_infos& header)
 	
 	int tr = open(opath.str().c_str(), O_RDWR | O_CREAT, S_IRUSR | S_IWUSR);
 	if (tr == -1) {
-		std::cerr << "Failed to open file: " << strerror(errno) << std::endl << opath.str() << std::endl;
+		std::ostringstream oss;
+		oss << "[method CGI post] Failed to open file: " << strerror(errno) << std::endl << header.infile;
+		webservLogger.log(LVL_ERROR, oss);
 		return;
 	}
 	header.uri = opath.str();
@@ -66,7 +70,9 @@ void Server::method_post_cgi(int fd, header_infos& header)
 
 	if (pid == -1)
 	{
-		std::cerr << "fork" << std::endl;
+		std::ostringstream oss;
+		oss << "[method CGI post] Failed to fork";
+		webservLogger.log(LVL_ERROR, oss);
 		return;
 	}
 

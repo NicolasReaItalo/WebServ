@@ -8,7 +8,9 @@ int getFileSize(const char* filename) {
 
     // Check if the file was successfully opened
     if (!file.is_open()) {
-        std::cerr << "Could not open the file!" << std::endl;
+        std::ostringstream oss;
+        oss << "[getFileSize] Could not open the file " << filename;
+        webservLogger.log(LVL_ERROR, oss);
         return -1;
     }
 
@@ -23,17 +25,23 @@ int getFileSize(const char* filename) {
 
 static int set_nonblocking(int sockfd) {
     int flags = fcntl(sockfd, F_GETFL, 0);
-    if (flags == -1) {
-        std::cerr << "fcntl(F_GETFL) failed: " << strerror(errno) << std::endl;
+    if (flags == -1) 
+    {
+        std::ostringstream oss;
+        oss << "[set_nonblocking] fcntl(F_GETFL) failed: " << strerror(errno);
+        webservLogger.log(LVL_ERROR, oss);
         return 0;
     }
-    if (fcntl(sockfd, F_SETFL, flags | O_NONBLOCK) == -1) {
-        std::cerr << "fcntl(F_SETFL) failed: " << strerror(errno) << std::endl;
+    if (fcntl(sockfd, F_SETFL, flags | O_NONBLOCK) == -1) 
+    {
+        std::ostringstream oss;
+        oss << "[set_nonblocking] fcntl(F_SETFL) failed: " << strerror(errno);
+        webservLogger.log(LVL_ERROR, oss);
         return 0;
     }
     {
         std::ostringstream oss;
-        oss << "[serverRun] Socket " << sockfd << " set to non-blocking";
+        oss << "[set_nonblocking] Socket " << sockfd << " set to non-blocking";
         webservLogger.log(LVL_DEBUG, oss);
     }
     return 1;
@@ -52,7 +60,6 @@ int Server::ServerStart()
         oss << "[serverStart] epoll_create1 failed: " << strerror(errno);
         webservLogger.log(LVL_ERROR, oss);
         close(epoll_fd);
-        std::cout << "closing fd " <<epoll_fd << "server_start line 36\n";
         
         return 1;
     }
@@ -197,11 +204,9 @@ int Server::ServerStart()
                 cgiList[tmp].bodySize = getFileSize(cgiList[tmp].uri.c_str());
                 method_get(cgiList[tmp], tmp);
 				remove(ito->second.uri.c_str());
-                //std::cerr << "remove " << ito->second.uri.c_str() << "in server_start.cpp line 169" << std::endl;
 				if (ito->second.toDo == POST || ito->second.toDo == POST_CGI)
                 {
 					remove(ito->second.infile.c_str());
-                    //std::cerr << "remove " << ito->second.infile.c_str() << "in server_start.cpp line 171" << std::endl;
                 }
                 cgiList.erase(tmp);
                 ito = cgiList.begin();
@@ -222,7 +227,6 @@ int Server::ServerStart()
                     webservLogger.log(LVL_ERROR, oss);
                 }
                 remove(ito->second.uri.c_str());
-                //std::cerr << "remove " << ito->second.uri.c_str() << "in server_start.cpp line 194" << std::endl;
                 cgiList.erase(tmp);
                 ito = cgiList.begin(); // Reset iterator after erase
             }
