@@ -6,19 +6,20 @@
 /*   By: jerperez <jerperez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 16:02:57 by jerperez          #+#    #+#             */
-/*   Updated: 2024/10/10 14:02:31 by jerperez         ###   ########.fr       */
+/*   Updated: 2024/10/14 10:12:42 by jerperez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include <iostream>
+#include <iomanip>
+#include <sstream>
 #include "ConfigServer.hpp"
 #include "DirectiveBlock.hpp"
 #include "Directive.hpp"
 #include "tokenizer.hpp"
 #include "parser.hpp"
 #include "config_constants.h"
-#include <iostream>
-#include <iomanip>
-#include <sstream>
+
 
 static void	_print_dir(DirectiveBlock d)
 {

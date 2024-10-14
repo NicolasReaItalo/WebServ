@@ -6,12 +6,11 @@
 /*   By: jerperez <jerperez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/13 10:52:33 by jerperez          #+#    #+#             */
-/*   Updated: 2024/10/01 11:55:21 by jerperez         ###   ########.fr       */
+/*   Updated: 2024/10/14 09:34:19 by jerperez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ConfigLocation.hpp"
-
 
 ConfigLocation::ConfigLocation(void) {};
 
