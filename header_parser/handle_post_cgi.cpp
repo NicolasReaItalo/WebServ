@@ -6,7 +6,7 @@
 /*   By: nrea <nrea@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/02 11:05:47 by nrea              #+#    #+#             */
-/*   Updated: 2024/10/10 12:24:36 by nrea             ###   ########.fr       */
+/*   Updated: 2024/10/14 14:50:48 by nrea             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -125,7 +125,9 @@ ConfigServer *config,int locationIndex, std::map<std::string,std::string> &heade
 	response.envMap["SERVER_NAME"]= config->getAddress();
 	response.envMap["SERVER_PORT"]= config->getPort();
 	response.envMap["SERVER_PROTOCOL"]= "HTTP/1.1";
-	response.envMap["CONTENT_LENGTH"]= header_attributes["Content-length"];
+	response.envMap["CONTENT_LENGTH"]= header_attributes["Content-Length"];
+	response.envMap["CONTENT_TYPE"]= header_attributes["Content-Type"];
+	// header_attributes["Content-Type"] = "text/html";
 	response.envMap["SCRIPT_NAME"]= response.ressourcePath;
 	response.envMap["PATH_TRANSLATED"]= response.ressourcePath;
 	response.envMap["QUERY_STRING"]= header_attributes["QUERY_STRING"];

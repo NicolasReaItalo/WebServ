@@ -14,15 +14,20 @@ print ( """
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<link rel="stylesheet" href="style.css">
-	<title>MEGAUPLOAD</title>
+
+	<title>File Upload</title>
 </head>
 <body>
-<div class='app'>
-	<h1>MEGAUPLOAD</h1>
+	<div class="app">
+		<div class="header">
+			<h1>FILE UPLOAD</h1>
+		</div>
+
+		<h3>Files uploaded</h3>
+		<div class="uploaded-list">
 """)
 
 # Fichiers uploade eventuels
-print('<div class="uploaded-list">')
 if os.environ['REQUEST_METHOD'] == 'POST':
 	form = cgi.FieldStorage()
 
@@ -31,20 +36,45 @@ if os.environ['REQUEST_METHOD'] == 'POST':
 		if not isinstance(files,list):
 			files = [files]
 		for file in files:
-			print(file)
 			if file.filename:
 				file_name = file.filename
 				file_path = 'html-files/cgi_upload/uploaded/' + file_name
 				with open(file_path, 'wb') as f:
 					f.write(file.file.read())
-				print('<div class="uploaded-file">')
-				print(f"<h4>File '{file_name}' uploaded successfully.</h4>")
-				upload_datetime = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-				print(f"<div class='file-info'>Uploaded on: {upload_datetime}</div>")
-				print('</div>')
-print('</div>')
-print('</div>')
-print ("""</body>
-</html>\r\n""")
+				print(f"""
+				<div class="uploaded-file">
+				<div><img class="file-icon" src="file.png" alt="">{file_name} uploaded succesfully</div>
+				</div>""")
+
+print("""
+			</div>
+			<h3>Choose files to upload</h3>
+		<div class="upload-form">
+			<form id="uploadForm" action="/cgi_upload/upload.py" method="POST" enctype="multipart/form-data">
+				<div id="fileList">
+					<div class="file-input">
+						<input type="file" name="files[]">
+					</div>
+				</div>
+
+				<button type="button" onclick="addFileInput()">Add another file</button>
+				<button type="submit">Send files</button>
+			</form>
+		</div>
+	</div>
+</div>
+
+<script>
+	function addFileInput() {
+		const fileList = document.getElementById('fileList');
+		const newInput = document.createElement('div');
+		newInput.classList.add('file-input');
+		newInput.innerHTML = '<input type="file" name="files[]">';
+		fileList.appendChild(newInput);
+	}
+</script>
+</body>
+</html>\r\n\r\n""")
+
 exit()
 
