@@ -1,0 +1,171 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   style.css                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/09/19 12:49:58 by qgiraux           #+#    #+#             */
+/*   Updated: 2024/10/10 12:00:13 by qgiraux          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+* { 
+	margin: 0; 
+	padding: 0; 
+	box-sizing: border-box; 
+} 
+
+body { 
+	font-family: Arial, sans-serif; 
+	background-color: #131212; 
+	display: flex; 
+	justify-content: center; 
+	align-items: center; 
+	/* height: 80vh;  */
+} 
+
+.page {
+    display: flex;
+    flex-direction: column;
+    gap: 3px; /* Adjusts space between the two error sections */
+}
+
+.title { 
+	margin-top: 30px;
+	margin-bottom: 10px;
+	text-align: center; 
+	background-color: #5a5b8a; 
+	padding: 10px; 
+	border-radius: 5px; 
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); 
+} 
+
+.bloc { 
+	margin-top: 5px;
+	margin-bottom: 5px;
+    display: flex;
+    gap: 10px;
+    text-align: center; 
+    background-color: #7071a1; 
+    padding: 10px; 
+    border-radius: 5px; 
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); 
+    flex-direction: row; /* Ensure items are in a row */
+    align-items: center; /* Vertically center the items */
+    justify-content: center; /* Horizontally center the items */
+    height: 100%; /* Ensure the container takes full height */
+	min-width:500px;
+}
+
+.resizable-image {
+    max-width: 500px; /* Adjust the size to fit within the container */
+    max-height: 400px;
+    display: block;
+	margin: auto;
+}
+
+
+
+
+/* Force the third image to appear on a new line */
+.resizable-image:nth-child(3) {
+    flex-basis: 100%; /* Takes up full width, moving it to the next line */
+}
+
+.bloc a {
+	display: block;
+	margin: 10px 0;
+}
+
+h1 { 
+	font-size: 5rem; 
+	color: #aaaaad; 
+} 
+
+p { 
+	font-size: 1.5rem; 
+	color: #333; 
+	margin-bottom: 20px; 
+} 
+
+a { 
+	text-decoration: none; 
+	background-color: #aaaaad; 
+	color: #000000; 
+	padding: 10px 20px; 
+	border-radius: 3px; 
+	font-weight: bold; 
+	transition: background-color 0.3s ease; 
+} 
+
+A { 
+	text-decoration: none; 
+	background-color: #aaaaad; 
+	color: #000000; 
+	padding: 1px 2px; 
+	border-radius: 2px; 
+	font-weight: bold; 
+	transition: background-color 0.3s ease; 
+} 
+
+a:hover { 
+	background-color: #c7c7c7; 
+	color: #3f3f3f; 
+}
+
+a:hover { 
+	background-color: #aaaaad; 
+}
+
+
+button {
+	background-color: rgba(0, 0, 0, 0.2);
+	border: solid;
+	border-width: 1px;
+	border-radius: 5px;
+	font-size: 30px;
+	color: #555;
+	padding: 0 0em 0 0;
+	margin: 0;
+	width: 100%;
+}
+
+.home-button {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #728aa3;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+	text-align-last: center;
+}
+
+.home-button:hover {
+    background-color: #798b9e;
+}
+
+.styled-button {
+    background-color: #4CAF50; /* Green background */
+    border: none; /* Remove borders */
+    color: white; /* White text */
+    padding: 15px 32px; /* Some padding */
+    text-align: center; /* Centered text */
+    text-decoration: none; /* Remove underline */
+    display: inline-block; /* Make the container inline-block */
+    font-size: 16px; /* Increase font size */
+    margin: 4px 2px; /* Some margin */
+    cursor: pointer; /* Pointer/hand icon */
+    border-radius: 12px; /* Rounded corners */
+}
+
+.styled-button:hover {
+    background-color: #45a049; /* Darker green on hover */
+}
+
+.username-label {
+    font-weight: bold; /* Make the text bold */
+    color: #000000; /* Change the text color */
+    font-size: 18px; /* Increase the font size */
+    margin-right: 10px; /* Add some space between the label and the input */
+}
