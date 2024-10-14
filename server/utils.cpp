@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:50:06 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/10/14 12:51:33 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/10/14 13:50:42 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -157,7 +157,7 @@ void Server::sendCustomError(header_infos header, int errcode, int fd)
                 oss << "[custom error] Sending header " << errcode << errorList[errcode] << " to " << fd << "...";
                 webservLogger.log(LVL_INFO, oss);   
             }
-            if (-1 == send(fd, head.c_str(), head.size(), MSG_NOSIGNAL))
+            if (-1 == send(fd, head.c_str(), head.size(), MSG_NOSIGNAL | MSG_DONTWAIT))
             {
                 std::ostringstream oss;
                 oss << "[custom error] Failed to send header to " << fd;
@@ -168,7 +168,7 @@ void Server::sendCustomError(header_infos header, int errcode, int fd)
                 oss << "[custom error] Sending file to " << fd << "...";
                 webservLogger.log(LVL_INFO, oss);   
             }
-            if (-1 == send(fd, &(data[0]), header.bodySize, MSG_NOSIGNAL))
+            if (-1 == send(fd, &(data[0]), header.bodySize, MSG_NOSIGNAL | MSG_DONTWAIT))
             {
                 std::ostringstream oss;
                 oss << "[custom error] Failed to send body to " << fd;
@@ -229,8 +229,8 @@ void Server::sendError(header_infos header, int errcode, int fd)
         body = generate_error_page(errcode);
     }
     std::string head = ss.str();
-    send(fd, head.c_str(), head.size(), header.i_ev | MSG_NOSIGNAL);
-    send(fd, body.c_str(), body.size(), header.i_ev | MSG_NOSIGNAL);
+    send(fd, head.c_str(), head.size(), header.i_ev | MSG_NOSIGNAL | MSG_DONTWAIT);
+    send(fd, body.c_str(), body.size(), header.i_ev | MSG_NOSIGNAL | MSG_DONTWAIT);
 
     if (shutdown(fd, SHUT_WR) == -1) {
         perror("shutdown");

@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:49:25 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/10/14 12:50:24 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/10/14 14:16:46 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,16 @@ void Server::send_chunk(int fd, const header_infos& header)
             oss << "[send chunk] sending header to: " << fd;
             webservLogger.log(LVL_DEBUG, oss);
         }
-        send(fd, head.c_str(), head.size(), MSG_NOSIGNAL);
+        ssize_t bytesSent = send(fd, head.c_str(), head.size(), MSG_NOSIGNAL | MSG_DONTWAIT);
+        if (bytesSent == -1)
+        {
+            std::ostringstream oss;
+            oss << "[send chunk] Error sending header: " << strerror(errno);
+            webservLogger.log(LVL_ERROR, oss);
+            close(fd);
+            fd_set.erase(fd);
+            return;
+        }
         events[chunk[fd].i_ev].events = EPOLLOUT | EPOLLET;
         if (epoll_ctl(epoll_fd, EPOLL_CTL_MOD, fd, &events[chunk[fd].i_ev]) == -1)
         {
@@ -68,6 +77,8 @@ void Server::send_chunk(int fd, const header_infos& header)
         }
         chunk[fd].readIndex = 0;
     }
+    else
+        send_chunk(fd);
 }
 void Server::send_chunk(int fd)
 {
@@ -93,7 +104,7 @@ void Server::send_chunk(int fd)
         oss.write(reinterpret_cast<const char*>(&tmp[0]), bytesRead);
         oss << "\r\n";
         data = oss.str();                
-        ssize_t bytesSent = send(fd, data.c_str(), data.size(), MSG_NOSIGNAL);
+        ssize_t bytesSent = send(fd, data.c_str(), data.size(), MSG_NOSIGNAL | MSG_DONTWAIT);
         if (bytesSent == -1){
 
             return failed_to_send(fd);
@@ -103,7 +114,7 @@ void Server::send_chunk(int fd)
             oss << "[send chunk] sending last chunk to " << fd;
             webservLogger.log(LVL_DEBUG, oss);
         }
-        bytesSent = send(fd, "0\r\n\r\n", 5, MSG_NOSIGNAL);
+        bytesSent = send(fd, "0\r\n\r\n", 5, MSG_NOSIGNAL | MSG_DONTWAIT);
         if (bytesSent == -1){
 
             return failed_to_send(fd);
@@ -118,8 +129,6 @@ void Server::send_chunk(int fd)
             fd_set.erase(fd);
             return;
         }
-        // close(chunk[fd].fd_ressource);
-        // fd_set.erase(chunk[fd].fd_ressource);
         chunk.erase(fd);
         if (cgiList.find(fd) != cgiList.end())
         {
@@ -144,7 +153,7 @@ void Server::send_chunk(int fd)
             chunk.erase(fd);
             return;
         }
-        ssize_t bytesSent = send(fd, data.c_str(), data.size(), MSG_NOSIGNAL);
+        ssize_t bytesSent = send(fd, data.c_str(), data.size(), MSG_NOSIGNAL | MSG_DONTWAIT);
         if (bytesSent == -1)
         {
             return failed_to_send(fd);

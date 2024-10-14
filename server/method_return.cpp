@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:49:38 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/10/14 12:50:57 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/10/14 13:50:42 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ void Server::method_return(const header_infos& header, int fd)
             oss << "[method return] Sending header 302 -Found to " << fd << "...";
             webservLogger.log(LVL_INFO, oss);   
         }
-        if (-1 == send(fd, head.c_str(), head.size(), MSG_NOSIGNAL))
+        if (-1 == send(fd, head.c_str(), head.size(), MSG_NOSIGNAL | MSG_DONTWAIT))
         {
             std::ostringstream oss;
             oss << "[method return] Failed to send header to " << fd;

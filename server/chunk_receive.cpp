@@ -74,7 +74,7 @@ void Server::chunked_post(int fd, std::vector<unsigned char> body, header_infos&
             method_post_cgi(fd, header);
         else
         {
-            if (!is_socket_open(fd) || -1 == send(fd, head.c_str(), head.size(), MSG_NOSIGNAL))
+            if (!is_socket_open(fd) || -1 == send(fd, head.c_str(), head.size(), MSG_NOSIGNAL | MSG_DONTWAIT))
             {
                 std::ostringstream oss;
                 oss << "[method post] error sending header\n" << strerror(errno);

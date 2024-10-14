@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:49:44 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/10/14 12:42:09 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/10/14 14:39:10 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ void Server::receive_data(int fd, int i)
     }
     
     while (true) {
-        bytesRead = recv(fd, buffer, maxBodySize - 1, MSG_NOSIGNAL);
+        bytesRead = recv(fd, buffer, maxBodySize - 1, MSG_NOSIGNAL | MSG_DONTWAIT);
         
         //if receiving a chunk from a chunked POST
         if (bytesRead < 0) 
