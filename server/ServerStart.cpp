@@ -165,7 +165,6 @@ int Server::ServerStart()
                     webservLogger.log(LVL_INFO, oss);
                 }
                 close(tmp);
-                std::cout << "closing fd " << tmp << "server_start line 37\n";
                 fd_set.erase(tmp);
             }
             else
