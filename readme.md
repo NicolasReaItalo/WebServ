@@ -90,7 +90,7 @@ This is a simple http1.1 server, able to hanlde requests GET, POST, and DELETE, 
 
 ### Contributors
 * Quentin Giraux  - https://github.com/qgiraux
-* Nicolas Rea     -
+* Nicolas Rea     - https://github.com/NicolasReaItalo
 * Jeremy Perez    - https://github.com/jerperez42
 
 
