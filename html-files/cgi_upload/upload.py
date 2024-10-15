@@ -37,8 +37,6 @@ if os.environ['REQUEST_METHOD'] == 'POST':
 			files = [files]
 		for file in files:
 			if file.filename:
-				if hasattr(file.file, 'read'):
-					print(f"Type de fichier lu: {type(file.file)}")
 				file_name = file.filename
 				file_path = 'html-files/cgi_upload/uploaded/' + file_name
 				with open(file_path, 'wb') as f:
