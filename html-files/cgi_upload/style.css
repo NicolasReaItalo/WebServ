@@ -1,0 +1,99 @@
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+	color:rgb(90, 91, 92);
+	font-family: "Poppins", sans-serif;
+}
+
+body {
+	background-color: #C1CFDA;
+}
+
+h1 {
+	font-size: 33px;
+}
+
+h2 {
+
+	padding: 1rem;
+}
+
+.app {
+	align-items: center;
+	display: flex;
+	flex-direction: column;
+	padding: 1.5rem;
+
+}
+
+.upload-form {
+	background-color: red;
+	min-width: 400px;
+	padding: 2rem;
+	border: 1px;
+	border-style: solid;
+	border-color: rgb(154, 155, 156);
+	border-radius: 5px;
+	background-color: rgb(245, 245, 245);
+}
+
+form button{
+	padding: 0.3rem;
+	font-size: 1rem;
+}
+
+form :where(i, p){
+	color: #6990F2;
+  }
+  form i{
+	font-size: 50px;
+  }
+  form p{
+	margin-top: 15px;
+	font-size: 16px;
+  }
+
+.file-input{
+	padding: 0.3rem;
+	font-size: 1rem;
+}
+
+.upload-icon{
+	width: 10rem;
+}
+
+
+.header {
+	display: flex;
+	background-color: rgb(245, 245, 245);
+	align-items: center;
+	padding: 2rem;
+	border: 1px;
+	border-style: solid;
+	border-color: rgb(154, 155, 156);
+	border-radius: 5px;
+}
+
+.uploaded-list {
+	min-width: 400px;
+	/* height: 400px; */
+	display: flex;
+	flex-direction: column;
+	border: 1px;
+	border-style: solid;
+	border-color: rgb(154, 155, 156);
+	border-radius: 5px;
+	padding: 1rem;
+	background-color: rgb(245, 245, 245);
+}
+
+.file-icon{
+	width: 1rem;
+}
+
+uploaded-file {
+	display: flex;
+	flex-direction: row;
+	font-size: 1.2 rem;
+}

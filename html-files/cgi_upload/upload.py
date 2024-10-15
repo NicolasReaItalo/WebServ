@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import json, requests, cgi, os, datetime
+import cgi, os
 import cgitb
 
 cgitb.enable()
@@ -37,10 +37,16 @@ if os.environ['REQUEST_METHOD'] == 'POST':
 			files = [files]
 		for file in files:
 			if file.filename:
+				if hasattr(file.file, 'read'):
+					print(f"Type de fichier lu: {type(file.file)}")
 				file_name = file.filename
 				file_path = 'html-files/cgi_upload/uploaded/' + file_name
 				with open(file_path, 'wb') as f:
-					f.write(file.file.read())
+					while True:
+						chunk = file.file.read(1024)
+						if not chunk:
+							break
+						f.write(chunk)
 				print(f"""
 				<div class="uploaded-file">
 				<div><img class="file-icon" src="file.png" alt="">{file_name} uploaded succesfully</div>
@@ -73,6 +79,7 @@ print("""
 		fileList.appendChild(newInput);
 	}
 </script>
+
 </body>
 </html>\r\n\r\n""")
 
