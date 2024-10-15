@@ -85,7 +85,7 @@ This is a simple http1.1 server, able to hanlde requests GET, POST, and DELETE, 
 
 ### Built With
 
-* [![Next][Next.js]][Next-url]
+* [![c++][c++]][c++-url]
 * [![React][React.js]][React-url]
 * [![Vue][Vue.js]][Vue-url]
 * [![Angular][Angular.io]][Angular-url]
