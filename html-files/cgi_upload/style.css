@@ -97,23 +97,20 @@ uploaded-file {
 	flex-direction: row;
 	font-size: 1.2 rem;
 }
-.home-conf{
-	margin-top: 10px;
-}
 .home-button {
-    min-width: 400px;
-	
-	/* height: 400px; */
-	text-align: center;
-	display: flex;
-	flex-direction: column;
-	border: 1px;
-	/* min-height: 30px; */
-	border-style: solid;
-	border-color: rgb(154, 155, 156);
-	border-radius: 5px;
-	background-color: rgb(245, 245, 245);
-	text-decoration: none;	
+	font-size: 1.1rem;
+	font-weight: bold;
+    text-align: center;
+    margin-top: 10px;
+    padding: 5px;
+	padding-top: 10px;
+	padding-bottom: 10px;
+	min-width: 300px ;
+    border-radius: 5px;
+    border: 1px solid rgb(154, 155, 156);
+    background-color: rgb(245, 245, 245);
+    text-decoration: none;
+    box-sizing: border-box;
 }
 
 
