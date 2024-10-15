@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:49:40 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/10/10 12:21:54 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/10/14 13:50:42 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,9 @@ void Server::method_post(header_infos& header, std::vector<unsigned char> body, 
     header.fd_ressource = open(header.ressourcePath.c_str(), O_RDWR | O_CREAT, S_IRUSR | S_IWUSR);
     if (-1 == header.fd_ressource)
     {
-        std::cerr << "Failed to open " << header.ressourcePath << std::endl;
+        std::ostringstream oss;
+		oss << "[method post] Failed to open file: " << header.ressourcePath;
+		webservLogger.log(LVL_ERROR, oss);
         sendError(header, 500, fd); // Send internal server error if file open fails
         return;
     }
@@ -43,7 +45,9 @@ void Server::method_post(header_infos& header, std::vector<unsigned char> body, 
         ssize_t bytes_written = write(header.fd_ressource, &(body[0]), bytes_read);
         if (bytes_written == -1)
         {
-            std::cerr << "Error writing to file: " << strerror(errno) << std::endl;
+            std::ostringstream oss;
+            oss << "[method post] Error writing to file: " << strerror(errno);
+            webservLogger.log(LVL_ERROR, oss);
             sendError(header, 500, fd); // Send internal server error if write fails
             return;
         }
@@ -57,12 +61,18 @@ void Server::method_post(header_infos& header, std::vector<unsigned char> body, 
             method_post_cgi(fd, header);
         else
         {
-            if (-1 == send(fd, head.c_str(), head.size(), 0))
-                    std::cerr << "error sending header\n";
+            if (-1 == send(fd, head.c_str(), head.size(), MSG_NOSIGNAL | MSG_DONTWAIT))
+            {
+                std::ostringstream oss;
+                oss << "[method post] Error sending header";
+                webservLogger.log(LVL_ERROR, oss);
+            }
             // Check if we failed to read or write the full content
             if (bytes_written != bytes_read)
             {
-                std::cerr << "Error: Mismatch in bytes written." << std::endl;
+                std::ostringstream oss;
+                oss << "[method post] Error: Mismatch in bytes written.";
+                webservLogger.log(LVL_ERROR, oss);
                 sendError(header, 500, fd); // Send internal server error if there's a mismatch
                 return;
             }

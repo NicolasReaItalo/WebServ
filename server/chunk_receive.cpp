@@ -25,6 +25,7 @@ void Server::chunked_post(int fd, std::vector<unsigned char> body, header_infos&
         oss << "[method post chunk] starting for a new chunk..." << header.ressourcePath;
         webservLogger.log(LVL_DEBUG, oss);
     }
+    fd_set[header.fd_ressource].timer = time;
     std::ostringstream str;
     str << std::string(body.begin(), body.end());
 
@@ -73,8 +74,12 @@ void Server::chunked_post(int fd, std::vector<unsigned char> body, header_infos&
             method_post_cgi(fd, header);
         else
         {
-            if (-1 == send(fd, head.c_str(), head.size(), 0))
-                    std::cerr << "error sending header\n";
+            if (!is_socket_open(fd) || -1 == send(fd, head.c_str(), head.size(), MSG_NOSIGNAL | MSG_DONTWAIT))
+            {
+                std::ostringstream oss;
+                oss << "[method post] error sending header\n" << strerror(errno);
+                webservLogger.log(LVL_ERROR, oss);
+            }
         }
         close(header.fd_ressource);
         chunk.erase(fd);
@@ -100,6 +105,8 @@ void Server::chunked_post(int fd, std::vector<unsigned char> body, header_infos&
     {
         sendError(header, 413, fd);
         close(header.fd_ressource);
+        fd_set.erase(header.fd_ressource);
+        close(fd);
         chunk.erase(fd);
         if (!header.keepAlive)
         {
@@ -121,9 +128,10 @@ void Server::chunked_post(int fd, std::vector<unsigned char> body, header_infos&
     {
         sendError(header, 500, fd); // Send internal server error if there's a mismatch
         close(header.fd_ressource);
+        fd_set.erase(header.fd_ressource);
+        close(fd);
         chunk.erase(fd);
         remove(header.ressourcePath.c_str());
-        //std::cerr << "remove " << header.ressourcePath.c_str() << "in chunk_receive.cpp line 124" << std::endl;
         if (!header.keepAlive)
         {
             if (epoll_ctl(epoll_fd, EPOLL_CTL_DEL, fd, NULL) == -1) 

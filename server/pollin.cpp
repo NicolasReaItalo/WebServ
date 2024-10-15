@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:49:44 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/10/10 16:44:35 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/10/14 14:39:10 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,23 +41,23 @@ void Server::receive_data(int fd, int i)
     }
     
     while (true) {
-        bytesRead = recv(fd, buffer, maxBodySize - 1, 0);
+        bytesRead = recv(fd, buffer, maxBodySize - 1, MSG_NOSIGNAL | MSG_DONTWAIT);
         
         //if receiving a chunk from a chunked POST
         if (bytesRead < 0) 
         {
             {
                 std::ostringstream oss;
-                oss << "[POLLIN] body from fd " << fd << " fully received, selecting method...";
+                oss << "[POLLIN] body from fd " << fd << " fully received, selecting method..." << header.toDo;
                 webservLogger.log(LVL_DEBUG, oss);
             }
-            if (chunk.find(fd) != chunk.end())
+            if (chunk.find(fd) != chunk.end() && chunk[fd].timestamp == POST)
             {
                 fd_set[fd].timer = time;
                 chunked_post(fd,  body, chunk[fd]);
                 return;
             }
-            std::cout << "body is " << &(body[0]) << std::endl;
+            // std::cout << "body is " << &(body[0]) << std::endl;
             switch (header.toDo)
             {
                 case POST:
@@ -100,8 +100,15 @@ void Server::receive_data(int fd, int i)
                     return;
                 default:
                     std::ostringstream oss;
-                    oss << "[POLLIN] Unknown method on fd " << fd;
+                    oss << "[POLLIN] Unknown method on fd " << fd << " : " << header.toDo << "\n" << headerStr << std::endl;
                     webservLogger.log(LVL_ERROR, oss);
+                    close(fd);
+                    if (chunk.find(fd) != chunk.end())
+                        chunk.erase(fd);
+                    fd_set.erase(fd);
+                    if (cgiList.find(fd) != cgiList.end())
+                        cgiList.erase(fd);
+                    
                     return;  
             }
         }

@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:49:25 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/10/10 14:45:04 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/10/14 14:16:46 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,16 @@
 #include <sstream>
 #include <ctime>
 #include <fstream>
+
+bool Server::is_socket_open(int fd) {
+    // Try to use fcntl to get the file descriptor flags
+    if (fcntl(fd, F_GETFL) != -1) {
+        return true;  // File descriptor is valid
+    } else if (errno == EBADF) {
+        return false; // File descriptor is closed
+    }
+    return false; // Some other error, treat as closed
+}
 
 void Server::send_chunk(int fd, const header_infos& header)
 {
@@ -37,8 +47,6 @@ void Server::send_chunk(int fd, const header_infos& header)
             fdsets tmp = {"0", "0", time, true, false};
             fd_set[fd] = tmp;
         }
-        fd_set[chunk[fd].fd_ressource] = fd_set[fd];
-        fd_set[chunk[fd].fd_ressource].listener = false;
         std::string mime = mimeList[get_mime_type(chunk[fd].ressourcePath)];
 
         /*create and send the header*/
@@ -48,16 +56,29 @@ void Server::send_chunk(int fd, const header_infos& header)
             oss << "[send chunk] sending header to: " << fd;
             webservLogger.log(LVL_DEBUG, oss);
         }
-        send(fd, head.c_str(), head.size(), 0);
+        ssize_t bytesSent = send(fd, head.c_str(), head.size(), MSG_NOSIGNAL | MSG_DONTWAIT);
+        if (bytesSent == -1)
+        {
+            std::ostringstream oss;
+            oss << "[send chunk] Error sending header: " << strerror(errno);
+            webservLogger.log(LVL_ERROR, oss);
+            close(fd);
+            fd_set.erase(fd);
+            return;
+        }
         events[chunk[fd].i_ev].events = EPOLLOUT | EPOLLET;
         if (epoll_ctl(epoll_fd, EPOLL_CTL_MOD, fd, &events[chunk[fd].i_ev]) == -1)
         {
-            std::cerr << "epoll_ctl failed: " << strerror(errno) << std::endl;
+            std::ostringstream oss;
+            oss << "epoll_ctl failed: " << strerror(errno);
+            webservLogger.log(LVL_DEBUG, oss);
             close(fd);
             fd_set.erase(fd);
         }
         chunk[fd].readIndex = 0;
     }
+    else
+        send_chunk(fd);
 }
 void Server::send_chunk(int fd)
 {
@@ -66,7 +87,7 @@ void Server::send_chunk(int fd)
     if (!file) 
     {
         std::ostringstream oss;
-        oss << "[send chunk] Error opening file: " << chunk[fd].ressourcePath;
+        oss << "[send chunk] Error opening file: " << chunk[fd].ressourcePath << " for fd " << fd ;
         perror("error code :");
         webservLogger.log(LVL_ERROR, oss);
         return ; // Return an empty vector
@@ -77,18 +98,13 @@ void Server::send_chunk(int fd)
     std::streamsize bytesRead = file.read(reinterpret_cast<char*>(tmp.data()), CHUNK_SIZE).gcount();
     std::string data;
     std::stringstream oss;
-    if (file.eof() || bytesRead < CHUNK_SIZE)
+    if (file.eof()/* || bytesRead < CHUNK_SIZE*/)
     {
         oss << std::hex << bytesRead << "\r\n"; 
         oss.write(reinterpret_cast<const char*>(&tmp[0]), bytesRead);
         oss << "\r\n";
-        data = oss.str();
-        {
-            std::ostringstream oss;
-            oss << "[send chunk] sending next chunk to " << fd;
-            webservLogger.log(LVL_DEBUG, oss);
-        }                
-        ssize_t bytesSent = send(fd, data.c_str(), data.size(), 0);
+        data = oss.str();                
+        ssize_t bytesSent = send(fd, data.c_str(), data.size(), MSG_NOSIGNAL | MSG_DONTWAIT);
         if (bytesSent == -1){
 
             return failed_to_send(fd);
@@ -98,7 +114,7 @@ void Server::send_chunk(int fd)
             oss << "[send chunk] sending last chunk to " << fd;
             webservLogger.log(LVL_DEBUG, oss);
         }
-        bytesSent = send(fd, "0\r\n\r\n", 5, 0);
+        bytesSent = send(fd, "0\r\n\r\n", 5, MSG_NOSIGNAL | MSG_DONTWAIT);
         if (bytesSent == -1){
 
             return failed_to_send(fd);
@@ -113,13 +129,10 @@ void Server::send_chunk(int fd)
             fd_set.erase(fd);
             return;
         }
-        // close(chunk[fd].fd_ressource);
-        // fd_set.erase(chunk[fd].fd_ressource);
         chunk.erase(fd);
         if (cgiList.find(fd) != cgiList.end())
         {
             remove(cgiList[fd].uri.c_str());
-            //std::cerr << "remove " << cgiList[fd].uri.c_str() << "in chunk_send.cpp line 122" << std::endl;
             cgiList.erase(fd);
         }
     }
@@ -130,9 +143,19 @@ void Server::send_chunk(int fd)
         oss.write(reinterpret_cast<const char*>(tmp.data()), bytesRead);
         oss << "\r\n";
         data = oss.str();
-        ssize_t bytesSent = send(fd, data.c_str(), data.size(), MSG_MORE);
-        if (bytesSent == -1){
-
+        if (!is_socket_open(fd))
+        {
+            std::ostringstream oss;
+            oss << "[send chunk] fd " << fd << " unavailable: ";
+            webservLogger.log(LVL_ERROR, oss);
+            close(fd);
+            fd_set.erase(fd);
+            chunk.erase(fd);
+            return;
+        }
+        ssize_t bytesSent = send(fd, data.c_str(), data.size(), MSG_NOSIGNAL | MSG_DONTWAIT);
+        if (bytesSent == -1)
+        {
             return failed_to_send(fd);
         }
         events[chunk[fd].i_ev].events = EPOLLOUT | EPOLLET;

@@ -13,13 +13,14 @@
 #ifndef	CONFIGBLOCK_HPP
 # define CONFIGBLOCK_HPP
 
-#include <string>
-#include <map>
-#include "Directive.hpp"
+# include <string>
+# include <map>
+# include "Directive.hpp"
 
 class ConfigBlock
 {
 	public:
+		/*Equivalent to std::deque<std::string>*/
 		typedef Directive::args_t	parameters_t;
 	protected:
 		typedef std::map<std::string, parameters_t> \

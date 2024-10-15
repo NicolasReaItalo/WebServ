@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:49:35 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/10/10 14:45:04 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/10/14 13:50:42 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,6 @@ void Server::method_delete(const header_infos& header, int fd)
     }
     if (0 == remove(header.ressourcePath.c_str()))
     {
-        //std::cerr << "remove " << header.ressourcePath.c_str() << "in method_delete.cpp line 25" << std::endl;
         //struct stat fileInfo;
         std::string time_str = std::ctime(&time);;
         time_str.erase(time_str.find_last_not_of("\n") + 1);
@@ -36,7 +35,7 @@ void Server::method_delete(const header_infos& header, int fd)
         << "time: " << time_str << "\r\n" << "\r\n";
 
         std::string head = ss.str();
-        send(fd, head.c_str(), head.size(), 0);
+        send(fd, head.c_str(), head.size(), MSG_NOSIGNAL | MSG_DONTWAIT);
     }
     else
     {

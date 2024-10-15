@@ -6,26 +6,32 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:49:52 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/10/08 17:03:48 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/10/14 14:44:50 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Server.hpp"
 #include <ctime>
 
-int set_nonblocking(int sockfd) {
+static int set_nonblocking(int sockfd) {
     int flags = fcntl(sockfd, F_GETFL, 0);
-    if (flags == -1) {
-        std::cerr << "fcntl(F_GETFL) failed: " << strerror(errno) << std::endl;
+    if (flags == -1) 
+    {
+        std::ostringstream oss;
+        oss << "[set_nonblocking] fcntl(F_GETFL) failed: " << strerror(errno);
+        webservLogger.log(LVL_ERROR, oss);
         return 0;
     }
-    if (fcntl(sockfd, F_SETFL, flags | O_NONBLOCK) == -1) {
-        std::cerr << "fcntl(F_SETFL) failed: " << strerror(errno) << std::endl;
+    if (fcntl(sockfd, F_SETFL, flags | O_NONBLOCK) == -1) 
+    {
+        std::ostringstream oss;
+        oss << "[set_nonblocking] fcntl(F_SETFL) failed: " << strerror(errno);
+        webservLogger.log(LVL_ERROR, oss);
         return 0;
     }
     {
         std::ostringstream oss;
-        oss << "[serverRun] Socket " << sockfd << " set to non-blocking";
+        oss << "[set_nonblocking] Socket " << sockfd << " set to non-blocking";
         webservLogger.log(LVL_DEBUG, oss);
     }
     return 1;
@@ -62,11 +68,19 @@ int Server::ServerRun()
                 {
                     struct sockaddr_in client_address;
                     socklen_t addrlen = sizeof(client_address);
+                    set_nonblocking(fd);
                     new_socket = accept(fd, (struct sockaddr *)&client_address, &addrlen);
                     if (new_socket == -1)
                     {
                         std::ostringstream oss;
                         oss << "[serverRun] accept failed: " << strerror(errno);
+                        webservLogger.log(LVL_ERROR, oss);
+                        break;
+                    }
+                    if (new_socket == 0)
+                    {
+                        std::ostringstream oss;
+                        oss << "[serverRun] accept failed: accepted on 0";
                         webservLogger.log(LVL_ERROR, oss);
                         break;
                     }
@@ -92,6 +106,7 @@ int Server::ServerRun()
                         close(new_socket);
                         continue;
                     }
+                    
                     fd_set[new_socket] = fd_set[fd];
                     fd_set[new_socket].listener = false;
                     fd_set[new_socket].client = true;
