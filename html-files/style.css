@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:49:58 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/10/10 12:00:13 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/10/15 16:11:03 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,11 +42,14 @@ body {
 } 
 
 .bloc { 
+	color: rgb(197, 235, 235);
 	margin-top: 5px;
 	margin-bottom: 5px;
     display: flex;
     gap: 10px;
     text-align: center; 
+	font-size: 1em;
+	font-weight: bold;
     background-color: #7071a1; 
     padding: 10px; 
     border-radius: 5px; 
