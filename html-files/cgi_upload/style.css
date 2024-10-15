@@ -97,3 +97,26 @@ uploaded-file {
 	flex-direction: row;
 	font-size: 1.2 rem;
 }
+.home-conf{
+	margin-top: 10px;
+}
+.home-button {
+    min-width: 400px;
+	
+	/* height: 400px; */
+	text-align: center;
+	display: flex;
+	flex-direction: column;
+	border: 1px;
+	/* min-height: 30px; */
+	border-style: solid;
+	border-color: rgb(154, 155, 156);
+	border-radius: 5px;
+	background-color: rgb(245, 245, 245);
+	text-decoration: none;	
+}
+
+
+.home-button:hover {
+    background-color: rgb(204, 205, 206);
+}

@@ -67,7 +67,16 @@ print("""
 				<button type="submit">Send files</button>
 			</form>
 		</div>
+	  <br>
+	  <div class="home-conf">
+	  	<div class="home-button">
+			<a href="/index.html" class="home-button">go to home</a>
+		</div>
+	  </div>
+	  
+	  
 	</div>
+	  
 </div>
 
 <script>
