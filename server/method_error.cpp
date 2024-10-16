@@ -15,5 +15,10 @@ void Server::method_error(const header_infos& header, int fd)
 		chunk.erase(fd);
 	fd_set.erase(fd);
 	close(fd);
+    {
+        std::ostringstream oss;
+        oss << "[method error] closing " << fd;
+        webservLogger.log(LVL_INFO, oss);
+    }
     return ;
 }
