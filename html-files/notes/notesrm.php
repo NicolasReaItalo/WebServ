@@ -21,7 +21,7 @@ $form= <<<END
 	<input type="text" class="form-control" name="msg" placeholder="Enter your note" required  >
 	<button>Submit Note</button>
 	</form>
-	<br>
+    <br>
 	<form action="/notes/notesrm.php" method="POST" enctype="application/x-www-form-urlencoded">
 	<button>Remove Last</button>
 	</form>
@@ -46,16 +46,17 @@ END;
 
 
 
-if( $_SERVER['REQUEST_METHOD'] == 'POST')
-{
-	$postData = array();
-	//recuperer le contenu du body
-	$rawPostData = file_get_contents("php://stdin");
-	parse_str($rawPostData, $postData);
-	$msg = 	nl2br((htmlspecialchars($postData['msg'], ENT_QUOTES, 'UTF-8')));
-
-	//Ajouter la ligne a la fin du fichier
-	$myfile = file_put_contents('html-files/notes/notes.txt', $msg.PHP_EOL , FILE_APPEND | LOCK_EX);
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    // Supprimer la dernière ligne du fichier
+    $lines = file('html-files/notes/notes.txt', FILE_IGNORE_NEW_LINES);
+    if (!empty($lines)) {
+        array_pop($lines);
+        if (empty($lines)) {
+            file_put_contents('html-files/notes/notes.txt', '', LOCK_EX);
+        } else {
+            file_put_contents('html-files/notes/notes.txt', implode(PHP_EOL, $lines) . PHP_EOL, LOCK_EX);
+        }
+    }
 }
 $lines = array();
 //ouvrir le fichier et le parser => mettre chaque ligne dans un tableau
