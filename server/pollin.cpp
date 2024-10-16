@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:49:44 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/10/14 14:39:10 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/10/16 14:47:35 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ void Server::receive_data(int fd, int i)
     std::vector<unsigned char> body;
     std::string headerStr = ""; // String to hold the header part
     header_infos header;
-
+    body.clear();
     bool headerParsed = false; // Flag to track whether the header has been parsed
     
     {
@@ -44,7 +44,7 @@ void Server::receive_data(int fd, int i)
         bytesRead = recv(fd, buffer, maxBodySize - 1, MSG_NOSIGNAL | MSG_DONTWAIT);
         
         //if receiving a chunk from a chunked POST
-        if (bytesRead < 0) 
+        if (bytesRead < 0 && (body.size() > 0 || headerParsed) )
         {
             {
                 std::ostringstream oss;
