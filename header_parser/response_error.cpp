@@ -6,7 +6,7 @@
 /*   By: nrea <nrea@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 10:13:31 by nrea              #+#    #+#             */
-/*   Updated: 2024/10/10 14:22:52 by nrea             ###   ########.fr       */
+/*   Updated: 2024/10/16 13:58:05 by nrea             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,9 +28,8 @@ header_infos response_error(std::string error_code, ConfigServer  * config,int l
 	response.locationIndex = locationIndex;
 	response.chunked = false;
 
-	//la caracteristique keep-alive depend de l'erreur:  a ameliorer pour la rendre + generale
 	if ( error_code == HTTP_STATUS_BAD_REQUEST || error_code == HTTP_STATUS_INTERNAL_SERVER_ERROR ||
-	error_code == HTTP_STATUS_HTTP_VERSION_NOT_SUPPORTED)
+	error_code == HTTP_STATUS_HTTP_VERSION_NOT_SUPPORTED || error_code == HTTP_STATUS_PAYLOAD_TOO_LARGE )
 		response.keepAlive = false;
 	else
 		response.keepAlive = true;
