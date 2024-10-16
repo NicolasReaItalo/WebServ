@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:50:06 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/10/14 13:50:42 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/10/16 15:00:50 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,81 +111,73 @@ void Server::sendCustomError(header_infos header, int errcode, int fd)
         oss << "[custom error] starting for fd " << fd;
         webservLogger.log(LVL_INFO, oss);
     }
+
+    int tr = open(header.ressourcePath.c_str(), O_RDONLY);
+    if (tr == -1)
     {
-        int tr = open(header.ressourcePath.c_str(), O_RDONLY);
-        if (-1 == tr)
-        {
-            {
-            std::ostringstream oss;
-            oss << "[custom error] failed to open " << header.ressourcePath << ", sending 404 to "<<fd;
-            webservLogger.log(LVL_ERROR, oss);
-            }
-            sendError(header, 404, fd);
-            return;
-        }
-        close(tr);
+        std::ostringstream oss;
+        oss << "[custom error] failed to open " << header.ressourcePath << ", sending 404 to " << fd;
+        webservLogger.log(LVL_ERROR, oss);
+        sendError(header, 404, fd);
+        return;
     }
+    close(tr);
+
     if (header.bodySize > CHUNK_SIZE)
     {
         std::ostringstream oss;
         oss << "[custom error] file bigger than max authorized size, sending by CHUNKS";
         webservLogger.log(LVL_INFO, oss);
         send_chunk(fd, header);
-        return ;
+        return;
     }
-    else
+
+    std::vector<unsigned char> data = load_file(header.ressourcePath);
+
+    std::string time_str = std::ctime(&time);
+    time_str.erase(time_str.find_last_not_of("\n") + 1);
+    std::stringstream ss;
+    ss << "HTTP/1.1 " << errcode << " " << errorList[errcode] << "\r\n"
+       << "Content-Type: " << header.contentType << "\r\n"
+       << "Content-Length: " << data.size() << "\r\n"
+       << "Date: " << time_str << "\r\n\r\n";
+
+    std::string head = ss.str();
+    if (fcntl(fd, F_GETFD) != -1)
     {
-        std::vector<unsigned char> data = load_file(header.ressourcePath);
+        std::ostringstream oss;
+        oss << "[custom error] Sending header " << errcode << " " << errorList[errcode] << " to " << fd << "...";
+        webservLogger.log(LVL_INFO, oss);
 
-        char buffer[maxBodySize];
-        for (unsigned long i = 0; i < maxBodySize; i++)
-            buffer[i] = 0;
-
-        std::string time_str = std::ctime(&time);;
-        time_str.erase(time_str.find_last_not_of("\n") + 1);
-        std::stringstream ss;
-        ss  << "HTTP/1.1 "<< errcode << errorList[errcode] << "\r\n"
-        << "Content-Type: " << header.contentType << "\r\n"
-        << "Content-Length: " << data.size() << "\r\n"
-        << "time: " << time_str << "\r\n" << "\r\n";
-
-        std::string head = ss.str();
-        if (fcntl(fd, F_GETFD) != -1)
+        if (send(fd, head.c_str(), head.size(), MSG_NOSIGNAL | MSG_DONTWAIT) == -1)
         {
-            {
-                std::ostringstream oss;
-                oss << "[custom error] Sending header " << errcode << errorList[errcode] << " to " << fd << "...";
-                webservLogger.log(LVL_INFO, oss);   
-            }
-            if (-1 == send(fd, head.c_str(), head.size(), MSG_NOSIGNAL | MSG_DONTWAIT))
-            {
-                std::ostringstream oss;
-                oss << "[custom error] Failed to send header to " << fd;
-                webservLogger.log(LVL_INFO, oss);
-            }
-            {
-                std::ostringstream oss;
-                oss << "[custom error] Sending file to " << fd << "...";
-                webservLogger.log(LVL_INFO, oss);   
-            }
-            if (-1 == send(fd, &(data[0]), header.bodySize, MSG_NOSIGNAL | MSG_DONTWAIT))
-            {
-                std::ostringstream oss;
-                oss << "[custom error] Failed to send body to " << fd;
-                webservLogger.log(LVL_INFO, oss);
-            }
+            std::ostringstream oss;
+            oss << "[custom error] Failed to send header to " << fd;
+            webservLogger.log(LVL_ERROR, oss);
         }
-        if (header.keepAlive == false)
+
+        oss.str("");
+        oss << "[custom error] Sending file to " << fd << "...";
+        webservLogger.log(LVL_INFO, oss);
+
+        if (send(fd, &(data[0]), data.size(), MSG_NOSIGNAL | MSG_DONTWAIT) == -1)
         {
-            if (epoll_ctl(epoll_fd, EPOLL_CTL_DEL, fd, NULL) == -1)
-            {
-                std::ostringstream oss;
-                oss << "Failed to remove fd from epoll: " << strerror(errno);
-                webservLogger.log(LVL_INFO, oss);
-            }
-            close(fd);
-            fd_set.erase(fd);
+            std::ostringstream oss;
+            oss << "[custom error] Failed to send body to " << fd;
+            webservLogger.log(LVL_ERROR, oss);
         }
+    }
+
+    if (!header.keepAlive)
+    {
+        if (epoll_ctl(epoll_fd, EPOLL_CTL_DEL, fd, NULL) == -1)
+        {
+            std::ostringstream oss;
+            oss << "Failed to remove fd from epoll: " << strerror(errno);
+            webservLogger.log(LVL_ERROR, oss);
+        }
+        close(fd);
+        fd_set.erase(fd);
     }
 }
 
@@ -193,48 +185,49 @@ void Server::sendCustomError(header_infos header, int errcode, int fd)
 void Server::sendError(header_infos header, int errcode, int fd)
 {
     std::string time_str = std::ctime(&time);
-    std::string body;
-    
-    {
-        std::stringstream ss;
-        ss << errcode;
-        std::string errorpage = header.configServer->getDirectiveOutput(header.locationIndex, "error_page", ss.str());
-        if (errorpage != "")
-        {
-            int tr = open(errorpage.c_str(), O_RDONLY);
-            if (tr > 0)
-            {
-                close(tr);
-                std::stringstream oss;             
-                header.ressourcePath = errorpage;
-                sendCustomError(header, errcode, fd);
-                return ;
-                
-            }
-            else
-                perror("SendError: Error opening error page");
-            
-        }
-    }
-    std::stringstream ss;
     time_str.erase(time_str.find_last_not_of("\n") + 1);
 
-    ss << "HTTP/1.1 " << errcode << " " << errorList[errcode] << "\r\n"
-    << "Date : " << time_str << "\r\nContent-Type : text/html\r\n\r\n";
-    
-	(void)fd;
-    // body = header... custom error page path
-    if (body.empty())
-    {
-        body = generate_error_page(errcode);
-    }
-    std::string head = ss.str();
-    send(fd, head.c_str(), head.size(), header.i_ev | MSG_NOSIGNAL | MSG_DONTWAIT);
-    send(fd, body.c_str(), body.size(), header.i_ev | MSG_NOSIGNAL | MSG_DONTWAIT);
+    std::stringstream ss;
+    ss << errcode;
+    std::string errorpage = header.configServer->getDirectiveOutput(header.locationIndex, "error_page", ss.str());
 
-    if (shutdown(fd, SHUT_WR) == -1) {
+    if (!errorpage.empty())
+    {
+        int tr = open(errorpage.c_str(), O_RDONLY);
+        if (tr > 0)
+        {
+            close(tr);
+            header.ressourcePath = errorpage;
+            sendCustomError(header, errcode, fd);
+            return;
+        }
+        else
+        {
+            perror("SendError: Error opening error page");
+        }
+    }
+
+    ss.str("");
+    ss << "HTTP/1.1 " << errcode << " " << errorList[errcode] << "\r\n"
+       << "Date: " << time_str << "\r\n"
+       << "Content-Type: text/html\r\n\r\n";
+
+    std::string body = generate_error_page(errcode);
+    std::string head = ss.str();
+
+    if (send(fd, head.c_str(), head.size(), MSG_NOSIGNAL | MSG_DONTWAIT) == -1)
+    {
+        perror("SendError: Failed to send header");
+    }
+
+    if (send(fd, body.c_str(), body.size(), MSG_NOSIGNAL | MSG_DONTWAIT) == -1)
+    {
+        perror("SendError: Failed to send body");
+    }
+
+    if (shutdown(fd, SHUT_WR) == -1)
+    {
         perror("shutdown");
-        return;
     }
 }
 
