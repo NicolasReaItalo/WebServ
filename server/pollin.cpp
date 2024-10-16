@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pollin.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
+/*   By: nrea <nrea@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:49:44 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/10/16 14:47:35 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/10/16 15:19:39 by nrea             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ void Server::receive_data(int fd, int i)
     header_infos header;
     body.clear();
     bool headerParsed = false; // Flag to track whether the header has been parsed
-    
+
     {
         std::ostringstream oss;
         oss << "[POLLIN] Loading data from fd " << fd;
@@ -39,10 +39,10 @@ void Server::receive_data(int fd, int i)
         headerParsed = true;
         header = chunk[fd];
     }
-    
+
     while (true) {
         bytesRead = recv(fd, buffer, maxBodySize - 1, MSG_NOSIGNAL | MSG_DONTWAIT);
-        
+
         //if receiving a chunk from a chunked POST
         if (bytesRead < 0 && (body.size() > 0 || headerParsed) )
         {
@@ -108,8 +108,8 @@ void Server::receive_data(int fd, int i)
                     fd_set.erase(fd);
                     if (cgiList.find(fd) != cgiList.end())
                         cgiList.erase(fd);
-                    
-                    return;  
+
+                    return;
             }
         }
         // End of file, client disconnected
@@ -122,18 +122,18 @@ void Server::receive_data(int fd, int i)
             }
             close(fd);
             fd_set.erase(fd);
-            return;                
+            return;
         }
 
         // If the header is not yet parsed, look for the header/body separation
-        if (bytesRead > 0 && !headerParsed && chunk.find(fd) == chunk.end()) 
+        if (bytesRead > 0 && !headerParsed && chunk.find(fd) == chunk.end())
         {
             std::string tmp(reinterpret_cast<char*>(buffer), bytesRead);
 
             // Find the position where the header ends (marked by \r\n\r\n)
             size_t headerEndPos = tmp.find("\r\n\r\n");
-            
-            if (headerEndPos != std::string::npos) 
+
+            if (headerEndPos != std::string::npos)
             {
                 // Extract header
                 size_t l = headerStr.size();
@@ -144,7 +144,7 @@ void Server::receive_data(int fd, int i)
                 std::vector<unsigned char> bodyPart(buffer + headerEndPos + 4, buffer + bytesRead);
                 body.insert(body.end(), bodyPart.begin(), bodyPart.end());
 
-                
+
                 {
                     std::ostringstream oss;
                     oss << "[POLLIN] header from fd " << fd << " fully received, requesting parsing";
@@ -156,18 +156,18 @@ void Server::receive_data(int fd, int i)
                     headerParsed = true; // Mark header as parsed
                     header = headerParser(headerStr, std::make_pair(fd_set[fd].address, fd_set[fd].port));
                 }
-                else 
+                else
                     header = chunk[fd];
                 header.i_ev = i;
-            } 
-            else 
+            }
+            else
             {
                 // The header is incomplete; append to headerStr and continue reading
                 headerStr += tmp;
                 continue;
             }
-        } 
-        else 
+        }
+        else if (bytesRead > 0)
         {
             // After the header has been parsed, continue receiving the body
             body.insert(body.end(), buffer, buffer + bytesRead);
