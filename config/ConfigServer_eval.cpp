@@ -6,7 +6,7 @@
 /*   By: jerperez <jerperez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/10 13:29:48 by jerperez          #+#    #+#             */
-/*   Updated: 2024/10/14 10:02:06 by jerperez         ###   ########.fr       */
+/*   Updated: 2024/10/17 12:28:32 by jerperez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,8 @@ static bool _is_address(const std::string &address)
 	int					val255;
 	int					length;
 
+	if (0 == address.length() || ip_separator == address[address.length() - 1])
+		return (false); //fix getline
 	length = 0;
 	while (std::getline(ss, s255, ip_separator) && (fields_size + 1) != length)
 	{
@@ -85,12 +87,17 @@ int	ConfigServer::_evalListen(void)
 {
 	if (!this->ConfigBlock::inDirectives("listen"))
 		return CF_ERRDMISSING;
-	parameters_t &listenParameter = this->_directive_parameters["listen"];
-	if (1 != listenParameter.size())
+	parameters_t &listenParameters = this->_directive_parameters["listen"];
+	if (1 != listenParameters.size())
 		return CF_ERRDPARAM;
-	std::stringstream		ss(listenParameter.front());
+	const std::string		&parameter = listenParameters.front();
+
+	if (0 == parameter.length() || ':' == parameter[parameter.length() - 1])
+		return CF_ERRDPARAM; //fix getline
+	std::stringstream		ss(parameter);
 	std::string				elem;
 	int						i = 0;
+
 	while (std::getline(ss, elem, ':') && i != 3)
 	{
 		if (0 == i && _is_address(elem))
