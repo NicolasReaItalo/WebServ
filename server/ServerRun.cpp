@@ -12,14 +12,14 @@
 
 static int set_nonblocking(int sockfd) {
     int flags = fcntl(sockfd, F_GETFL, 0);
-    if (flags == -1) 
+    if (flags == -1)
     {
         std::ostringstream oss;
         oss << "[set_nonblocking] fcntl(F_GETFL) failed: " << strerror(errno);
         webservLogger.log(LVL_ERROR, oss);
         return -1;
     }
-    if (fcntl(sockfd, F_SETFL, flags | O_NONBLOCK) == -1) 
+    if (fcntl(sockfd, F_SETFL, flags | O_NONBLOCK) == -1)
     {
         std::ostringstream oss;
         oss << "[set_nonblocking] fcntl(F_SETFL) failed: " << strerror(errno);
@@ -81,7 +81,7 @@ int Server::ServerRun()
                         struct epoll_event event;
                         event.events = EPOLLIN | EPOLLET;
                         event.data.fd = new_socket;
-                        if (epoll_ctl(epoll_fd, EPOLL_CTL_ADD, new_socket, &event) == -1) 
+                        if (epoll_ctl(epoll_fd, EPOLL_CTL_ADD, new_socket, &event) == -1)
                         {
                             std::ostringstream oss;
                             oss << "[serverRun] epoll_ctl failed: " << strerror(errno);
@@ -89,7 +89,7 @@ int Server::ServerRun()
                             close(new_socket);
                             continue;
                         }
-                        
+
                         fd_set[new_socket] = fd_set[fd];
                         fd_set[new_socket].listener = false;
                         fd_set[new_socket].client = true;
@@ -108,8 +108,8 @@ int Server::ServerRun()
                     if (new_socket == -1)
                     {
                         std::ostringstream oss;
-                        oss << "[serverRun] accept failed: " << strerror(errno);
-                        webservLogger.log(LVL_ERROR, oss);
+                        oss << "[serverRun] accept failed: fd:" << fd <<"  " << strerror(errno);
+                        webservLogger.log(LVL_DEBUG, oss);
                     }
                     break;
                 }
@@ -167,14 +167,14 @@ int Server::ServerRun()
 
 // static int set_nonblocking(int sockfd) {
 //     int flags = fcntl(sockfd, F_GETFL, 0);
-//     if (flags == -1) 
+//     if (flags == -1)
 //     {
 //         std::ostringstream oss;
 //         oss << "[set_nonblocking] fcntl(F_GETFL) failed: " << strerror(errno);
 //         webservLogger.log(LVL_ERROR, oss);
 //         return 0;
 //     }
-//     if (fcntl(sockfd, F_SETFL, flags | O_NONBLOCK) == -1) 
+//     if (fcntl(sockfd, F_SETFL, flags | O_NONBLOCK) == -1)
 //     {
 //         std::ostringstream oss;
 //         oss << "[set_nonblocking] fcntl(F_SETFL) failed: " << strerror(errno);
@@ -250,7 +250,7 @@ int Server::ServerRun()
 //                     struct epoll_event event;
 //                     event.events = EPOLLIN | EPOLLET;
 //                     event.data.fd = new_socket;
-//                     if (epoll_ctl(epoll_fd, EPOLL_CTL_ADD, new_socket, &event) == -1) 
+//                     if (epoll_ctl(epoll_fd, EPOLL_CTL_ADD, new_socket, &event) == -1)
 //                     {
 //                         std::ostringstream oss;
 //                         oss << "[serverRun] epoll_ctl failed: " << strerror(errno);
@@ -258,7 +258,7 @@ int Server::ServerRun()
 //                         close(new_socket);
 //                         continue;
 //                     }
-                    
+
 //                     fd_set[new_socket] = fd_set[fd];
 //                     fd_set[new_socket].listener = false;
 //                     fd_set[new_socket].client = true;

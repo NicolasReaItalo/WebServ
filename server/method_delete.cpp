@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   method_delete.cpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
+/*   By: nrea <nrea@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:49:35 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/10/14 13:50:42 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/10/17 12:45:49 by nrea             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ void Server::method_delete(const header_infos& header, int fd)
         std::string mime = mimeList[get_mime_type(header.ressourcePath)];
 
         std::stringstream ss;
-        ss  << "HTTP/1.1 200 OK\r\n"
+        ss  << "HTTP/1.1 204 NO CONTENT\r\n"
         << "Content-Type: " << mime << "\r\n"
         << "time: " << time_str << "\r\n" << "\r\n";
 

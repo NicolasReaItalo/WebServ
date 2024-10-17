@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.cpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
+/*   By: nrea <nrea@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:50:06 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/10/16 15:00:50 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/10/17 12:37:09 by nrea             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -231,6 +231,41 @@ void Server::sendError(header_infos header, int errcode, int fd)
     }
 }
 
+/*prototype for sendError function*/
+void Server::sendError(int errcode, int fd)
+{
+    std::string time_str = std::ctime(&time);
+    time_str.erase(time_str.find_last_not_of("\n") + 1);
+
+    std::stringstream ss;
+    ss.str("");
+    ss << "HTTP/1.1 " << errcode << " " << errorList[errcode] << "\r\n"
+       << "Date: " << time_str << "\r\n"
+       << "Content-Type: text/html\r\n\r\n";
+
+    std::string body = generate_error_page(errcode);
+    std::string head = ss.str();
+
+    if (send(fd, head.c_str(), head.size(), MSG_NOSIGNAL | MSG_DONTWAIT) == -1)
+    {
+        perror("SendError: Failed to send header");
+    }
+
+    if (send(fd, body.c_str(), body.size(), MSG_NOSIGNAL | MSG_DONTWAIT) == -1)
+    {
+        perror("SendError: Failed to send body");
+    }
+
+    if (shutdown(fd, SHUT_WR) == -1)
+    {
+        perror("shutdown");
+    }
+}
+
+
+
+
+
 void Server::failed_to_send(int fd)
 {
     std::ostringstream oss;
@@ -246,7 +281,7 @@ void Server::failed_to_send(int fd)
 void removeHeader(const std::string& filename)
 {
     std::ifstream inFile(filename.c_str());
-    
+
     if (!inFile) {
         std::ostringstream oss;
         oss << "[removeHeader] Could not open the file for reading: " << filename;
@@ -313,7 +348,7 @@ int Server::parse_cgi_tmp_file(header_infos& header)
     off_t bytesRead = 0;
     while( pos == std::string::npos)
     {
-        
+
         int t = read(tr, buffer, 2);
         if (t == 0)
         {

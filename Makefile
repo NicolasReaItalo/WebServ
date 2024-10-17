@@ -6,7 +6,7 @@
 #    By: nrea <nrea@student.42.fr>                  +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/02/06 10:28:10 by jerperez          #+#    #+#              #
-#    Updated: 2024/10/16 14:32:29 by nrea             ###   ########.fr        #
+#    Updated: 2024/10/17 12:40:43 by nrea             ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -106,7 +106,7 @@ all: $(NAME)
 
 $(NAME): $(OBJS)
 	@$(CXX) $(CPPFLAGS) -o $@ $^
-	@echo "Settings up forbidden file adn dir for defense"
+	@echo "Settings up forbidden file and dir for defense"
 	@chmod 0 html-files/forbidden_directory
 	@chmod 0 html-files/forbidden_file.html
 	@echo "$(_COLOR_GREEN)Ready to use $(_COLOR_BOLD)$(NAME) !$(_COLOR_END)"
@@ -124,7 +124,7 @@ clean:
 
 fclean: clean
 	@rm -f $(NAME) $(NAME_B)
-	@echo "removing forbidden file and dir"
+	@echo "changing back auth for forbidden file and dir"
 	@chmod 777 html-files/forbidden_directory
 	@chmod 777 html-files/forbidden_file.html
 	@echo "$(_COLOR_YELLOW)Program(s) removed.$(_COLOR_END)"

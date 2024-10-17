@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pollin.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
+/*   By: nrea <nrea@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:49:44 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/10/17 12:18:37 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/10/17 12:37:49 by nrea             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,13 +50,14 @@ void Server::receive_data(int fd, int i)
                 std::ostringstream oss;
                 oss << "[POLLIN] body without header and not in chunkList on fd " << fd;
                 webservLogger.log(LVL_DEBUG, oss);
+				sendError(400,fd);
                 close (fd);
                 chunk.erase(fd);
                 cgiList.erase(fd);
                 fd_set.erase(fd);
                 return;
             }
-                
+
             {
                 std::ostringstream oss;
                 oss << "[POLLIN] body from fd " << fd << " fully received, selecting method..." << header.toDo;
@@ -72,7 +73,7 @@ void Server::receive_data(int fd, int i)
                 cgiList.erase(fd);
                 fd_set.erase(fd);
                 return;
-                
+
             }
             if (chunk.find(fd) != chunk.end() && chunk[fd].timestamp == POST)
             {

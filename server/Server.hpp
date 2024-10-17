@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
+/*   By: nrea <nrea@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:49:46 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/10/17 11:02:18 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/10/17 12:37:35 by nrea             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -126,7 +126,7 @@ class Server
         void set_errorList();
         void closeAllFd();
         void killAllChildren();
-        
+
         /*on loops*/
         int ServerRun();
         void receive_data(int fd, int i);
@@ -147,6 +147,7 @@ class Server
         void send_chunk(int fd);
         void send_index(int fd, const header_infos& header, std::map<std::string, std::string>& index);
         void sendError(header_infos header, int errcode, int fd);
+		void sendError(int errcode, int fd);
         void sendCustomError(header_infos header, int errcode, int fd);
 
         /*utils used mostly to parse header*/
@@ -168,13 +169,13 @@ class Server
         int parse_cgi_tmp_file(header_infos& header);
 
         bool is_socket_open(int fd);
-        
+
     public :
         Server(std::list<ConfigServer> servers);
         int ServerStart();
         void ServerClose();
         ~Server();
-        
+
 
 
 };
