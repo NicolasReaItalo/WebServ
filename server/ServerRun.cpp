@@ -99,7 +99,13 @@ int Server::ServerRun()
                             webservLogger.log(LVL_INFO, oss);
                         }
                     }
-                    if (new_socket == -1 && (errno != EAGAIN && errno != EWOULDBLOCK))
+                    // if (new_socket == -1 && (errno != EAGAIN && errno != EWOULDBLOCK))
+                    // {
+                    //     std::ostringstream oss;
+                    //     oss << "[serverRun] accept failed: " << strerror(errno);
+                    //     webservLogger.log(LVL_ERROR, oss);
+                    // }
+                    if (new_socket == -1)
                     {
                         std::ostringstream oss;
                         oss << "[serverRun] accept failed: " << strerror(errno);
@@ -115,6 +121,16 @@ int Server::ServerRun()
         }
         else if (events[i].events & EPOLLOUT)
         {
+            if (chunk.find(fd) == chunk.end())
+            {
+                std::ostringstream oss;
+                oss << "[serverRun] EPOLLOUT on \"NOT CHUNK\", closing fd"<< fd;
+                webservLogger.log(LVL_ERROR, oss);
+                close (fd);
+                cgiList.erase(fd);
+                fd_set.erase(fd);
+                break;
+            }
             send_chunk(fd);
         }
         else if (events[i].events & (EPOLLERR | EPOLLHUP))

@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:49:46 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/10/14 12:10:11 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/10/17 11:02:18 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,8 +36,8 @@
 #include "http_errors.hpp"
 
 #define MAX_EVENTS 500
-#define BUFFER_SIZE 100000
-#define CHUNK_SIZE 100000
+#define BUFFER_SIZE 1000000
+#define CHUNK_SIZE 1000000
 #define TIMEOUT 5
 
 #define ERROR 1

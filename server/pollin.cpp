@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pollin.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nrea <nrea@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:49:44 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/10/16 15:19:39 by nrea             ###   ########.fr       */
+/*   Updated: 2024/10/17 11:44:01 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,6 @@ void Server::receive_data(int fd, int i)
     header_infos header;
     body.clear();
     bool headerParsed = false; // Flag to track whether the header has been parsed
-
     {
         std::ostringstream oss;
         oss << "[POLLIN] Loading data from fd " << fd;
@@ -40,16 +39,41 @@ void Server::receive_data(int fd, int i)
         header = chunk[fd];
     }
 
-    while (true) {
+    while (!stopper) {
         bytesRead = recv(fd, buffer, maxBodySize - 1, MSG_NOSIGNAL | MSG_DONTWAIT);
+        std::cout << bytesRead << std::endl << buffer << std::endl;
 
         //if receiving a chunk from a chunked POST
-        if (bytesRead < 0 && (body.size() > 0 || headerParsed) )
+        if (bytesRead < 0)
         {
+            if (!headerParsed)
+            {
+                std::ostringstream oss;
+                oss << "[POLLIN] body without header and not in chunkList on fd " << fd;
+                webservLogger.log(LVL_DEBUG, oss);
+                close (fd);
+                chunk.erase(fd);
+                cgiList.erase(fd);
+                fd_set.erase(fd);
+                return;
+            }
+                
             {
                 std::ostringstream oss;
                 oss << "[POLLIN] body from fd " << fd << " fully received, selecting method..." << header.toDo;
                 webservLogger.log(LVL_DEBUG, oss);
+            }
+            if (header.toDo < 1 || header.toDo > 8)
+            {
+                std::ostringstream oss;
+                oss << "[POLLIN] problem on header, dropping request on fr " << fd;
+                webservLogger.log(LVL_ERROR, oss);
+                close(fd);
+                chunk.erase(fd);
+                cgiList.erase(fd);
+                fd_set.erase(fd);
+                return;
+                
             }
             if (chunk.find(fd) != chunk.end() && chunk[fd].timestamp == POST)
             {
@@ -108,7 +132,6 @@ void Server::receive_data(int fd, int i)
                     fd_set.erase(fd);
                     if (cgiList.find(fd) != cgiList.end())
                         cgiList.erase(fd);
-
                     return;
             }
         }
@@ -126,7 +149,7 @@ void Server::receive_data(int fd, int i)
         }
 
         // If the header is not yet parsed, look for the header/body separation
-        if (bytesRead > 0 && !headerParsed && chunk.find(fd) == chunk.end())
+        if (bytesRead > 0 && !headerParsed /*&& chunk.find(fd) == chunk.end()*/)
         {
             std::string tmp(reinterpret_cast<char*>(buffer), bytesRead);
 
@@ -151,13 +174,8 @@ void Server::receive_data(int fd, int i)
                     webservLogger.log(LVL_DEBUG, oss);
                 }
                 // Parse header
-                if (chunk.find(fd) == chunk.end())
-                {
-                    headerParsed = true; // Mark header as parsed
-                    header = headerParser(headerStr, std::make_pair(fd_set[fd].address, fd_set[fd].port));
-                }
-                else
-                    header = chunk[fd];
+                headerParsed = true; // Mark header as parsed
+                header = headerParser(headerStr, std::make_pair(fd_set[fd].address, fd_set[fd].port));
                 header.i_ev = i;
             }
             else

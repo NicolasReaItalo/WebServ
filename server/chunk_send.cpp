@@ -6,7 +6,7 @@
 /*   By: qgiraux <qgiraux@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/19 12:49:25 by qgiraux           #+#    #+#             */
-/*   Updated: 2024/10/15 15:54:58 by qgiraux          ###   ########.fr       */
+/*   Updated: 2024/10/17 11:23:02 by qgiraux          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,9 +87,11 @@ void Server::send_chunk(int fd)
     if (!file) 
     {
         std::ostringstream oss;
-        oss << "[send chunk] Error opening file: \"" << chunk[fd].ressourcePath << "\" for fd " << fd ;
+        oss << "[send chunk] Error opening file: \"" << chunk[fd].ressourcePath << "\" for fd " << fd << std::endl;
         perror("error code :");
+        sendError(chunk[fd], 500, fd);
         webservLogger.log(LVL_ERROR, oss);
+        
         return ; // Return an empty vector
     }
 
