@@ -6,7 +6,7 @@
 /*   By: jerperez <jerperez@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/03 15:20:58 by jerperez          #+#    #+#             */
-/*   Updated: 2024/10/10 10:03:50 by jerperez         ###   ########.fr       */
+/*   Updated: 2024/10/17 12:38:47 by jerperez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,7 @@ static int	_parse(char *pathname, std::list<ConfigServer> &servers)
 	std::cout << "\e[34m##############################\e[0m" << std::endl;
 	if (pr_parse(list, servers))
 	{
-		std::cerr << "main: Parsing failed" << std::endl;
+		std::cerr << "main error: parsing failed" << std::endl;
 		return (1);
 	}
 	return (0);
@@ -71,7 +71,10 @@ int	main(int ac, char *av[])
 			return 1;
 	}
 	else
-		return ret;
+	{
+		std::cerr << "main: error: expected 1 argument, received: " << (ac - 1) << std::endl;
+		return 2;
+	}
 	Server server(servers);
 	server.ServerStart();
 	std::cout << "\n\t\t\033[1;31m<<<  EXIT  >>>\033[0m\n\n";
