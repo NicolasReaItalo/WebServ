@@ -100,7 +100,7 @@ This is a simple http1.1 server, able to hanlde requests GET, POST, and DELETE, 
 
 * clone the repository in your desired folder
 * in console, use the commande make to compile the project
-* execute the binary file, with a .con as parameter, either one given in conf_files, or one of your own making
+* execute the binary file, with a .conf as parameter, either one given in conf_files, or one of your own making
 
 <!-- ROADMAP -->
 ## Issues
