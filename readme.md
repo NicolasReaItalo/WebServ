@@ -74,7 +74,7 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-This is a simple http1.1 server, able to hanlde requests GET, POST, and DELETE, as well as CGIs. The project must be launched with a .conf file associated, based onn the same structure as nginx conf files. For more information, please check the <a href="https://github.com/qgiraux/WebServ/wiki">wiki</a>
+This is a simple http1.1 server, able to handle requests GET, POST, and DELETE, as well as CGIs. The project must be launched with a .conf file associated, based onn the same structure as nginx conf files. For more information, please check the <a href="https://github.com/qgiraux/WebServ/wiki">wiki</a>
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
